@@ -461,4 +461,29 @@ footer {
     color:#111;
     font-weight:600;
 }
+.social-links{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
 
+.social-links a{
+    color:#cbd5e1;
+    text-decoration:none;
+    font-size:15px;
+    transition:.3s;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.social-links a i{
+    color:#facc15;
+    width:20px;
+}
+
+.social-links a:hover{
+    color:#facc15;
+    padding-left:8px;
+}
