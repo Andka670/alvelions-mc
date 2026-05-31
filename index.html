@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alvelions MC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">
+        ALVELIONS MC
+    </div>
+
+    <div class="menu">
+        <a href="#home">Home</a>
+        <a href="#rules">Rules</a>
+        <a href="#staff">Staff</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="store.html">Store</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+    </div>
+</nav>
+
+<section class="hero" id="home">
+
+    <h1>ALVELIONS MC</h1>
+
+    <p style="max-width:800px; margin:0 auto 25px; line-height:1.8;">
+        Selamat datang di <strong>Alvelions MC</strong>, server Minecraft Bedrock Indonesia
+        yang menghadirkan pengalaman bermain terbaik dengan komunitas aktif,
+        performa server yang stabil, dan berbagai fitur menarik. Nikmati petualangan
+        seru, sistem ekonomi yang seimbang, event rutin, serta lingkungan bermain
+        yang aman dan nyaman untuk semua pemain.
+    </p>
+
+    <!-- IP BOX -->
+    <div style="text-align:center; margin-bottom:12px; font-weight:600; font-size:18px; line-height:1.6;">
+        IP: <span style="color:#facc15;">alvelionsmc.mineidhost.icu</span><br>
+        Port: <span style="color:#facc15;">19207</span>
+    </div>
+
+    <div class="hero-buttons">
+
+        <a href="register.html" class="btn">
+            Mulai Bermain
+        </a>
+
+        <button class="btn secondary" onclick="copyIP()">
+            Salin IP
+        </button>
+
+    </div>
+
+</section>
+<section id="rules">
+
+    <h2 class="section-title">
+        Rules Server
+    </h2>
+
+    <div class="content-box">
+
+        <ol>
+
+            <li>Dilarang menggunakan cheat.</li>
+
+            <li>Dilarang griefing.</li>
+
+            <li>Dilarang spam chat.</li>
+
+            <li>Hormati pemain lain.</li>
+
+            <li>Ikuti arahan staff.</li>
+
+        </ol>
+
+    </div>
+
+</section>
+
+<section id="staff">
+
+    <h2 class="section-title">
+        Staff Server
+    </h2>
+
+    <div class="staff-grid">
+
+        <div class="staff-card">
+            <h3>Owner</h3>
+            <p>Alvelions</p>
+        </div>
+
+        <div class="staff-card">
+            <h3>Admin</h3>
+            <p>Coming Soon</p>
+        </div>
+
+        <div class="staff-card">
+            <h3>Moderator</h3>
+            <p>Coming Soon</p>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="doc">
+
+    <h2 class="section-title">
+        Documentation
+    </h2>
+
+    <div class="content-box">
+
+        <p>
+            Dapatkan informasi lengkap tentang server kami di dokumentasi berikut.
+        </p>
+
+        <div style="margin-top:20px;">
+            <a href="documentation.html" class="btn">
+                Baca Dokumentasi
+            </a>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="store">
+
+    <h2 class="section-title">
+        Store & Donasi
+    </h2>
+
+    <div class="content-box">
+
+        <p>
+            Dukung perkembangan server dengan membeli rank atau item eksklusif.
+        </p>
+
+        <div style="margin-top:20px;">
+            <a href="store.html" class="btn">
+                Kunjungi Store
+            </a>
+        </div>
+
+    </div>
+
+</section>
+<section id="social">
+
+    <h2 class="section-title">
+        Social Media
+    </h2>
+
+    <div class="content-box">
+
+        <p>Ikuti kami di sosial media untuk update terbaru server!</p>
+
+        <div class="hero-buttons" style="margin-top:20px; flex-wrap:wrap; gap:10px;">
+
+            <a href="https://www.tiktok.com/@username" target="_blank" class="btn">
+                <i class="fa-brands fa-tiktok"></i> TikTok
+            </a>
+
+            <a href="https://instagram.com/andka670_" target="_blank" class="btn secondary">
+                <i class="fa-brands fa-instagram"></i> Instagram
+            </a>
+
+            <a href="https://discord.gg/YDxcMPjXMV" target="_blank" class="btn">
+                <i class="fa-brands fa-discord"></i> Discord
+            </a>
+
+            <a href="https://chat.whatsapp.com/GhmkA5uzQXqCWJNeAHGpZn" target="_blank" class="btn secondary">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+<footer>
+
+    <p>
+        © 2026 Alvelions MC
+    </p>
+
+</footer>
+
+<script>
+function copyIP() {
+
+    const ip = "alvelionsmc.mineidhost.icu:19207";
+
+    navigator.clipboard.writeText(ip);
+
+    alert("IP berhasil disalin! " + ip);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Alvelions MC</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:radial-gradient(circle at top left,#0f172a,#020617);
+    color:#fff;
+}
+
+.admin-container{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:240px;
+    background:#0b1220;
+    padding:20px;
+    border-right:1px solid #1f2937;
+}
+
+.sidebar h2{
+    color:#facc15;
+    margin-bottom:25px;
+}
+
+.sidebar a{
+    display:flex;
+    gap:10px;
+    padding:12px;
+    color:#e5e7eb;
+    text-decoration:none;
+    border-radius:10px;
+    margin-bottom:8px;
+    cursor:pointer;
+}
+
+.sidebar a:hover{ background:#1f2937; }
+
+.sidebar a.active{
+    background:#facc15;
+    color:#000;
+}
+
+.content{
+    flex:1;
+    padding:25px;
+}
+
+.page{ display:none; }
+.page.active{ display:block; }
+
+.card{
+    background:#0b1220;
+    padding:20px;
+    border-radius:14px;
+    border:1px solid #1f2937;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #1f2937;
+    background:#0f172a;
+    color:#fff;
+}
+
+button{
+    background:#facc15;
+    border:none;
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    margin-top:15px;
+    border-collapse:collapse;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+table th, table td{
+    padding:12px;
+    border-bottom:1px solid #1f2937;
+    text-align:left;
+    font-size:13px;
+}
+
+table th{
+    color:#facc15;
+    background:#0f172a;
+}
+
+table tr:hover{
+    background:#111827;
+}
+
+.action-btn{
+    display:flex;
+    gap:8px;
+}
+
+.btn-edit{
+    background:#3b82f6;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    border:none;
+}
+
+.btn-delete{
+    background:#ef4444;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="admin-container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>ADMIN</h2>
+
+    <a class="active" onclick="showPage('dashboard', this)">
+        <i class="fa fa-home"></i> Dashboard
+    </a>
+
+    <a onclick="showPage('products', this)">
+        <i class="fa fa-box"></i> Produk
+    </a>
+
+    <a onclick="showPage('orders', this)">
+        <i class="fa fa-shopping-cart"></i> Orders
+    </a>
+
+    <a onclick="showPage('income', this)">
+        <i class="fa fa-dollar-sign"></i> Pendapatan
+    </a>
+    <a onclick="logout()" style="margin-top:20px;background:#ef4444;color:#fff;">
+    <i class="fa fa-right-from-bracket"></i> Logout
+</a>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page active">
+    <div class="card">
+        <h2>Dashboard</h2>
+        <p>Selamat datang Admin</p>
+    </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="page">
+    <div class="card">
+        <h2>CRUD Produk</h2>
+
+        <input id="name" placeholder="Nama Produk">
+        <input id="price" type="number" placeholder="Harga">
+        <input id="desc" placeholder="Deskripsi">
+
+        <button onclick="addProduct()">+ Tambah Produk</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Harga</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="productList"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ORDERS -->
+<div id="orders" class="page">
+    <div class="card">
+        <h2>Orders</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Transaksi</th>
+                    <th>ID Payment</th>
+                    <th>Product</th>
+                    <th>User</th>
+                    <th>Gamertag</th>
+                    <th>Phone</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="orderList"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- INCOME -->
+<div id="income" class="page">
+    <div class="card">
+        <h2>Pendapatan</h2>
+        <h3 id="incomeTotal">Rp 0</h3>
+
+        <canvas id="incomeChart" style="margin-top:20px;"></canvas>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="incomeTable"></tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/admin.js"></script>
+
+<script>
+function showPage(page, el){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(page).classList.add('active');
+
+    document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function logout() {
+    // Clear session or token
+    // Redirect to login page
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

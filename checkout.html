@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout</title>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+<div class="auth-card">
+
+<!-- 🔥 QRIS DARI SUPABASE BUCKET qris -->
+<div style="text-align:center; margin-bottom:15px;">
+    <p><b>QRIS Pembayaran</b></p>
+    <img id="qrisImage" style="width:220px; border-radius:10px;">
+</div>
+
+<h1>Checkout Order</h1>
+
+<input id="username" placeholder="Username">
+<input id="gamertag" placeholder="Gamertag Minecraft">
+<input id="phone" placeholder="Nomor HP">
+<input id="id_transaksi_payment" placeholder="ID Transaksi Payment">
+
+<!-- 🔥 DROPDOWN RANK DARI PRODUCTS -->
+<select id="productSelect">
+    <option value="">Pilih Rank</option>
+</select>
+
+<select id="payment">
+    <option value="dana">DANA</option>
+    <option value="gopay">GOPAY</option>
+    <option value="ovo">OVO</option>
+    <option value="shopeepay">SHOPEEPAY</option>
+</select>
+
+<button class="btn" onclick="submitOrder()">
+    Kirim Pesanan
+</button>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+
+<script>
+
+function generateID() {
+    return 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
+}
+
+/* =========================
+   WIB TIME (INDONESIA)
+========================= */
+function getWIBTime() {
+    return new Date().toLocaleString("sv-SE", {
+        timeZone: "Asia/Jakarta"
+    }).replace("T", " ");
+}
+
+/* =========================
+   LOAD QRIS
+========================= */
+function loadQris() {
+
+    const { data } = supabaseClient
+        .storage
+        .from("qris")
+        .getPublicUrl("alvelions.jpeg");
+
+    document.getElementById("qrisImage").src = data.publicUrl;
+}
+
+loadQris();
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+async function loadProducts() {
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("*");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const select = document.getElementById("productSelect");
+
+    data.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.id;
+        option.textContent = item.name + " - Rp" + item.price;
+        select.appendChild(option);
+    });
+}
+
+loadProducts();
+
+/* =========================
+   SUBMIT ORDER
+========================= */
+async function submitOrder() {
+
+    const productId = document.getElementById("productSelect").value;
+
+    const username = document.getElementById("username").value;
+    const gamertag = document.getElementById("gamertag").value;
+    const phone = document.getElementById("phone").value;
+    const id_transaksi_payment = document.getElementById("id_transaksi_payment").value.trim();
+    const payment = document.getElementById("payment").value;
+
+    if (!username || !gamertag || !phone) {
+        alert("Isi semua data!");
+        return;
+    }
+
+    if (!id_transaksi_payment) {
+        alert("ID Transaksi Payment wajib diisi!");
+        return;
+    }
+
+    if (!productId) {
+        alert("Pilih rank terlebih dahulu!");
+        return;
+    }
+
+    // CEK USERNAME
+    const { data: user, error: userError } = await supabaseClient
+        .from("users_profile")
+        .select("username")
+        .eq("username", username);
+
+    if (userError) {
+        console.error(userError);
+        alert("Terjadi kesalahan saat mengecek akun!");
+        return;
+    }
+
+    if (!user || user.length === 0) {
+        alert("Username tidak terdaftar di sistem!\nSilakan buat akun terlebih dahulu.");
+        return;
+    }
+
+    const id_transaksi = generateID();
+    const created_at = getWIBTime();
+
+    const { error } = await supabaseClient
+        .from("orders")
+        .insert({
+            id_transaksi,
+            id_transaksi_payment,
+            product_id: productId,
+            username,
+            gamertag,
+            phone,
+            payment_method: payment,
+            status: "pending",
+            created_at
+        });
+
+    if (error) {
+        console.error(error);
+        alert("Gagal membuat order: " + error.message);
+        return;
+    }
+
+    alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
+
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>

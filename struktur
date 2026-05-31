@@ -1,0 +1,18 @@
+index.html
+login.html
+register.html
+dashboard.html
+store.html
+admin.html
+checkout.html
+orders.html
+
+css/
+ └─ style.css
+
+js/
+ ├─ supabase.js
+ ├─ auth.js
+ ├─ store.js
+ ├─ orders.js
+ └─ dashboard.js

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - Alvelions MC</title>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <h1>Login</h1>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Email">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password">
+
+        <button
+            class="btn"
+            onclick="login()">
+
+            Login
+
+        </button>
+        <p id="message" style="margin-top:10px; color:red;"></p>
+        <p>
+
+            Belum punya akun?
+
+            <a href="register.html">
+
+                Register
+
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
