@@ -2,13 +2,6 @@ console.log("ADMIN JS JALAN");
 
 let incomeChart;
 
-// Helper untuk menentukan warna class select berdasarkan statusnya
-function getStatusClass(status) {
-    if (status === "done") return "status-done";
-    if (status === "pending") return "status-pending";
-    return "status-none";
-}
-
 // =====================
 // PRODUCTS
 // =====================
@@ -103,9 +96,6 @@ async function loadOrders() {
     list.innerHTML = "";
 
     (data || []).forEach(o => {
-        // Ambil class warna berdasarkan status saat ini
-        const currentStatusClass = getStatusClass(o.status);
-
         list.innerHTML += `
         <tr>
             <td>${o.id}</td>
@@ -117,14 +107,15 @@ async function loadOrders() {
             <td>${o.phone}</td>
             <td>${o.payment_method}</td>
             <td>
-                <select class="status-badge ${currentStatusClass}" onchange="updateStatus('${o.id}', this.value); this.className='status-badge ' + (this.value === 'done' ? 'status-done' : this.value === 'pending' ? 'status-pending' : 'status-none')">
-                    <option value="pending" ${o.status=="pending"?"selected":""} style="background:#0f172a; color:#fff;">pending</option>
-                    <option value="done" ${o.status=="done"?"selected":""} style="background:#0f172a; color:#fff;">done</option>
-                    <option value="none" ${o.status=="none"?"selected":""} style="background:#0f172a; color:#fff;">none</option>
+                <select onchange="updateStatus('${o.id}', this.value)">
+                    <option value="pending" ${o.status=="pending"?"selected":""}>pending</option>
+                    <option value="done" ${o.status=="done"?"selected":""}>done</option>
+                    <option value="none" ${o.status=="none"?"selected":""}>none</option>
                 </select>
             </td>
             <td>${o.created_at}</td>
 
+            <!-- 🔥 BUTTON DELETE -->
             <td>
                 <button class="btn-delete" onclick="deleteOrder('${o.id}')">
                     Delete
