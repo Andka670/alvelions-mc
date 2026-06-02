@@ -2,6 +2,13 @@ console.log("ADMIN JS JALAN");
 
 let incomeChart;
 
+// Helper untuk mengambil class CSS berdasarkan status order
+function getStatusClass(status) {
+    if (status === "done") return "status-done";
+    if (status === "pending") return "status-pending";
+    return "status-none";
+}
+
 // =====================
 // PRODUCTS
 // =====================
@@ -88,34 +95,60 @@ async function deleteProduct(id) {
 // ORDERS
 // =====================
 async function loadOrders() {
-    const { data } = await supabaseClient.from("orders").select("*");
-
+    // Tarik data order sekaligus data produk untuk relasi ID -> Nama Produk
+    const { data: orders } = await supabaseClient.from("orders").select("*");
+    const { data: products } = await supabaseClient.from("products").select("*");
+    
     const list = document.getElementById("orderList");
     if (!list) return;
 
     list.innerHTML = "";
 
-    (data || []).forEach(o => {
+    const safeOrders = orders || [];
+    const safeProducts = products || [];
+
+    // Ambil nilai dari element filter select & search input di HTML
+    const filterEl = document.getElementById("statusFilter");
+    const filterValue = filterEl ? filterEl.value : "all";
+
+    const searchEl = document.getElementById("searchUsername");
+    const searchValue = searchEl ? searchEl.value.toLowerCase().trim() : "";
+
+    safeOrders.forEach(o => {
+        // 1. Logika Fitur Filter Status
+        if (filterValue !== "all" && o.status !== filterValue) return;
+
+        // 2. Logika Fitur Search Username (Pencarian Parsial / Tidak harus case-sensitive)
+        const orderUsername = o.username ? o.username.toLowerCase() : "";
+        if (searchValue !== "" && !orderUsername.includes(searchValue)) return;
+
+        // Logika Mengubah ID Product Menjadi Nama Product
+        const product = safeProducts.find(p => String(p.id) === String(o.product_id));
+        const productName = product ? product.name : `ID: ${o.product_id} (Terhapus)`;
+
+        // Ambil warna background class status saat ini
+        const currentStatusClass = getStatusClass(o.status);
+
         list.innerHTML += `
         <tr>
             <td>${o.id}</td>
             <td>${o.id_transaksi}</td>
             <td>${o.id_transaksi_payment || "-"}</td>
-            <td>${o.product_id}</td>
+            <td>${productName}</td>
             <td>${o.username}</td>
             <td>${o.gamertag}</td>
             <td>${o.phone}</td>
             <td>${o.payment_method}</td>
             <td>
-                <select onchange="updateStatus('${o.id}', this.value)">
-                    <option value="pending" ${o.status=="pending"?"selected":""}>pending</option>
-                    <option value="done" ${o.status=="done"?"selected":""}>done</option>
-                    <option value="none" ${o.status=="none"?"selected":""}>none</option>
+                <select class="status-select ${currentStatusClass}" 
+                    onchange="updateStatus('${o.id}', this.value); this.className='status-select ' + (this.value === 'done' ? 'status-done' : this.value === 'pending' ? 'status-pending' : 'status-none')">
+                    <option value="pending" ${o.status=="pending"?"selected":""} style="background:#0f172a; color:#fff;">pending</option>
+                    <option value="done" ${o.status=="done"?"selected":""} style="background:#0f172a; color:#fff;">done</option>
+                    <option value="none" ${o.status=="none"?"selected":""} style="background:#0f172a; color:#fff;">none</option>
                 </select>
             </td>
             <td>${o.created_at}</td>
 
-            <!-- 🔥 BUTTON DELETE -->
             <td>
                 <button class="btn-delete" onclick="deleteOrder('${o.id}')">
                     Delete
