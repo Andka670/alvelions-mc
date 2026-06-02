@@ -7,7 +7,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -136,6 +135,33 @@ table tr:hover{
     font-size:12px;
     border:none;
 }
+
+/* KUSTOMISASI WARNA STATUS (BADGE) */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    text-align: center;
+    min-width: 70px;
+}
+
+.status-done {
+    background-color: #10b981; /* Hijau Emerald */
+    color: #fff;
+}
+
+.status-pending {
+    background-color: #eab308; /* Kuning Amber */
+    color: #000; /* Teks hitam agar kontras dengan warna kuning */
+}
+
+.status-none {
+    background-color: #6b7280; /* Abu-abu Gray */
+    color: #fff;
+}
 </style>
 </head>
 
@@ -143,7 +169,6 @@ table tr:hover{
 
 <div class="admin-container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>ADMIN</h2>
 
@@ -167,10 +192,8 @@ table tr:hover{
 </a>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="page active">
     <div class="card">
         <h2>Dashboard</h2>
@@ -178,7 +201,6 @@ table tr:hover{
     </div>
 </div>
 
-<!-- PRODUCTS -->
 <div id="products" class="page">
     <div class="card">
         <h2>CRUD Produk</h2>
@@ -202,7 +224,6 @@ table tr:hover{
     </div>
 </div>
 
-<!-- ORDERS -->
 <div id="orders" class="page">
     <div class="card">
         <h2>Orders</h2>
@@ -228,7 +249,6 @@ table tr:hover{
     </div>
 </div>
 
-<!-- INCOME -->
 <div id="income" class="page">
     <div class="card">
         <h2>Pendapatan</h2>
@@ -253,7 +273,6 @@ table tr:hover{
 </div>
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/admin.js"></script>
@@ -271,6 +290,28 @@ function logout() {
     // Clear session or token
     // Redirect to login page
     window.location.href = "index.html";
+}
+
+/**
+ * 💡 TIPS INTEGRASI UNTUK FILE js/admin.js:
+ * Saat melakukan rendering data row pada tabel Order di file js/admin.js,
+ * bungkus variabel status menggunakan fungsi helper di bawah ini.
+ * * Contoh penggunaan saat looping data di js/admin.js:
+ * <td>${renderStatusBadge(order.status)}</td>
+ */
+function renderStatusBadge(status) {
+    const formatStatus = status ? status.toLowerCase().trim() : 'none';
+    let classWarna = 'status-none';
+
+    if (formatStatus === 'done') {
+        classWarna = 'status-done';
+    } else if (formatStatus === 'pending') {
+        classWarna = 'status-pending';
+    } else if (formatStatus === 'none') {
+        classWarna = 'status-none';
+    }
+
+    return `<span class="status-badge ${classWarna}">${formatStatus}</span>`;
 }
 </script>
 
