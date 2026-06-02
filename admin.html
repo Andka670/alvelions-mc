@@ -7,7 +7,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -136,6 +135,31 @@ table tr:hover{
     font-size:12px;
     border:none;
 }
+
+/* STYLE UNTUK DROPDOWN STATUS BERWARNA */
+.status-select {
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    font-weight: 600;
+    font-size: 12px;
+    border: none !important;
+    cursor: pointer;
+    outline: none;
+    text-transform: uppercase;
+    width: auto !important;
+}
+.status-done {
+    background-color: #10b981 !important; /* Hijau */
+    color: #fff !important;
+}
+.status-pending {
+    background-color: #eab308 !important; /* Kuning */
+    color: #000 !important;
+}
+.status-none {
+    background-color: #6b7280 !important; /* Abu-abu */
+    color: #fff !important;
+}
 </style>
 </head>
 
@@ -143,7 +167,6 @@ table tr:hover{
 
 <div class="admin-container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>ADMIN</h2>
 
@@ -167,10 +190,8 @@ table tr:hover{
 </a>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="page active">
     <div class="card">
         <h2>Dashboard</h2>
@@ -178,7 +199,6 @@ table tr:hover{
     </div>
 </div>
 
-<!-- PRODUCTS -->
 <div id="products" class="page">
     <div class="card">
         <h2>CRUD Produk</h2>
@@ -202,10 +222,25 @@ table tr:hover{
     </div>
 </div>
 
-<!-- ORDERS -->
 <div id="orders" class="page">
     <div class="card">
         <h2>Orders</h2>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label for="searchUsername" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Cari Username:</label>
+                <input id="searchUsername" oninput="filterOrders()" placeholder="Ketik username..." style="margin: 0;">
+            </div>
+            <div style="width: 200px;">
+                <label for="statusFilter" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Filter Status:</label>
+                <select id="statusFilter" onchange="filterOrders()" style="margin: 0;">
+                    <option value="all">Semua Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="done">Done</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+        </div>
 
         <table>
             <thead>
@@ -227,8 +262,6 @@ table tr:hover{
         </table>
     </div>
 </div>
-
-<!-- INCOME -->
 <div id="income" class="page">
     <div class="card">
         <h2>Pendapatan</h2>
@@ -253,7 +286,6 @@ table tr:hover{
 </div>
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/admin.js"></script>
@@ -267,9 +299,14 @@ function showPage(page, el){
     el.classList.add('active');
 }
 
+/* Pemanggilan fungsi filter jika file admin.js dimuat ulang */
+function filterOrders() {
+    if (typeof loadOrders === "function") {
+        loadOrders();
+    }
+}
+
 function logout() {
-    // Clear session or token
-    // Redirect to login page
     window.location.href = "index.html";
 }
 </script>
