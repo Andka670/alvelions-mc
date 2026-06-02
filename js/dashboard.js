@@ -43,16 +43,14 @@ async function loadProfile(userId) {
         data.username || "-";
     document.getElementById("panelName").textContent =
         data.username || "USER PANEL";
-    document.getElementById("role").textContent =
-        data.role || "user";
-
+    
     document.getElementById("created_at").textContent =
         data.created_at
             ? new Date(data.created_at).toLocaleDateString("id-ID")
             : "-";
 
     // =====================
-    // LOAD TRANSACTIONS + STATUS
+    // LOAD TRANSACTIONS + STATUS RANK
     // =====================
     loadOrderStatus(data.username);
     loadTransactions(data.username);
@@ -64,6 +62,18 @@ async function loadProfile(userId) {
 async function loadTransactions(username) {
 
     const tbody = document.getElementById("transactionList");
+
+    // Ambil data produk terlebih dahulu secara terpisah untuk dicocokkan namanya manual
+    const { data: productsData } = await supabaseClient
+        .from("products") 
+        .select("id, name");
+
+    const productMap = {};
+    if (productsData) {
+        productsData.forEach(p => {
+            productMap[p.id] = p.name;
+        });
+    }
 
     const { data, error } = await supabaseClient
         .from("orders")
@@ -93,12 +103,13 @@ async function loadTransactions(username) {
     tbody.innerHTML = data.map(item => {
 
         const isPending = item.status === "pending";
+        const productName = productMap[item.product_id] || item.product_id || '-';
 
         return `
             <tr>
                 <td>${item.id_transaksi || '-'}</td>
                 <td>${item.id_transaksi_payment || '-'}</td>
-                <td>${item.product_id || '-'}</td>
+                <td>${productName}</td>
                 <td>${item.payment_method || '-'}</td>
                 <td>
                     <span class="badge ${item.status}">
@@ -126,6 +137,7 @@ async function loadTransactions(username) {
         `;
     }).join("");
 }
+
 // =====================
 // LOAD ANNOUNCEMENTS
 // =====================
@@ -154,35 +166,55 @@ async function loadAnnouncements() {
             <h3>${item.title}</h3>
             <p>${item.content}</p>
         </div>
-    `).join("");
+     `).join("");
 }
 
 // =====================
-// LOAD STATUS ORDER TERAKHIR
+// LOAD STATUS RANK DARI TRANSACTIONS TERAKHIR (KHUSUS STATUS DONE)
 // =====================
 async function loadOrderStatus(username) {
 
+    // 1. Ambil data produk untuk pemetaan nama
+    const { data: productsData } = await supabaseClient
+        .from("products") 
+        .select("id, name");
+
+    const productMap = {};
+    if (productsData) {
+        productsData.forEach(p => {
+            productMap[String(p.id)] = p.name;
+        });
+    }
+
+    // 2. Mengambil transaksi terakhir yang statusnya benar-benar 'done'
     const { data, error } = await supabaseClient
         .from("orders")
-        .select("status, created_at")
+        .select("product_id, status, created_at")
         .eq("username", username)
+        .eq("status", "done") // Mengunci pencarian hanya untuk transaksi yang selesai/done
         .order("created_at", { ascending: false })
         .limit(1);
 
     if (error) {
         console.error("Order error:", error);
+        document.getElementById("role").textContent = "User";
         return;
     }
 
     const latest = data?.[0];
     const roleEl = document.getElementById("role");
 
+    // 3. Jika tidak ditemukan ada transaksi dengan status 'done', role diatur ke default "User"
     if (!latest) {
-        roleEl.textContent += " | Status: Belum ada order";
+        roleEl.textContent = "User";
         return;
     }
 
-    roleEl.textContent += " | Status: " + latest.status;
+    // Cari nama rank di map, jika map kosong tampilkan product_id, jika null tampilkan "User"
+    const rankName = productMap[String(latest.product_id)] || latest.product_id || "User";
+
+    // Update elemen text di halaman HTML
+    roleEl.textContent = rankName;
 }
 
 // =====================
