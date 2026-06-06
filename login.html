@@ -1,60 +1,234 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login - Alvelions MC</title>
+    <title>Login - Alvelions MC</title>
 
-<link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght=700;900&family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#facc15;
+            --secondary:#f59e0b;
+            --bg:#07050f;
+            --card:rgba(255,255,255,.04);
+        }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:var(--bg);
+            background-image:
+                radial-gradient(circle at center,
+                rgba(250,204,21,.08) 0%,
+                transparent 70%);
+            font-family:'Inter',sans-serif;
+            color:white;
+        }
+
+        .auth-container{
+            width:100%;
+            max-width:420px;
+            padding:20px;
+        }
+
+        .auth-card{
+            background:var(--card);
+            backdrop-filter:blur(15px);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:20px;
+            padding:30px;
+            text-align:center;
+            box-shadow:0 0 25px rgba(250,204,21,.08);
+        }
+
+        .logo{
+            font-family:'Orbitron',sans-serif;
+            font-size:2rem;
+            font-weight:900;
+            background:linear-gradient(
+                90deg,
+                #facc15,
+                #f59e0b,
+                #fff,
+                #facc15
+            );
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            margin-bottom:10px;
+        }
+
+        .subtitle{
+            color:#cbd5e1;
+            font-size:.8rem;
+            margin-bottom:25px;
+        }
+
+        .auth-card h1{
+            font-size:1.5rem;
+            margin-bottom:20px;
+            color:var(--primary);
+        }
+
+        input{
+            width:100%;
+            padding:14px;
+            margin-bottom:12px;
+            border:none;
+            border-radius:12px;
+            background:rgba(255,255,255,.05);
+            color:white;
+            outline:none;
+            font-size:.95rem;
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        input:focus{
+            border-color:var(--primary);
+            box-shadow:0 0 10px rgba(250,204,21,.2);
+        }
+
+        .btn{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:var(--primary);
+            color:black;
+            font-weight:700;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 0 15px rgba(250,204,21,.5);
+        }
+
+        #message{
+            margin-top:12px;
+            font-size:.85rem;
+            min-height: 20px;
+        }
+
+        .auth-card p{
+            margin-top:15px;
+            color:#cbd5e1;
+            font-size:.9rem;
+        }
+
+        .auth-card a{
+            color:var(--primary);
+            text-decoration:none;
+            font-weight:700;
+        }
+
+        .auth-card a:hover{
+            text-decoration:underline;
+        }
+
+        .back-home{
+            display:inline-block;
+            margin-top:15px;
+            font-size:.85rem;
+        }
+    </style>
 </head>
 <body>
 
 <div class="auth-container">
-
     <div class="auth-card">
+        <div class="logo">ALVELIONS MC</div>
+
+        <div class="subtitle">
+            Login ke akun Alvelions MC Anda.
+        </div>
 
         <h1>Login</h1>
 
         <input
             type="email"
             id="email"
-            placeholder="Email">
+            placeholder="Email"
+            required>
 
         <input
             type="password"
             id="password"
-            placeholder="Password">
+            placeholder="Password"
+            required>
 
         <button
             class="btn"
             onclick="login()">
-
             Login
-
         </button>
-        <p id="message" style="margin-top:10px; color:red;"></p>
+
+        <p id="message"></p>
+
         <p>
-
             Belum punya akun?
-
-            <a href="register.html">
-
-                Register
-
-            </a>
-
+            <a href="register.html">Register</a>
         </p>
 
+        <a href="index.html" class="back-home">
+            ← Kembali ke Beranda
+        </a>
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="js/supabase.js"></script>
+<script src="js/auth.js"></script> 
 
-<script src="js/auth.js"></script>
+<script>
+// Skrip pelindung sesi dijalankan paling akhir setelah semua library siap
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        if (typeof supabaseClient !== 'undefined') {
+            // 1. Cek sesi aktif dari Supabase Auth
+            const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+            if (!authError && user) {
+                console.log("User teridentifikasi. Mengambil profile dari database...");
+
+                // 2. Query ke tabel users_profile menggunakan ID user yang aktif
+                const { data: profile, error: profileError } = await supabaseClient
+                    .from('users_profile')
+                    .select('role')
+                    .eq('id', user.id) // Sesuai dengan primary key ID / Relasi Auth ID di tabel users_profile
+                    .single();
+
+                if (profileError) {
+                    console.error("Gagal memuat tabel users_profile:", profileError.message);
+                    return;
+                }
+
+                // 3. Cek isi text role dan alihkan halaman secara instan
+                if (profile && profile.role === "admin") {
+                    window.location.replace("admin.html");
+                } else {
+                    window.location.replace("dashboard.html");
+                }
+            }
+        } else {
+            console.error("Supabase client belum terdeteksi. Cek konfigurasi js/supabase.js Anda.");
+        }
+    } catch (err) {
+        console.error("Sesi bermasalah atau gagal terhubung ke database:", err);
+    }
+});
+</script>
 
 </body>
 </html>
