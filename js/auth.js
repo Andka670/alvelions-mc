@@ -13,14 +13,12 @@ async function register() {
     message.style.color = "#facc15";
     message.textContent = "Sedang mendaftarkan...";
 
+    // 1. Daftar ke Supabase Auth
     const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
+        email: email,
+        password: password,
         options: {
-            data: {
-                username,
-                role: "Member" // Menambahkan default role otomatis ke metadata user
-            }
+            data: { username: username }
         }
     });
 
@@ -28,6 +26,28 @@ async function register() {
         message.style.color = "#ef4444";
         message.textContent = error.message;
         return;
+    }
+
+    // 2. Jika berhasil, masukkan data ke tabel 'users_profile'
+    // Gunakan data.user.id yang didapat dari proses sign up
+    if (data.user) {
+        const { error: profileError } = await supabaseClient
+            .from('users_profile')
+            .insert([
+                { 
+                    id: data.user.id, // Menyinkronkan ID dengan Auth
+                    username: username, 
+                    email: email,
+                    role: 'user' // Role default
+                }
+            ]);
+
+        if (profileError) {
+            console.error("Error insert ke profile:", profileError);
+            message.style.color = "#ef4444";
+            message.textContent = "User terdaftar, tapi gagal membuat profil.";
+            return;
+        }
     }
 
     message.style.color = "#22c55e";
