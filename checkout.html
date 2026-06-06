@@ -1,63 +1,235 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALVELIONS MC - CHECKOUT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #facc15; /* Kuning Cyber / Neon */
+            --secondary: #fbbf24; 
+            --bg-dark: #07050f; 
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
 
-<link rel="stylesheet" href="css/style.css">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.08) 0%, transparent 80%);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            padding: 30px 10px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+        }
+
+        .qris-box {
+            text-align: center;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .qris-box p {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #qrisImage {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+            background: #fff; /* Menjaga QR tetap terbaca jika transparan */
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+        }
+
+        select option {
+            background: #0c091a;
+            color: #fff;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: #fff;
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .back-link:hover { color: var(--primary); }
+    </style>
 </head>
 <body>
 
 <div class="auth-container">
+    <div class="auth-card">
 
-<div class="auth-card">
+        <div class="qris-box">
+            <p>QRIS Pembayaran</p>
+            <img id="qrisImage" alt="Memuat QRIS...">
+        </div>
 
-<!-- 🔥 QRIS DARI SUPABASE BUCKET qris -->
-<div style="text-align:center; margin-bottom:15px;">
-    <p><b>QRIS Pembayaran</b></p>
-    <img id="qrisImage" style="width:220px; border-radius:10px;">
-</div>
+        <h1>Checkout Order</h1>
 
-<h1>Checkout Order</h1>
+        <div class="form-group">
+            <label>Username Akun Web</label>
+            <input id="username" placeholder="Masukkan username terdaftar">
+        </div>
 
-<input id="username" placeholder="Username">
-<input id="gamertag" placeholder="Gamertag Minecraft">
-<input id="phone" placeholder="Nomor HP">
-<input id="id_transaksi_payment" placeholder="ID Transaksi Payment">
+        <div class="form-group">
+            <label>Gamertag Minecraft</label>
+            <input id="gamertag" placeholder="Contoh: SteveAlvelions">
+        </div>
 
-<!-- 🔥 DROPDOWN RANK DARI PRODUCTS -->
-<select id="productSelect">
-    <option value="">Pilih Rank</option>
-</select>
+        <div class="form-group">
+            <label>Nomor HP / WhatsApp</label>
+            <input id="phone" placeholder="Contoh: 0851xxxxxxxx">
+        </div>
 
-<select id="payment">
-    <option value="dana">DANA</option>
-    <option value="gopay">GOPAY</option>
-    <option value="ovo">OVO</option>
-    <option value="shopeepay">SHOPEEPAY</option>
-</select>
+        <div class="form-group">
+            <label>Pilih Paket Rank</label>
+            <select id="productSelect">
+                <option value="">-- Pilih Rank --</option>
+            </select>
+        </div>
 
-<button class="btn" onclick="submitOrder()">
-    Kirim Pesanan
-</button>
+        <div class="form-group">
+            <label>Metode Pembayaran</label>
+            <select id="payment">
+                <option value="dana">DANA</option>
+                <option value="gopay">GOPAY</option>
+                <option value="ovo">OVO</option>
+                <option value="shopeepay">SHOPEEPAY</option>
+            </select>
+        </div>
 
-</div>
+        <div class="form-group">
+            <label>ID Transaksi Payment (Dari Aplikasi E-Wallet)</label>
+            <input id="id_transaksi_payment" placeholder="Masukkan Kode / Ref ID Transaksi">
+        </div>
 
+        <button id="submitBtn" class="btn" onclick="submitOrder()">
+            Kirim Pesanan
+        </button>
+
+        <a href="index.html" class="back-link">← Kembali ke Home</a>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 
 <script>
-
 function generateID() {
     return 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
 }
 
-/* =========================
-   WIB TIME (INDONESIA)
-========================= */
 function getWIBTime() {
     return new Date().toLocaleString("sv-SE", {
         timeZone: "Asia/Jakarta"
@@ -68,7 +240,6 @@ function getWIBTime() {
    LOAD QRIS
 ========================= */
 function loadQris() {
-
     const { data } = supabaseClient
         .storage
         .from("qris")
@@ -76,14 +247,12 @@ function loadQris() {
 
     document.getElementById("qrisImage").src = data.publicUrl;
 }
-
 loadQris();
 
 /* =========================
    LOAD PRODUCTS
 ========================= */
 async function loadProducts() {
-
     const { data, error } = await supabaseClient
         .from("products")
         .select("*");
@@ -102,38 +271,44 @@ async function loadProducts() {
         select.appendChild(option);
     });
 }
-
 loadProducts();
 
 /* =========================
    SUBMIT ORDER
 ========================= */
 async function submitOrder() {
+    const submitBtn = document.getElementById("submitBtn");
+    
+    // Mendapatkan Element Select & Teks Nama Produk yang dipilih
+    const productSelect = document.getElementById("productSelect");
+    const productId = productSelect.value;
+    const productName = productSelect.options[productSelect.selectedIndex] ? productSelect.options[productSelect.selectedIndex].text : "";
 
-    const productId = document.getElementById("productSelect").value;
-
-    const username = document.getElementById("username").value;
-    const gamertag = document.getElementById("gamertag").value;
-    const phone = document.getElementById("phone").value;
+    const username = document.getElementById("username").value.trim();
+    const gamertag = document.getElementById("gamertag").value.trim();
+    const phone = document.getElementById("phone").value.trim();
     const id_transaksi_payment = document.getElementById("id_transaksi_payment").value.trim();
     const payment = document.getElementById("payment").value;
 
+    // Validasi input kosong
     if (!username || !gamertag || !phone) {
         alert("Isi semua data!");
         return;
     }
-
+    if (!productId) {
+        alert("Pilih rank terlebih dahulu!");
+        return;
+    }
     if (!id_transaksi_payment) {
         alert("ID Transaksi Payment wajib diisi!");
         return;
     }
 
-    if (!productId) {
-        alert("Pilih rank terlebih dahulu!");
-        return;
-    }
+    // Mengunci tombol agar tidak diklik berkali-kali saat proses kirim sedang berjalan
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Memproses...";
 
-    // CEK USERNAME
+    // CEK USERNAME DI TABEL users_profile
     const { data: user, error: userError } = await supabaseClient
         .from("users_profile")
         .select("username")
@@ -142,17 +317,22 @@ async function submitOrder() {
     if (userError) {
         console.error(userError);
         alert("Terjadi kesalahan saat mengecek akun!");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Kirim Pesanan";
         return;
     }
 
     if (!user || user.length === 0) {
         alert("Username tidak terdaftar di sistem!\nSilakan buat akun terlebih dahulu.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Kirim Pesanan";
         return;
     }
 
     const id_transaksi = generateID();
     const created_at = getWIBTime();
 
+    // INSERT KE TABEL orders
     const { error } = await supabaseClient
         .from("orders")
         .insert({
@@ -170,14 +350,29 @@ async function submitOrder() {
     if (error) {
         console.error(error);
         alert("Gagal membuat order: " + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Kirim Pesanan";
         return;
     }
 
     alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
+    
+    // Struktur format teks untuk WhatsApp admin agar lebih rapi
+    const waText = `Halo Admin Alvelions MC,\n\nSaya sudah melakukan checkout dan pembayaran.\n\n` +
+                   `• ID Invoice: ${id_transaksi}\n` +
+                   `• Username: ${username}\n` +
+                   `• Gamertag: ${gamertag}\n` +
+                   `• Rank: ${productName}\n` +
+                   `• Metode: ${payment.toUpperCase()}\n` +
+                   `• Ref ID Payment: ${id_transaksi_payment}\n\n` +
+                   `Mohon segera dicek dan diproses, terima kasih!`;
 
+    // Membuka link WhatsApp di tab baru
+    window.open(`https://wa.me/628994491500?text=${encodeURIComponent(waText)}`, '_blank');
+    
+    // Memindahkan halaman user ke dashboard
     window.location.href = "dashboard.html";
 }
-
 </script>
 
 </body>
