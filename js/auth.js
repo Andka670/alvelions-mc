@@ -1,140 +1,82 @@
 async function register() {
-
-    const username =
-        document.getElementById("username").value.trim();
-
-    const email =
-        document.getElementById("email").value.trim();
-
-    const password =
-        document.getElementById("password").value;
-
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
     const message = document.getElementById("message");
-
-    message.textContent = "";
-    message.style.color = "red";
 
     if (!username || !email || !password) {
-        message.textContent = "Lengkapi semua data.";
+        message.style.color = "#ef4444";
+        message.textContent = "Semua kolom wajib diisi!";
         return;
     }
 
-    // 🔥 cek username sudah ada
-    const { data: existing, error: checkError } = await supabaseClient
-        .from("users_profile")
-        .select("username")
-        .eq("username", username);
+    message.style.color = "#facc15";
+    message.textContent = "Sedang mendaftarkan...";
 
-    if (checkError) {
-        message.textContent = "Terjadi kesalahan cek data.";
-        return;
-    }
-
-    if (existing && existing.length > 0) {
-        message.textContent = "Username sudah digunakan!";
-        return;
-    }
-
-    // 🔥 register ke Supabase Auth
-    const { data: signUpData, error } =
-        await supabaseClient.auth.signUp({
-            email,
-            password
-        });
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+            data: {
+                username,
+                role: "Member" // Menambahkan default role otomatis ke metadata user
+            }
+        }
+    });
 
     if (error) {
+        message.style.color = "#ef4444";
         message.textContent = error.message;
         return;
     }
 
-    const userId = signUpData.user.id;
-
-    // 🔥 simpan ke profile (TIDAK pakai email karena tidak ada kolomnya)
-    const { error: profileError } =
-        await supabaseClient
-            .from("users_profile")
-            .insert([
-                {
-                    id: userId,
-                    username: username,
-                    role: "user"
-                }
-            ]);
-
-    if (profileError) {
-        message.textContent = profileError.message;
-        return;
-    }
-
-    message.style.color = "green";
-    message.textContent = "Registrasi berhasil!";
-
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 1000);
+    message.style.color = "#22c55e";
+    message.textContent = "Registrasi berhasil! Silakan coba login.";
 }
 
-
-// =======================================================
-// LOGIN
-// =======================================================
-
 async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const messageElement = document.getElementById('message');
 
-    const email =
-        document.getElementById("email").value.trim();
+    // Reset status pesan
+    messageElement.style.color = "white";
+    messageElement.innerText = "Sedang memproses...";
 
-    const password =
-        document.getElementById("password").value;
-
-    const message = document.getElementById("message");
-
-    message.textContent = "";
-    message.style.color = "red";
-
-    if (!email || !password) {
-        message.textContent = "Lengkapi semua data.";
-        return;
-    }
-
-    // 🔥 login ke Supabase Auth
-    const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-            email,
-            password
+    try {
+        // 1. Proses Sign In ke Supabase Auth
+        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
         });
 
-    if (error) {
-        message.textContent = error.message;
-        return;
-    }
+        if (authError) throw authError;
 
-    const userId = data.user.id;
+        if (authData.user) {
+            // 2. Ambil data role dari tabel users_profile menggunakan ID user yang baru login
+            const { data: profile, error: profileError } = await supabaseClient
+                .from('users_profile')
+                .select('role')
+                .eq('id', authData.user.id) // sesuaikan nama kolom id jika di database Anda berbeda (misal: 'user_id')
+                .single();
 
-    // 🔥 ambil profile user
-    const { data: profile, error: profileError } =
-        await supabaseClient
-            .from("users_profile")
-            .select("username, role")
-            .eq("id", userId)
-            .single();
+            if (profileError) {
+                throw new Error("Gagal memuat profil pengguna: " + profileError.message);
+            }
 
-    if (profileError || !profile) {
-        message.textContent = "Gagal mengambil data user.";
-        return;
-    }
+            messageElement.style.color = "#22c55e"; // warna hijau sukses
+            messageElement.innerText = "Login berhasil! Mengalihkan...";
 
-    message.style.color = "green";
-    message.textContent = "Login berhasil!";
-
-    setTimeout(() => {
-
-        // 🔥 routing berdasarkan role
-        if (profile.role === "admin") {
-            window.location.href = "admin.html";
-        } else {
-            window.location.href = "dashboard.html";
+            // 3. Pengalihan halaman sesuai data dari tabel
+            if (profile && profile.role === "admin") {
+                window.location.replace("admin.html");
+            } else {
+                window.location.replace("dashboard.html");
+            }
         }
-
-    }, 1000);
+    } catch (error) {
+        console.error(error);
+        messageElement.style.color = "#ef4444"; // warna merah error
+        messageElement.innerText = error.message || "Terjadi kesalahan saat login.";
+    }
 }
