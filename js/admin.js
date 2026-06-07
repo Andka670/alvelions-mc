@@ -8,7 +8,24 @@ function getStatusClass(status) {
     if (status === "pending") return "status-pending";
     return "status-none";
 }
+// --- Proteksi Halaman: Cek apakah user sudah login ---
+async function checkAuth() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+        // Jika tidak ada session, paksa arahkan ke halaman login
+        window.location.href = "index.html";
+    }
+}
 
+// Jalankan pengecekan saat file dimuat
+checkAuth();
+
+// Tambahkan juga listener agar jika user logout, halaman otomatis tertutup
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+        window.location.href = "index.html";
+    }
+});
 // =====================
 // PRODUCTS
 // =====================
