@@ -308,8 +308,14 @@ function filterOrders() {
     }
 }
 
-function logout() {
-    window.location.href = "index.html";
+async function logout() {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+        alert("Gagal logout: " + error.message);
+    } else {
+        // Setelah logout berhasil di Supabase, baru pindah halaman
+        window.location.href = "index.html";
+    }
 }
 </script>
 
