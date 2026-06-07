@@ -170,29 +170,31 @@ async function loadTransactions(username) {
 }
 
 // ======================
-// AKSI CANCEL TRANSAKSI (GANTI STATUS KE FAILED/CANCELLED)
+// AKSI HAPUS TRANSAKSI (PERMANEN)
 // ======================
 async function cancelTransaction(id, username) {
-    const konfirmasi = confirm(`Apakah kamu yakin ingin membatalkan transaksi #${id}?`);
+    const konfirmasi = confirm(`Apakah kamu yakin ingin menghapus permanen transaksi #${id}?`);
     if (!konfirmasi) return;
 
     try {
+        // Mengubah .update menjadi .delete() untuk menghapus record
         const { error } = await supabaseClient
             .from("orders")
-            .update({ status: "failed" }) 
+            .delete() 
             .eq("id", id);
 
         if (error) {
-            alert("Gagal membatalkan transaksi: " + error.message);
+            alert("Gagal menghapus transaksi: " + error.message);
             return;
         }
 
-        alert(`Transaksi #${id} berhasil dibatalkan.`);
+        alert(`Transaksi #${id} berhasil dihapus.`);
+        // Refresh tabel setelah data dihapus
         loadTransactions(username);
 
     } catch (err) {
-        console.error("Error saat membatalkan transaksi:", err);
-        alert("Terjadi kesalahan sistem saat mencoba membatalkan transaksi.");
+        console.error("Error saat menghapus transaksi:", err);
+        alert("Terjadi kesalahan sistem saat mencoba menghapus transaksi.");
     }
 }
 
