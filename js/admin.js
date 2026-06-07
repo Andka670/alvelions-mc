@@ -32,14 +32,26 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 async function addProduct() {
     const name = document.getElementById("name").value;
     const price = document.getElementById("price").value;
-    const desc = document.getElementById("desc").value;
+    const desc = document.getElementById("desc").value; // Ini mengambil dari input ID 'desc'
 
     if (!name || !price) return alert("Nama & harga wajib!");
 
-    await supabaseClient.from("products").insert([
-        { name, price: Number(price), desc }
-    ]);
+    // PERBAIKAN: Ubah 'desc' menjadi 'description' sesuai nama kolom database
+    const { data, error } = await supabaseClient
+        .from("products")
+        .insert([{ 
+            name: name, 
+            price: Number(price), 
+            description: desc // Sesuaikan dengan nama kolom di database Anda
+        }]);
 
+    if (error) {
+        alert("Gagal tambah produk: " + error.message);
+        console.error(error);
+        return;
+    }
+
+    // Bersihkan input
     document.getElementById("name").value = "";
     document.getElementById("price").value = "";
     document.getElementById("desc").value = "";
