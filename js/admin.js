@@ -68,6 +68,7 @@ async function loadProducts() {
     list.innerHTML = "";
 
     (data || []).forEach(p => {
+        // PERBAIKAN: Gunakan p.description (sesuai nama kolom baru)
         list.innerHTML += `
         <tr>
             <td>${p.name}</td>
@@ -75,10 +76,9 @@ async function loadProducts() {
             <td>
                 <div class="action-btn">
                     <button class="btn-edit"
-                        onclick="editProduct('${p.id}', '${p.name}', '${p.price}', '${p.desc || ""}')">
+                        onclick="editProduct('${p.id}', '${p.name}', '${p.price}', '${p.description || ""}')">
                         Edit
                     </button>
-
                     <button class="btn-delete"
                         onclick="deleteProduct('${p.id}')">
                         Hapus
