@@ -592,22 +592,32 @@
     async function loadProducts() {
         const container = document.getElementById('rankGridContainer');
         
+        // Validasi apakah client tersedia
+        const client = window.supabase || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
+    
+        if (!client) {
+            console.error("Supabase client tidak ditemukan!");
+            container.innerHTML = '<div class="loading-text">Error: Database tidak terhubung.</div>';
+            return;
+        }
+    
         try {
-            // Menggunakan window.supabase untuk akses global
-            const { data: products, error } = await window.supabase
+            const { data: products, error } = await client
                 .from('products')
                 .select('*');
         
             if (error) throw error;
-        
-            const filteredProducts = products.filter(product => 
-                product.name.toLowerCase().includes('rank')
+            
+            // Pastikan products ada sebelum difilter
+            const productList = products || [];
+            const filteredProducts = productList.filter(product => 
+                product.name && product.name.toLowerCase().includes('rank')
             );
         
             container.innerHTML = '';
         
             if (filteredProducts.length === 0) {
-                container.innerHTML = '<div class="loading-text">Tidak ada rank tersedia.</div>';
+                container.innerHTML = '<div class="loading-text">Tidak ada rank tersedia saat ini.</div>';
                 return;
             }
         
@@ -616,18 +626,20 @@
                 div.className = 'rank-box';
                 div.innerHTML = `
                     <span class="rank-n">${product.name}</span>
-                    <span class="rank-p">Rp ${product.price.toLocaleString()}</span>
+                    <span class="rank-p">Rp ${product.price ? product.price.toLocaleString() : '0'}</span>
                 `;
-                div.onclick = () => openProductModal(product); 
+                // Pastikan openProductModal sudah terdefinisi di script Anda
+                div.onclick = () => typeof openProductModal === 'function' ? openProductModal(product) : console.log(product); 
                 container.appendChild(div);
             });
         
         } catch (err) {
             console.error("Gagal memuat produk:", err);
-            container.innerHTML = '<div class="loading-text">Gagal memuat data.</div>';
+            container.innerHTML = '<div class="loading-text">Gagal memuat data dari server.</div>';
         }
     }
-
+    
+    // Gunakan 'DOMContentLoaded' untuk memastikan elemen HTML sudah siap
     window.addEventListener('DOMContentLoaded', loadProducts);
 
     /* ==========================================
