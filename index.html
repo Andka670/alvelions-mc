@@ -577,69 +577,47 @@
         /* ========================================================
            🔥 DYNAMIC LOAD PRODUCTS FROM SUPABASE DATABASE
         ======================================================== */
-        async function loadDbProducts() {
-            const container = document.getElementById("rankGridContainer");
+        async function loadProducts() {
+            const container = document.getElementById('rankGridContainer');
             
-            // Mengambil semua baris kolom dari tabel products
-            const { data, error } = await supabaseClient
-                .from("products")
-                .select("*")
-                .order('price', { ascending: true }); // Mengurutkan dari harga termurah
-
-            if (error) {
-                console.error("Gagal mengambil tabel products:", error);
-                container.innerHTML = `<div class="loading-text" style="color:var(--danger)">Gagal memuat list produk database!</div>`;
-                return;
+            try {
+                // 1. Ambil data dari Supabase
+                const { data: products, error } = await supabase
+                    .from('products') // sesuaikan nama tabel Anda
+                    .select('*');
+        
+                if (error) throw error;
+        
+                // 2. FILTER: Hanya ambil yang nama produknya mengandung "rank" (case-insensitive)
+                const filteredProducts = products.filter(product => 
+                    product.name.toLowerCase().includes('rank')
+                );
+        
+                // 3. Clear loading text
+                container.innerHTML = '';
+        
+                // 4. Render hasil filter
+                if (filteredProducts.length === 0) {
+                    container.innerHTML = '<div class="loading-text">Tidak ada rank tersedia.</div>';
+                    return;
+                }
+        
+                filteredProducts.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'rank-box';
+                    div.innerHTML = `
+                        <span class="rank-n">${product.name}</span>
+                        <span class="rank-p">Rp ${product.price.toLocaleString()}</span>
+                    `;
+                    // Tambahkan event klik untuk modal detail jika diperlukan
+                    div.onclick = () => openProductModal(product); 
+                    container.appendChild(div);
+                });
+        
+            } catch (err) {
+                console.error("Gagal memuat produk:", err);
+                container.innerHTML = '<div class="loading-text">Gagal memuat data.</div>';
             }
-
-            // Bersihkan teks pemuat loading awal
-            container.innerHTML = "";
-
-            // Looping data item untuk mencetak element rank-box otomatis
-            data.forEach((item, index) => {
-                const box = document.createElement("div");
-                box.className = "rank-box";
-                
-                // Jika item bernilai paling mahal / index terakhir, beri full lebar kolom (opsional gaya visual)
-                if (item.name.toLowerCase() === 'absolute' || item.price >= 350000) {
-                    box.style.gridColumn = "span 2";
-                }
-
-                // Format tampilan nominal rupiah ke ribuan (Contoh: 20000 -> 20K atau Rp20.000)
-                let displayPrice = item.price >= 1000 ? (item.price / 1000) + "K" : item.price;
-
-                box.innerHTML = `
-                    <span class="rank-n">${item.name.toUpperCase()}</span>
-                    <span class="rank-p">${displayPrice}</span>
-                `;
-
-                // Pecah teks fitur/deskripsi berdasarkan koma atau buat fallback array data jika dismpan bertipe text biasa
-                let featuresArray = [];
-                if (item.description) {
-                    featuresArray = item.description.split(',').map(f => f.trim());
-                } else {
-                    featuresArray = ["Hak akses paket " + item.name, "Hubungi admin untuk kustomisasi benefit"];
-                }
-
-                // Tambahkan event click untuk memicu pop-up info detail bawaan web
-                box.onclick = () => {
-                    const modal = document.getElementById("infoModal");
-                    const title = document.getElementById("modalTitle");
-                    const list = document.getElementById("modalList");
-                    
-                    list.innerHTML = "";
-                    title.textContent = item.name.toUpperCase() + " DETAIL";
-                    modal.style.display = "flex";
-
-                    featuresArray.forEach(fitur => {
-                        const li = document.createElement("li");
-                        li.textContent = fitur;
-                        list.appendChild(li);
-                    });
-                };
-
-                container.appendChild(box);
-            });
         }
 
         // Jalankan trigger fetch produk database saat web diakses
