@@ -89,21 +89,26 @@ async function loadProducts() {
     });
 }
 
-async function editProduct(id, name, price, desc) {
+async function editProduct(id, name, price, description) {
     const newName = prompt("Edit Nama Produk:", name);
     const newPrice = prompt("Edit Harga:", price);
-    const newDesc = prompt("Edit Deskripsi:", desc);
+    const newDescription = prompt("Edit Deskripsi:", description);
 
-    if (!newName || !newPrice) return;
+    if (newName === null || newPrice === null) return;
 
-    await supabaseClient
+    const { error } = await supabaseClient
         .from("products")
         .update({
             name: newName,
             price: Number(newPrice),
-            desc: newDesc
+            description: newDescription // Menggunakan 'description'
         })
         .eq("id", id);
+
+    if (error) {
+        alert("Gagal update produk: " + error.message);
+        return;
+    }
 
     loadProducts();
 }
