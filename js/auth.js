@@ -10,6 +10,7 @@ async function register() {
         return;
     }
 
+    message.style.color = "#facc15";
     message.textContent = "Sedang mendaftarkan...";
 
     // 1. Daftar ke Supabase Auth
@@ -25,27 +26,32 @@ async function register() {
         return;
     }
 
-    // 2. Insert ke users_profile (Tanpa email, tanpa created_at)
+    // 2. Insert ke users_profile
     if (data.user) {
         const { error: profileError } = await supabaseClient
             .from('users_profile')
-            .insert([
-                { 
-                    id: data.user.id, 
-                    username: username, 
-                    role: 'user' 
-                }
-            ]);
+            .insert([{ 
+                id: data.user.id, 
+                username: username, 
+                role: 'user' 
+            }]);
 
         if (profileError) {
             console.error("Error insert ke profile:", profileError);
+            message.style.color = "#ef4444";
             message.textContent = "Gagal membuat profil: " + profileError.message;
             return;
         }
     }
 
+    // --- TAMBAHKAN BAGIAN INI ---
     message.style.color = "#22c55e";
-    message.textContent = "Registrasi berhasil!";
+    message.textContent = "Registrasi berhasil! Mengalihkan ke halaman login...";
+    
+    // Memberikan jeda 1.5 detik agar user sempat membaca pesan sukses
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 1500); 
 }
 
 async function login() {
