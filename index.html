@@ -675,15 +675,6 @@
                 div.innerHTML = `
                     <span class="rank-n">${product.name}</span>
                     <span class="rank-p">Rp ${product.price ? product.price.toLocaleString() : '0'}</span>
-                    <div style="
-                        font-size:0.55rem;
-                        color:#cbd5e1;
-                        margin-top:6px;
-                        opacity:0.8;
-                        line-height:1.3;
-                    ">
-                        ${product.description || ''}
-                    </div>
                 `;
                 // Pastikan openProductModal sudah terdefinisi di script Anda
                 div.onclick = () => typeof openProductModal === 'function' ? openProductModal(product) : console.log(product); 
