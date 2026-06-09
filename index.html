@@ -621,9 +621,14 @@
         const modal = document.getElementById("infoModal");
         const title = document.getElementById("modalTitle");
         const list = document.getElementById("modalList");
-        
+    
         title.textContent = product.name;
-        list.innerHTML = `<li>Harga: Rp ${product.price.toLocaleString()}</li><li>Status: Tersedia</li>`;
+        list.innerHTML = `
+            <li><strong>Harga:</strong> Rp ${product.price.toLocaleString()}</li>
+            <li><strong>Deskripsi:</strong><br>${product.deskripsi || 'Tidak ada deskripsi'}</li>
+            <li><strong>Status:</strong> Tersedia</li>
+        `;
+    
         modal.style.display = "flex";
     }
 
@@ -670,6 +675,15 @@
                 div.innerHTML = `
                     <span class="rank-n">${product.name}</span>
                     <span class="rank-p">Rp ${product.price ? product.price.toLocaleString() : '0'}</span>
+                    <div style="
+                        font-size:0.55rem;
+                        color:#cbd5e1;
+                        margin-top:6px;
+                        opacity:0.8;
+                        line-height:1.3;
+                    ">
+                        ${product.deskripsi || ''}
+                    </div>
                 `;
                 // Pastikan openProductModal sudah terdefinisi di script Anda
                 div.onclick = () => typeof openProductModal === 'function' ? openProductModal(product) : console.log(product); 
