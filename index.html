@@ -625,7 +625,7 @@
         title.textContent = product.name;
         list.innerHTML = `
             <li><strong>Harga:</strong> Rp ${product.price.toLocaleString()}</li>
-            <li><strong>Deskripsi:</strong><br>${product.deskripsi || 'Tidak ada deskripsi'}</li>
+            <li><strong>Deskripsi:</strong><br>${product.description || 'Tidak ada deskripsi'}</li>
             <li><strong>Status:</strong> Tersedia</li>
         `;
     
@@ -682,7 +682,7 @@
                         opacity:0.8;
                         line-height:1.3;
                     ">
-                        ${product.deskripsi || ''}
+                        ${product.description || ''}
                     </div>
                 `;
                 // Pastikan openProductModal sudah terdefinisi di script Anda
