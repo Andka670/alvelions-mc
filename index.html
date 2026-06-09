@@ -285,6 +285,28 @@
         
         /* Loading Text Style */
         .loading-text { font-size: 0.7rem; text-align: center; color: var(--secondary); grid-column: span 2; padding: 15px; font-style: italic;}
+        .youtube-tutorial {
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(250, 204, 21, 0.15);
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .youtube-tutorial iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            display: block;
+        }
+        
+        .youtube-title {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -486,7 +508,18 @@
                 </div>
                 <div class="feature-item">
                     <div class="feature-name">🏝️ Claim Land</div>
-                    <div class="feature-desc">Beli dengan Money In-Game lalu klaim wilayah yang diinginkan.</div>
+                    <div class="feature-desc">
+                        Beli dengan Money In-Game lalu klaim wilayah yang diinginkan.
+                    </div>
+                
+                    <div class="youtube-tutorial">
+                        <div class="youtube-title">📺 Tutorial Claim Land</div>
+                        <iframe
+                            src="https://www.youtube.com/embed/VS0hi_VBVak"
+                            title="Tutorial Claim Land AlvelionsMC"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </div>
