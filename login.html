@@ -167,7 +167,11 @@
             id="password"
             placeholder="Password"
             required>
-
+        <div style="text-align:right; margin-bottom:12px;">
+            <a href="#" onclick="resetPassword()" style="font-size:.85rem;">
+                Lupa Password?
+            </a>
+        </div>
         <button
             class="btn"
             onclick="login()">
@@ -229,6 +233,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 </script>
+<script>
+async function resetPassword() {
+    const email = document.getElementById("email").value.trim();
 
+    if (!email) {
+        document.getElementById("message").innerHTML =
+            "Masukkan email terlebih dahulu.";
+        document.getElementById("message").style.color = "#ef4444";
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset-password.html"
+    });
+
+    if (error) {
+        document.getElementById("message").innerHTML = error.message;
+        document.getElementById("message").style.color = "#ef4444";
+    } else {
+        document.getElementById("message").innerHTML =
+            "Link reset password telah dikirim ke email Anda.";
+        document.getElementById("message").style.color = "#22c55e";
+    }
+}
+</script>
 </body>
 </html>
