@@ -479,6 +479,42 @@
             color: var(--primary);
             font-family: 'Orbitron', sans-serif;
         }
+        /* --- STAFF CONTACT SECTION --- */
+        .staff-header { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .staff-desc { font-size: 0.7rem; color: #a4a4b5; text-align: center; margin-bottom: 20px; line-height: 1.4; }
+        
+        .staff-contact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .staff-left { display: flex; align-items: center; gap: 12px; }
+        .avatar-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-family: 'Orbitron'; }
+        .staff-meta h4 { font-size: 0.85rem; font-family: 'Orbitron'; }
+        .staff-meta p { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .wa-btn {
+            background: #25d366; color: #000; padding: 8px 12px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
+        }
+        
+        .offline-text { font-size: 0.7rem; color: #444; font-weight: 700; margin-right: 10px; }
+        
+        .warning-box {
+            border: 1px dashed rgba(255, 71, 87, 0.4);
+            background: rgba(255, 71, 87, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        .warning-text { font-size: 0.65rem; color: #bdc3c7; line-height: 1.5; text-align: center; }
     </style>
 </head>
 <body>
@@ -729,43 +765,58 @@
 
         <div id="contact" class="tab-content">
             <div class="glass-card">
-                <h2>STAFF & SUPPORT</h2>
-                
-                <div class="staff-grid">
-                    <!-- Staff 1 -->
-                    <div class="staff-card">
-                        <div class="staff-avatar">O</div>
-                        <div class="staff-info">
-                            <h4>Owner Alve</h4>
-                            <p>Server Owner & Developer</p>
-                        </div>
-                        <span class="staff-badge" style="color:var(--primary)">ONLINE</span>
-                    </div>
+                <h2 class="staff-header">📞 STAFF CONTACT</h2>
+                <p class="staff-desc">Butuh bantuan premium, konfirmasi pembayaran, atau urusan mendesak lainnya? Hubungi kontak resmi staff FARRNEXUS di bawah ini.</p>
         
-                    <!-- Staff 2 -->
-                    <div class="staff-card">
-                        <div class="staff-avatar">M</div>
-                        <div class="staff-info">
-                            <h4>Mod Alve</h4>
-                            <p>In-game Moderator</p>
+                <div class="staff-contact-card">
+                    <div class="staff-left">
+                        <div class="avatar-circle" style="background:#ff4757; color:#fff;">F</div>
+                        <div class="staff-meta">
+                            <h4>FARIL</h4>
+                            <p style="color:#ff4757;">OWNER</p>
                         </div>
-                        <span class="staff-badge">OFFLINE</span>
                     </div>
+                    <a href="https://wa.me/6285119552284" class="wa-btn">💚 0851-1955-2284</a>
                 </div>
         
-                <h2 style="margin-top:20px;">CONTACT ADMIN</h2>
-                <div class="contact-grid">
-                    <a href="https://wa.me/628994491500" class="contact-card">
-                        <div class="contact-icon" style="color: #22c55e;">💬</div>
-                        <div class="contact-details">
-                            <h3>WHATSAPP</h3>
-                            <p>Klik untuk chat admin langsung</p>
+                <div class="staff-contact-card">
+                    <div class="staff-left">
+                        <div class="avatar-circle" style="background:#ee00ff; color:#fff;">F</div>
+                        <div class="staff-meta">
+                            <h4>FAREZ</h4>
+                            <p style="color:#ee00ff;">ADMIN</p>
                         </div>
-                    </a>
+                    </div>
+                    <a href="https://wa.me/6283879821195" class="wa-btn">💚 0838-7982-1195</a>
+                </div>
+        
+                <div class="staff-contact-card">
+                    <div class="staff-left">
+                        <div class="avatar-circle" style="background:#4facfe; color:#fff;">R</div>
+                        <div class="staff-meta">
+                            <h4>REZA</h4>
+                            <p style="color:#4facfe;">CMDR</p>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/6283842616668" class="wa-btn">💚 0838-4261-6668</a>
+                </div>
+        
+                <div class="staff-contact-card">
+                    <div class="staff-left">
+                        <div class="avatar-circle" style="background:#00f2fe; color:#000;">V</div>
+                        <div class="staff-meta">
+                            <h4>VINCH_</h4>
+                            <p style="color:#00f2fe;">DEV</p>
+                        </div>
+                    </div>
+                    <span class="offline-text">OFFLINE</span>
+                </div>
+        
+                <div class="warning-box">
+                    <p class="warning-text">⚠️ <b>PENTING:</b> Transaksi atau konfirmasi keuangan resmi hanya dilayani via WhatsApp <b>FARIL (Owner)</b>. Jangan melakukan transaksi di luar kontak yang tertera demi keamanan data Anda!</p>
                 </div>
             </div>
         </div>
-
         <div class="small-links-container">
             <a href="#" class="small-link" onclick="openModal('syarat')">Syarat & Ketentuan</a>
             <a href="#" class="small-link" onclick="openModal('kebijakan')">Kebijakan Privasi</a>
