@@ -348,7 +348,54 @@
         .money-price { color: var(--secondary); font-weight: 800; font-size: 0.9rem; }
         .bonus-text { font-size: 0.65rem; color: var(--gold); margin-top: 4px; opacity: 0.8; font-style: italic; }
         .rule-item { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 5px; padding-left: 10px; border-left: 2px solid var(--primary); }
+        /* --- CONTACT SECTION --- */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
         
+        .contact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: rgba(250, 204, 21, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .contact-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .contact-details h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        
+        .contact-details p {
+            font-size: 0.65rem;
+            opacity: 0.6;
+        }
         /* --- BUTTONS --- */
         .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 16px; border-radius: 12px; text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; }
         .btn-split-buy { background: var(--primary) !important; color: #000000 !important; margin: 15px auto 0 auto; width: max-content; gap: 12px; padding: 8px 16px; border-radius: 30px; animation: neonPulse 2s infinite alternate; border: none; }
@@ -678,46 +725,36 @@
 
         <div id="contact" class="tab-content">
             <div class="glass-card">
-                <h2 style="color: var(--primary);">📞 CONTACT US</h2>
-                <div class="community-grid">
-                    <a href="https://wa.me/628994491500" class="com-box whatsapp" target="_blank">
-                        <div class="com-icon">📱</div>
-                        <div class="com-info">
-                            <span class="com-title">WHATSAPP</span>
-                            <span class="com-sub">Hubungi Admin</span>
-                        </div>
-                    </a>
+                <h2>CONTACT US</h2>
+                <div class="contact-grid">
                     
-                    <a href="https://discord.com/invite/YDxcMPjXMV" class="com-box discord" target="_blank">
-                        <div class="com-icon">💬</div>
-                        <div class="com-info">
-                            <span class="com-title">DISCORD</span>
-                            <span class="com-sub">Join Server</span>
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/628994491500" class="contact-card">
+                        <div class="contact-icon" style="color: #22c55e;">💬</div>
+                        <div class="contact-details">
+                            <h3>WHATSAPP</h3>
+                            <p>Hubungi admin untuk support cepat</p>
                         </div>
                     </a>
         
-                    <a href="#" class="com-box tiktok" target="_blank">
-                        <div class="com-icon">🎵</div>
-                        <div class="com-info">
-                            <span class="com-title">TIKTOK</span>
-                            <span class="com-sub">@alvelionsmc</span>
+                    <!-- Email -->
+                    <a href="mailto:admin@alvelionsmc.com" class="contact-card">
+                        <div class="contact-icon" style="color: #facc15;">📧</div>
+                        <div class="contact-details">
+                            <h3>EMAIL</h3>
+                            <p>Pertanyaan bisnis atau kerjasama</p>
                         </div>
                     </a>
         
-                    <a href="mailto:admin@alvelions.com" class="com-box instagram">
-                        <div class="com-icon">📧</div>
-                        <div class="com-info">
-                            <span class="com-title">EMAIL</span>
-                            <span class="com-sub">Support</span>
+                    <!-- Discord Support -->
+                    <a href="https://discord.com/invite/YDxcMPjXMV" class="contact-card">
+                        <div class="contact-icon" style="color: #5865F2;">🎮</div>
+                        <div class="contact-details">
+                            <h3>DISCORD</h3>
+                            <p>Gabung tiket support di server kami</p>
                         </div>
                     </a>
-                </div>
-                
-                <div class="glass-card" style="margin-top: 15px; border: 1px solid rgba(250, 204, 21, 0.2);">
-                    <p style="font-size: 0.65rem; color: #cbd5e1; text-align: center;">
-                        Waktu Respon: 09:00 - 21:00 WIB.<br>
-                        Mohon bersabar jika admin sedang tidak online.
-                    </p>
+        
                 </div>
             </div>
         </div>
