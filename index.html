@@ -875,30 +875,5 @@
             "minecraft://?addExternalServer=ALVELIONS SMP|alvelionsmc.mineidhost.icu:19207";
     }
 </script>
-<script>
-    // Logika Tab Navigation
-    const navLinks = document.querySelectorAll('#navLinks li');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Hapus active dari semua link dan konten
-            navLinks.forEach(item => item.classList.remove('active'));
-            tabContents.forEach(content => content.style.display = 'none');
-            
-            // Tambah active ke yang diklik
-            this.classList.add('active');
-            const target = this.getAttribute('data-tab');
-            document.getElementById(target).style.display = 'block';
-        });
-    });
-
-    // Fungsi tambahan (Sidebar & Copy)
-    function openSideMenu() { document.getElementById("sideMenu").style.width = "250px"; }
-    function closeSideMenu() { document.getElementById("sideMenu").style.width = "0"; }
-    function joinServer() { window.location.href = "minecraft://?addExternalServer=ALVELIONS|alvelionsmc.mineidhost.icu:19207"; }
-</script>
 </body>
 </html>
