@@ -920,7 +920,7 @@
                 div.onclick = () => openProductModal(product);
     
                 // Logika pemisahan (Asumsi: Anda memberi nama produk mengandung kata "bulanan" atau "perbulan")
-                if (product.name.toLowerCase().includes('bulanan') || product.name.toLowerCase().includes('/mo')) {
+                if (product.name.toLowerCase().includes('bulanan') || product.name.toLowerCase().includes('/montly')) {
                     monthContainer.appendChild(div);
                 } else if (product.name.toLowerCase().includes('rank')) {
                     permContainer.appendChild(div);
