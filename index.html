@@ -893,52 +893,45 @@
         🔥 DYNAMIC LOAD PRODUCTS FROM SUPABASE DATABASE
     ======================================================== */
     async function loadProducts() {
-        const container = document.getElementById('rankGridContainer');
+        const permContainer = document.getElementById('rankPermanentContainer');
+        const monthContainer = document.getElementById('rankMonthlyContainer');
         
-        // Validasi apakah client tersedia
         const client = window.supabase || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
     
-        if (!client) {
-            console.error("Supabase client tidak ditemukan!");
-            container.innerHTML = '<div class="loading-text">Error: Database tidak terhubung.</div>';
-            return;
-        }
+        if (!client) return;
     
         try {
-            const { data: products, error } = await client
-                .from('products')
-                .select('*');
-        
+            const { data: products, error } = await client.from('products').select('*');
             if (error) throw error;
             
-            // Pastikan products ada sebelum difilter
             const productList = products || [];
-            const filteredProducts = productList.filter(product => 
-                product.name && product.name.toLowerCase().includes('rank')
-            );
-        
-            container.innerHTML = '';
-        
-            if (filteredProducts.length === 0) {
-                container.innerHTML = '<div class="loading-text">Tidak ada rank tersedia saat ini.</div>';
-                return;
-            }
-        
-            filteredProducts.forEach(product => {
+            
+            // Bersihkan loading
+            permContainer.innerHTML = '';
+            monthContainer.innerHTML = '';
+    
+            productList.forEach(product => {
                 const div = document.createElement('div');
                 div.className = 'rank-box';
                 div.innerHTML = `
                     <span class="rank-n">${product.name}</span>
                     <span class="rank-p">Rp ${product.price ? product.price.toLocaleString() : '0'}</span>
                 `;
-                // Pastikan openProductModal sudah terdefinisi di script Anda
-                div.onclick = () => typeof openProductModal === 'function' ? openProductModal(product) : console.log(product); 
-                container.appendChild(div);
+                div.onclick = () => openProductModal(product);
+    
+                // Logika pemisahan (Asumsi: Anda memberi nama produk mengandung kata "bulanan" atau "perbulan")
+                if (product.name.toLowerCase().includes('bulanan') || product.name.toLowerCase().includes('/mo')) {
+                    monthContainer.appendChild(div);
+                } else if (product.name.toLowerCase().includes('rank')) {
+                    permContainer.appendChild(div);
+                }
             });
+    
+            if (permContainer.innerHTML === '') permContainer.innerHTML = '<div class="loading-text">Tidak ada rank permanen.</div>';
+            if (monthContainer.innerHTML === '') monthContainer.innerHTML = '<div class="loading-text">Tidak ada rank bulanan.</div>';
         
         } catch (err) {
             console.error("Gagal memuat produk:", err);
-            container.innerHTML = '<div class="loading-text">Gagal memuat data dari server.</div>';
         }
     }
     
