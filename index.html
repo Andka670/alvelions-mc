@@ -893,52 +893,82 @@
         🔥 DYNAMIC LOAD PRODUCTS FROM SUPABASE DATABASE
     ======================================================== */
     async function loadProducts() {
-        const permContainer = document.getElementById('rankPermanentContainer');
-        const monthContainer = document.getElementById('rankMonthlyContainer');
-        
-        const client = window.supabase || (typeof supabaseClient !== 'undefined' ? supabaseClient : null);
+        const permContainer = document.getElementById("rankGridContainer");
+        const monthContainer = document.getElementById("rankMonthlyContainer");
     
-        if (!client) return;
+        if (!permContainer || !monthContainer) {
+            console.error("Container rank tidak ditemukan.");
+            return;
+        }
+    
+        const client =
+            window.supabaseClient ||
+            window.supabase ||
+            (typeof supabaseClient !== "undefined" ? supabaseClient : null);
+    
+        if (!client) {
+            permContainer.innerHTML =
+                '<div class="loading-text">Supabase belum terhubung.</div>';
+            monthContainer.innerHTML =
+                '<div class="loading-text">Supabase belum terhubung.</div>';
+            return;
+        }
     
         try {
-            const { data: products, error } = await client.from('products').select('*');
-            if (error) throw error;
-            
-            const productList = products || [];
-            
-            // Bersihkan loading
-            permContainer.innerHTML = '';
-            monthContainer.innerHTML = '';
+            const { data: products, error } = await client
+                .from("products")
+                .select("*")
+                .order("price", { ascending: true });
     
-            productList.forEach(product => {
-                const div = document.createElement('div');
-                div.className = 'rank-box';
+            if (error) throw error;
+    
+            permContainer.innerHTML = "";
+            monthContainer.innerHTML = "";
+    
+            (products || []).forEach(product => {
+                const div = document.createElement("div");
+                div.className = "rank-box";
+    
                 div.innerHTML = `
                     <span class="rank-n">${product.name}</span>
-                    <span class="rank-p">Rp ${product.price ? product.price.toLocaleString() : '0'}</span>
+                    <span class="rank-p">Rp ${(product.price || 0).toLocaleString("id-ID")}</span>
                 `;
+    
                 div.onclick = () => openProductModal(product);
     
-                // Logika pemisahan (Asumsi: Anda memberi nama produk mengandung kata "bulanan" atau "perbulan")
-                if (name.includes('/monthly')) {
-                    // Rank bulanan
+                const name = (product.name || "").toLowerCase();
+    
+                // Rank bulanan
+                if (name.includes("/monthly")) {
                     monthContainer.appendChild(div);
-                } else if (name.includes('rank')) {
-                    // Rank permanen
+                }
+                // Rank permanen
+                else if (name.includes("rank")) {
                     permContainer.appendChild(div);
                 }
             });
     
-            if (permContainer.innerHTML === '') permContainer.innerHTML = '<div class="loading-text">Tidak ada rank permanen.</div>';
-            if (monthContainer.innerHTML === '') monthContainer.innerHTML = '<div class="loading-text">Tidak ada rank bulanan.</div>';
-        
+            if (!permContainer.children.length) {
+                permContainer.innerHTML =
+                    '<div class="loading-text">Tidak ada rank permanen.</div>';
+            }
+    
+            if (!monthContainer.children.length) {
+                monthContainer.innerHTML =
+                    '<div class="loading-text">Tidak ada rank bulanan.</div>';
+            }
+    
         } catch (err) {
-            console.error("Gagal memuat produk:", err);
+            console.error(err);
+    
+            permContainer.innerHTML =
+                '<div class="loading-text">Gagal memuat data.</div>';
+            monthContainer.innerHTML =
+                '<div class="loading-text">Gagal memuat data.</div>';
         }
     }
     
-    // Gunakan 'DOMContentLoaded' untuk memastikan elemen HTML sudah siap
-    window.addEventListener('DOMContentLoaded', loadProducts);
+    window.addEventListener("DOMContentLoaded", loadProducts);
 
     /* ==========================================
     BEDROCK SERVER STATUS LIVE
