@@ -233,11 +233,22 @@ table tr:hover{
                 <label for="searchUsername" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Cari Username:</label>
                 <input id="searchUsername" oninput="filterOrders()" placeholder="Ketik username..." style="margin: 0;">
             </div>
+        
+            <div style="flex: 1; min-width: 200px;">
+                <label for="searchGamertag" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Cari Gamertag:</label>
+                <input id="searchGamertag" oninput="filterOrders()" placeholder="Ketik gamertag..." style="margin: 0;">
+            </div>
+        
+            <div style="flex: 1; min-width: 200px;">
+                <label for="searchPhone" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Cari Phone:</label>
+                <input id="searchPhone" oninput="filterOrders()" placeholder="Ketik nomor HP..." style="margin: 0;">
+            </div>
+        
             <div style="width: 200px;">
                 <label for="statusFilter" style="font-size: 13px; color: #e5e7eb; display: block; margin-bottom: 5px;">Filter Status:</label>
                 <select id="statusFilter" onchange="filterOrders()" style="margin: 0;">
+                    <option value="pending" selected>Pending</option>
                     <option value="all">Semua Status</option>
-                    <option value="pending">Pending</option>
                     <option value="done">Done</option>
                     <option value="none">None</option>
                 </select>
