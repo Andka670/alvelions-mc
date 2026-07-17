@@ -87,14 +87,14 @@ async function loadTransactions(username) {
 
         if (error) {
             console.error("Gagal memuat tabel orders:", error.message);
-            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ef4444;">Gagal memuat data</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #ef4444;">Gagal memuat data</td></tr>`;
             if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses";
             return;
         }
 
         // Jika data transaksi kosong / belum pernah belanja
         if (!data || data.length === 0) {
-            if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #94a3b8;">Belum ada riwayat transaksi</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #94a3b8;">Belum ada riwayat transaksi</td></tr>`;
             if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses"; 
             return;
         }
