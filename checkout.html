@@ -380,6 +380,57 @@ async function loadProducts() {
 }
 
 loadProducts();
+function rupiah(x){
+    return "Rp" + Number(x).toLocaleString("id-ID");
+}
+
+function updateSummary(){
+
+    const select=document.getElementById("productSelect");
+
+    if(!select.value){
+        document.getElementById("priceText").textContent="Rp0";
+        document.getElementById("totalText").textContent="Rp0";
+        return;
+    }
+
+    const price=Number(
+        select.options[select.selectedIndex].dataset.price
+    );
+
+    const qty=Math.max(
+        1,
+        Number(document.getElementById("quantity").value)
+    );
+
+    document.getElementById("priceText").textContent =
+        rupiah(price);
+
+    document.getElementById("totalText").textContent =
+        rupiah(price * qty);
+
+}
+
+function changeQty(v){
+
+    const qty=document.getElementById("quantity");
+
+    qty.value=Math.max(
+        1,
+        Number(qty.value)+v
+    );
+
+    updateSummary();
+
+}
+
+document
+.getElementById("productSelect")
+.addEventListener("change", updateSummary);
+
+document
+.getElementById("quantity")
+.addEventListener("input", updateSummary);
 /* =========================
    SUBMIT ORDER
 ========================= */
