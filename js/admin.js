@@ -123,7 +123,31 @@ async function deleteProduct(id) {
 
     loadProducts();
 }
+async function updateOrderTotalPrices() {
+    const { data: orders } = await supabaseClient
+        .from("orders")
+        .select("id, product_id, quantity");
 
+    const { data: products } = await supabaseClient
+        .from("products")
+        .select("id, price");
+
+    if (!orders || !products) return;
+
+    for (const order of orders) {
+        const product = products.find(p => String(p.id) === String(order.product_id));
+        if (!product) continue;
+
+        const totalPrice = Number(order.quantity || 1) * Number(product.price);
+
+        await supabaseClient
+            .from("orders")
+            .update({
+                total_price: totalPrice
+            })
+            .eq("id", order.id);
+    }
+}
 // =====================
 // ORDERS
 // =====================
@@ -227,20 +251,21 @@ async function loadIncome() {
 
         if (!product) return;
 
-        const price = Number(product.price);
-
-        total += price;
-
+        const qty = Number(o.quantity || 1);
+        const totalPrice = Number(o.total_price || 0);
+        
+        total += totalPrice;
+        
         if (!summary[product.name]) {
             summary[product.name] = {
                 qty: 0,
-                price: price,
+                price: Number(product.price),
                 total: 0
             };
         }
-
-        summary[product.name].qty += 1;
-        summary[product.name].total += price;
+        
+        summary[product.name].qty += qty;
+        summary[product.name].total += totalPrice;
     });
 
     const totalEl = document.getElementById("incomeTotal");
@@ -295,9 +320,14 @@ function renderChart(summary) {
 // =====================
 // AUTO LOAD
 // =====================
-loadProducts();
-loadOrders();
-loadIncome();
+async function init() {
+    await updateOrderTotalPrices();
+    await loadProducts();
+    await loadOrders();
+    await loadIncome();
+}
+
+init();
 
 async function deleteOrder(id) {
     if (!confirm("Yakin mau hapus order ini?")) return;
