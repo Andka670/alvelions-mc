@@ -416,7 +416,6 @@ document
 "input",
 updateSummary
 );
-updateSummary();
 /* =========================
    SUBMIT ORDER
 ========================= */
@@ -506,25 +505,25 @@ async function submitOrder() {
     alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
     
     // Struktur format teks untuk WhatsApp admin agar lebih rapi
-    const waText = const waText =
-        `Halo Admin Alvelions MC,
-        
-        Saya sudah melakukan checkout.
-        
-        • Invoice : ${id_transaksi}
-        • Username : ${username}
-        • Gamertag : ${gamertag}
-        
-        • Produk : ${productName}
-        • Harga : ${rupiah(unitPrice)}
-        • Jumlah : ${quantity}
-        • Total : ${rupiah(totalPrice)}
-        
-        • Metode : ${payment.toUpperCase()}
-        • Ref ID : ${id_transaksi_payment}
-        
-        Mohon segera diproses.
-        `;
+    const waText = `
+    Halo Admin Alvelions MC,
+    
+    Saya sudah melakukan checkout.
+    
+    • Invoice : ${id_transaksi}
+    • Username : ${username}
+    • Gamertag : ${gamertag}
+    
+    • Produk : ${productName}
+    • Harga : ${rupiah(unitPrice)}
+    • Jumlah : ${quantity}
+    • Total : ${rupiah(totalPrice)}
+    
+    • Metode : ${payment.toUpperCase()}
+    • Ref ID : ${id_transaksi_payment}
+    
+    Mohon segera diproses.
+    `;
     alert(
     "Pesanan berhasil!\n\n"+
     "Invoice berhasil disalin."
