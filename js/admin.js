@@ -166,18 +166,24 @@ async function loadOrders() {
 
     // Ambil nilai dari element filter select & search input di HTML
     const filterEl = document.getElementById("statusFilter");
-    const filterValue = filterEl ? filterEl.value : "all";
+    const filterValue = filterEl ? filterEl.value : "pending";
 
-    const searchEl = document.getElementById("searchUsername");
-    const searchValue = searchEl ? searchEl.value.toLowerCase().trim() : "";
+    const searchUsername = document.getElementById("searchUsername")?.value.toLowerCase().trim() || "";
+    const searchGamertag = document.getElementById("searchGamertag")?.value.toLowerCase().trim() || "";
+    const searchPhone = document.getElementById("searchPhone")?.value.toLowerCase().trim() || "";
 
     safeOrders.forEach(o => {
         // 1. Logika Fitur Filter Status
         if (filterValue !== "all" && o.status !== filterValue) return;
 
         // 2. Logika Fitur Search Username (Pencarian Parsial / Tidak harus case-sensitive)
-        const orderUsername = o.username ? o.username.toLowerCase() : "";
-        if (searchValue !== "" && !orderUsername.includes(searchValue)) return;
+        const orderUsername = (o.username || "").toLowerCase();
+        const orderGamertag = (o.gamertag || "").toLowerCase();
+        const orderPhone = (o.phone || "").toLowerCase();
+        
+        if (searchUsername && !orderUsername.includes(searchUsername)) return;
+        if (searchGamertag && !orderGamertag.includes(searchGamertag)) return;
+        if (searchPhone && !orderPhone.includes(searchPhone)) return;
 
         // Logika Mengubah ID Product Menjadi Nama Product
         const product = safeProducts.find(p => String(p.id) === String(o.product_id));
