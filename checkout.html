@@ -389,7 +389,7 @@ async function submitOrder() {
     // Mendapatkan Element Select & Teks Nama Produk yang dipilih
     const productSelect = document.getElementById("productSelect");
     const productId = productSelect.value;
-    const productName = productSelect.options[productSelect.selectedIndex] ? productSelect.options[productSelect.selectedIndex].dataset.name;
+    const productName = productSelect.options[productSelect.selectedIndex]?.dataset.name || "";
     const quantity=parseInt(document.getElementById("quantity").value)||1;
     const username = document.getElementById("username").value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
