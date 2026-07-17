@@ -146,6 +146,10 @@ async function loadTransactions(username) {
                     <td>${order.id}</td>
                     <td>${order.id_transaksi_payment || '-'}</td>
                     <td>${order.product_name || order.product_id || '-'}</td>
+                    <td>${order.quantity ?? 1}</td>
+                    <td>
+                        Rp ${(Number(order.total_price) || 0).toLocaleString("id-ID")}
+                    </td>
                     <td>${order.payment_method || '-'}</td>
                     <td>
                         <span class="badge ${badgeClass}">
