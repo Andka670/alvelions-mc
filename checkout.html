@@ -336,86 +336,50 @@ loadQris();
    LOAD PRODUCTS
 ========================= */
 async function loadProducts() {
-    const { data, error } = await supabaseClient
-        .from("products")
-        .select("*");
-
-    if (error) {
-        console.error(error);
-        return;
-    }
 
     const select = document.getElementById("productSelect");
 
-    data.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item.id;
-        option.textContent = item.name;
-        option.dataset.price = item.price;
-        option.dataset.name = item.name;
-        select.appendChild(option);
-    });
-}
-loadProducts();
-function rupiah(x){
-    return "Rp"+Number(x).toLocaleString("id-ID");
-}
+    // Reset isi dropdown
+    select.innerHTML = '<option value="">-- Pilih Produk --</option>';
 
-function updateSummary(){
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("id, name, description, price")
+        .order("name");
 
-    const select=document.getElementById("productSelect");
+    console.log("Products:", data);
+    console.log("Error:", error);
 
-    if(!select.value){
-
-        document.getElementById("priceText").textContent="Rp0";
-        document.getElementById("totalText").textContent="Rp0";
+    if (error) {
+        console.error(error);
+        alert(error.message);
         return;
     }
 
-    const price=Number(
-        select.options[
-            select.selectedIndex
-        ].dataset.price
-    );
+    if (!data || data.length === 0) {
+        console.log("Tidak ada produk.");
+        return;
+    }
 
-    const qty=Math.max(
-        1,
-        Number(document.getElementById("quantity").value)
-    );
+    data.forEach(item => {
 
-    document.getElementById("priceText").textContent=
-        rupiah(price);
+        const option = document.createElement("option");
 
-    document.getElementById("totalText").textContent=
-        rupiah(price*qty);
+        option.value = item.id;
+        option.textContent = item.name;
 
-}
+        option.dataset.price = item.price;
+        option.dataset.name = item.name;
+        option.dataset.description = item.description ?? "";
 
-function changeQty(v){
+        select.appendChild(option);
 
-    const qty=document.getElementById("quantity");
-
-    qty.value=Math.max(
-        1,
-        Number(qty.value)+v
-    );
+    });
 
     updateSummary();
-
 }
-document
-.getElementById("productSelect")
-.addEventListener(
-"change",
-updateSummary
-);
 
-document
-.getElementById("quantity")
-.addEventListener(
-"input",
-updateSummary
-);
+loadProducts();
 /* =========================
    SUBMIT ORDER
 ========================= */
