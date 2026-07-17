@@ -425,12 +425,14 @@ async function submitOrder() {
     const productSelect = document.getElementById("productSelect");
     const productId = productSelect.value;
     const productName = productSelect.options[productSelect.selectedIndex] ? productSelect.options[productSelect.selectedIndex].text : "";
-
+    const quantity=parseInt(document.getElementById("quantity").value)||1;
     const username = document.getElementById("username").value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const id_transaksi_payment = document.getElementById("id_transaksi_payment").value.trim();
     const payment = document.getElementById("payment").value;
+    const unitPrice=Number(productSelect.options[productSelect.selectedIndex].dataset.price);
+    const totalPrice=unitPrice*quantity;
 
     // Validasi input kosong
     if (!username || !gamertag || !phone) {
@@ -478,15 +480,17 @@ async function submitOrder() {
     const { error } = await supabaseClient
         .from("orders")
         .insert({
-            id_transaksi,
-            id_transaksi_payment,
-            product_id: productId,
-            username,
-            gamertag,
-            phone,
-            payment_method: payment,
-            status: "pending",
-            created_at
+        id_transaksi,
+        id_transaksi_payment,
+        product_id:productId,
+        quantity:quantity,
+        total_price:totalPrice,
+        username,
+        gamertag,
+        phone,
+        payment_method:payment,
+        status:"pending",
+        created_at
         });
 
     if (error) {
@@ -505,13 +509,20 @@ async function submitOrder() {
                    `• Username: ${username}\n` +
                    `• Gamertag: ${gamertag}\n` +
                    `• Rank: ${productName}\n` +
+                    • Rank : ${productName}
+                    • Harga : ${rupiah(unitPrice)}
+                    • Jumlah : ${quantity}
+                    • Total : ${rupiah(totalPrice)}
                    `• Metode: ${payment.toUpperCase()}\n` +
                    `• Ref ID Payment: ${id_transaksi_payment}\n\n` +
                    `Mohon segera dicek dan diproses, terima kasih!`;
-
+    alert(
+    "Pesanan berhasil!\n\n"+
+    "Invoice berhasil disalin."
+    );
+    navigator.clipboard.writeText(id_transaksi);
     // Membuka link WhatsApp di tab baru
     window.open(`https://wa.me/628994491500?text=${encodeURIComponent(waText)}`, '_blank');
-    
     // Memindahkan halaman user ke dashboard
     window.location.href = "dashboard.html";
 }
