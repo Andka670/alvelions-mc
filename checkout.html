@@ -163,6 +163,53 @@
             letter-spacing: 0.5px;
         }
         .back-link:hover { color: var(--primary); }
+        .quantity-box{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        
+        .qty-btn{
+            width:42px;
+            height:42px;
+            border:none;
+            border-radius:10px;
+            background:var(--primary);
+            color:#000;
+            font-size:22px;
+            cursor:pointer;
+            font-weight:bold;
+        }
+        
+        .qty-btn:hover{
+            opacity:.9;
+        }
+        
+        #quantity{
+            text-align:center;
+            font-weight:bold;
+        }
+        
+        .summary-card{
+            margin-top:15px;
+            background:rgba(250,204,21,.08);
+            border:1px solid rgba(250,204,21,.3);
+            border-radius:14px;
+            padding:15px;
+        }
+        
+        .summary-row{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:8px;
+        }
+        
+        .summary-row:last-child{
+            margin-bottom:0;
+            font-size:18px;
+            font-weight:bold;
+            color:var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -195,6 +242,43 @@
         <div class="form-group">
             <label>Pilih Paket Rank</label>
             <select id="productSelect">
+                <div class="form-group">
+                <label>Jumlah</label>
+                
+                <div class="quantity-box">
+                
+                <button
+                type="button"
+                class="qty-btn"
+                onclick="changeQty(-1)">−</button>
+                
+                <input
+                id="quantity"
+                type="number"
+                value="1"
+                min="1">
+                
+                <button
+                type="button"
+                class="qty-btn"
+                onclick="changeQty(1)">+</button>
+                
+                </div>
+                </div>
+                
+                <div class="summary-card">
+                
+                <div class="summary-row">
+                <span>Harga</span>
+                <span id="priceText">Rp0</span>
+                </div>
+                
+                <div class="summary-row">
+                <span>Total</span>
+                <span id="totalText">Rp0</span>
+                </div>
+                
+                </div>
                 <option value="">-- Pilih Rank --</option>
             </select>
         </div>
@@ -267,8 +351,9 @@ async function loadProducts() {
     data.forEach(item => {
         const option = document.createElement("option");
         option.value = item.id;
-        option.textContent = item.name + " - Rp" + item.price;
-        select.appendChild(option);
+        option.textContent = item.name;
+        option.dataset.price = item.price;
+        option.dataset.name = item.name;
     });
 }
 loadProducts();
