@@ -327,6 +327,11 @@ function renderChart(summary) {
 // AUTO LOAD
 // =====================
 async function init() {
+    const statusFilter = document.getElementById("statusFilter");
+    if (statusFilter) {
+        statusFilter.value = "pending";
+    }
+
     await updateOrderTotalPrices();
     await loadProducts();
     await loadOrders();
