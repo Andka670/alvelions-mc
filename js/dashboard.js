@@ -79,28 +79,57 @@ async function loadTransactions(username) {
     const totalPurchaseEl = document.getElementById("totalPurchase");
 
     try {
-        const { data, error } = await supabaseClient
-            .from("orders")
-            .select("*")
-            .eq("username", username)
-            .order("created_at", { ascending: false });
-
-        if (error) {
-            console.error("Gagal memuat tabel orders:", error.message);
-            if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #ef4444;">Gagal memuat data</td></tr>`;
+        const [
+            { data: orders, error: ordersError },
+            { data: products, error: productsError }
+        ] = await Promise.all([
+            supabaseClient
+                .from("orders")
+                .select("*")
+                .eq("username", username)
+                .order("created_at", { ascending: false }),
+        
+            supabaseClient
+                .from("products")
+                .select("id, name")
+        ]);
+        
+        if (ordersError || productsError) {
+            console.error("Gagal memuat data:", ordersError || productsError);
+        
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align:center;color:#ef4444;">
+                            Gagal memuat data
+                        </td>
+                    </tr>`;
+            }
+        
             if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses";
             return;
         }
 
         // Jika data transaksi kosong / belum pernah belanja
-        if (!data || data.length === 0) {
-            if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: #94a3b8;">Belum ada riwayat transaksi</td></tr>`;
-            if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses"; 
+        if (!orders || orders.length === 0) {
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align:center;color:#94a3b8;">
+                            Belum ada riwayat transaksi
+                        </td>
+                    </tr>`;
+            }
+        
+            if (totalPurchaseEl) {
+                totalPurchaseEl.textContent = "0 Sukses";
+            }
+        
             return;
         }
 
         // Hitung berapa kali transaksi yang statusnya SUCCESS / DONE
-        const transaksiSukses = data.filter(order => {
+        const transaksiSukses = orders.filter(order => {
             const statusLower = String(order.status || '').toLowerCase();
             return statusLower === "success" || statusLower === "done";
         }).length;
@@ -112,7 +141,13 @@ async function loadTransactions(username) {
 
         // Render data ke dalam tabel riwayat transaksi
         if (tbody) {
-            tbody.innerHTML = data.map(order => {
+                const productMap = {};
+                
+                (products || []).forEach(product => {
+                    productMap[product.id] = product.name;
+                });
+                
+                tbody.innerHTML = orders.map(order => {
                 let badgeClass = "pending";
                 const statusLower = String(order.status || '').toLowerCase();
                 
@@ -145,7 +180,7 @@ async function loadTransactions(username) {
                 <tr>
                     <td>${order.id}</td>
                     <td>${order.id_transaksi_payment || '-'}</td>
-                    <td>${order.product_name || order.product_id || '-'}</td>
+                    <td>${productMap[order.product_id] || `Produk #${order.product_id}`}</td>
                     <td>${order.quantity ?? 1}</td>
                     <td>
                         Rp ${(Number(order.total_price) || 0).toLocaleString("id-ID")}
