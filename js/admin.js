@@ -172,6 +172,8 @@ async function loadOrders() {
             <td>${o.gamertag}</td>
             <td>${o.phone}</td>
             <td>${o.payment_method}</td>
+            <td>${o.quantity ?? 1}</td>
+            <td>Rp ${Number(o.total_price ?? 0).toLocaleString("id-ID")}</td>
             <td>
                 <select class="status-select ${currentStatusClass}" 
                     onchange="updateStatus('${o.id}', this.value); this.className='status-select ' + (this.value === 'done' ? 'status-done' : this.value === 'pending' ? 'status-pending' : 'status-none')">
