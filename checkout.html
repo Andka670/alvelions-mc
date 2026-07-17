@@ -416,6 +416,7 @@ document
 "input",
 updateSummary
 );
+updateSummary();
 /* =========================
    SUBMIT ORDER
 ========================= */
@@ -425,7 +426,7 @@ async function submitOrder() {
     // Mendapatkan Element Select & Teks Nama Produk yang dipilih
     const productSelect = document.getElementById("productSelect");
     const productId = productSelect.value;
-    const productName = productSelect.options[productSelect.selectedIndex] ? productSelect.options[productSelect.selectedIndex].text : "";
+    const productName = productSelect.options[productSelect.selectedIndex] ? productSelect.options[productSelect.selectedIndex].dataset.name;
     const quantity=parseInt(document.getElementById("quantity").value)||1;
     const username = document.getElementById("username").value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
@@ -505,17 +506,25 @@ async function submitOrder() {
     alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
     
     // Struktur format teks untuk WhatsApp admin agar lebih rapi
-    const waText = `Halo Admin Alvelions MC,\n\nSaya sudah melakukan checkout dan pembayaran.\n\n` +
-                   `• ID Invoice: ${id_transaksi}\n` +
-                   `• Username: ${username}\n` +
-                   `• Gamertag: ${gamertag}\n` +
-                   `• Produk: ${productName}\n` +
-                    • Harga : ${rupiah(unitPrice)}
-                    • Jumlah : ${quantity}
-                    • Total : ${rupiah(totalPrice)}
-                   `• Metode: ${payment.toUpperCase()}\n` +
-                   `• Ref ID Payment: ${id_transaksi_payment}\n\n` +
-                   `Mohon segera dicek dan diproses, terima kasih!`;
+    const waText = const waText =
+        `Halo Admin Alvelions MC,
+        
+        Saya sudah melakukan checkout.
+        
+        • Invoice : ${id_transaksi}
+        • Username : ${username}
+        • Gamertag : ${gamertag}
+        
+        • Produk : ${productName}
+        • Harga : ${rupiah(unitPrice)}
+        • Jumlah : ${quantity}
+        • Total : ${rupiah(totalPrice)}
+        
+        • Metode : ${payment.toUpperCase()}
+        • Ref ID : ${id_transaksi_payment}
+        
+        Mohon segera diproses.
+        `;
     alert(
     "Pesanan berhasil!\n\n"+
     "Invoice berhasil disalin."
