@@ -240,9 +240,9 @@
         </div>
 
         <div class="form-group">
-            <label>Pilih Paket Rank</label>
+            <label>Pilih Paket Produk</label>
             <select id="productSelect">
-                <option value="">-- Pilih Rank --</option>
+                <option value="">-- Pilih Produk --</option>
             </select>
         </div>
         <div class="form-group">
@@ -353,6 +353,7 @@ async function loadProducts() {
         option.textContent = item.name;
         option.dataset.price = item.price;
         option.dataset.name = item.name;
+        select.appendChild(option);
     });
 }
 loadProducts();
@@ -440,7 +441,7 @@ async function submitOrder() {
         return;
     }
     if (!productId) {
-        alert("Pilih rank terlebih dahulu!");
+        alert("Pilih produk terlebih dahulu!");
         return;
     }
     if (!id_transaksi_payment) {
@@ -508,8 +509,7 @@ async function submitOrder() {
                    `• ID Invoice: ${id_transaksi}\n` +
                    `• Username: ${username}\n` +
                    `• Gamertag: ${gamertag}\n` +
-                   `• Rank: ${productName}\n` +
-                    • Rank : ${productName}
+                   `• Produk: ${productName}\n` +
                     • Harga : ${rupiah(unitPrice)}
                     • Jumlah : ${quantity}
                     • Total : ${rupiah(totalPrice)}
