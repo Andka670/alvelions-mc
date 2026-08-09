@@ -162,6 +162,46 @@ table tr:hover{
     background-color: #6b7280 !important; /* Abu-abu */
     color: #fff !important;
 }
+<<<<<<< HEAD
+
+/* MODAL RESET PASSWORD */
+.modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-box{
+    background:#0b1220;
+    border:1px solid #1f2937;
+    border-radius:14px;
+    padding:24px;
+    width:100%;
+    max-width:380px;
+}
+
+.modal-box h3{
+    color:#facc15;
+    margin:0 0 6px 0;
+}
+
+.modal-box p{
+    margin:0 0 12px 0;
+    color:#cbd5e1;
+    font-size:13px;
+}
+
+#resetPasswordMessage{
+    margin-top:8px;
+    font-size:13px;
+    min-height:18px;
+}
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 </style>
 </head>
 
@@ -186,6 +226,10 @@ table tr:hover{
 
     <a onclick="showPage('income', this)">
         <i class="fa fa-dollar-sign"></i> Pendapatan
+    </a>
+
+    <a onclick="showPage('users', this)">
+        <i class="fa fa-users"></i> Pengguna
     </a>
     <a onclick="logout()" style="margin-top:20px;background:#ef4444;color:#fff;">
     <i class="fa fa-right-from-bracket"></i> Logout
@@ -266,6 +310,10 @@ table tr:hover{
                     <th>Gamertag</th>
                     <th>Phone</th>
                     <th>Payment</th>
+<<<<<<< HEAD
+                    <th>Tipe QRIS</th>
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
                     <th>Qty</th>
                     <th>Total Price</th>
                     <th>Status</th>
@@ -298,9 +346,46 @@ table tr:hover{
     </div>
 </div>
 
+<div id="users" class="page">
+    <div class="card">
+        <h2>Pengguna</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="userList"></tbody>
+        </table>
+    </div>
+</div>
+
 </div>
 </div>
 
+<<<<<<< HEAD
+<div id="resetPasswordModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Reset Password</h3>
+        <p id="resetPasswordUsername"></p>
+
+        <input type="password" id="newPasswordInput" placeholder="Password baru (min 6 karakter)">
+        <input type="password" id="confirmPasswordInput" placeholder="Konfirmasi password baru">
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button onclick="submitResetPassword()">Simpan</button>
+            <button onclick="closeResetPasswordModal()" style="background:#374151;color:#fff;">Batal</button>
+        </div>
+
+        <p id="resetPasswordMessage"></p>
+    </div>
+</div>
+
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/admin.js"></script>
