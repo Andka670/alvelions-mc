@@ -210,7 +210,6 @@
             font-weight:bold;
             color:var(--primary);
         }
-<<<<<<< HEAD
 
         /* QRIS TYPE TOGGLE */
         .qris-type-toggle{
@@ -340,8 +339,6 @@
             background:var(--primary);
             color:#000;
         }
-=======
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     </style>
 </head>
 <body>
@@ -351,7 +348,6 @@
 
         <div class="qris-box">
             <p>QRIS Pembayaran</p>
-<<<<<<< HEAD
 
             <div class="qris-type-toggle">
                 <button type="button" id="btnQrisNasional" class="qris-type-btn active" onclick="setQrisType('nasional')">Nasional</button>
@@ -441,90 +437,6 @@
             Kirim Pesanan
         </button>
 
-=======
-            <img id="qrisImage" alt="Memuat QRIS...">
-        </div>
-
-        <h1>Checkout Order</h1>
-
-        <div class="form-group">
-            <label>Username Akun Web</label>
-            <input id="username" placeholder="Masukkan username terdaftar">
-        </div>
-
-        <div class="form-group">
-            <label>Gamertag Minecraft</label>
-            <input id="gamertag" placeholder="Contoh: SteveAlvelions">
-        </div>
-
-        <div class="form-group">
-            <label>Nomor HP / WhatsApp</label>
-            <input id="phone" placeholder="Contoh: 0851xxxxxxxx">
-        </div>
-
-        <div class="form-group">
-            <label>Pilih Produk</label>
-            <select id="productSelect">
-                <option value="">-- Pilih Produk --</option>
-            </select>
-        </div>
-        <div class="form-group">
-        <label>Jumlah</label>
-        
-        <div class="quantity-box">
-        
-        <button
-        type="button"
-        class="qty-btn"
-        onclick="changeQty(-1)">−</button>
-        
-        <input
-        id="quantity"
-        type="number"
-        value="1"
-        min="1">
-        
-        <button
-        type="button"
-        class="qty-btn"
-        onclick="changeQty(1)">+</button>
-        
-        </div>
-        </div>
-        
-        <div class="summary-card">
-        
-        <div class="summary-row">
-        <span>Harga</span>
-        <span id="priceText">Rp0</span>
-        </div>
-        
-        <div class="summary-row">
-        <span>Total</span>
-        <span id="totalText">Rp0</span>
-        </div>
-        
-        </div>
-        <div class="form-group">
-            <label>Metode Pembayaran</label>
-            <select id="payment">
-                <option value="dana">DANA</option>
-                <option value="gopay">GOPAY</option>
-                <option value="ovo">OVO</option>
-                <option value="shopeepay">SHOPEEPAY</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>ID Transaksi Payment (Dari Aplikasi E-Wallet)</label>
-            <input id="id_transaksi_payment" placeholder="Masukkan Kode / Ref ID Transaksi">
-        </div>
-
-        <button id="submitBtn" class="btn" onclick="submitOrder()">
-            Kirim Pesanan
-        </button>
-
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
         <a href="index.html" class="back-link">← Kembali ke Home</a>
     </div>
 </div>
@@ -546,7 +458,6 @@ function getWIBTime() {
 /* =========================
    QRIS (NASIONAL / INTERNASIONAL)
 ========================= */
-<<<<<<< HEAD
 const QRIS_FILES = {
     nasional: "alvelions.jpeg",
     internasional: "alvelions-intl.jpeg"
@@ -554,8 +465,6 @@ const QRIS_FILES = {
 
 let currentQrisType = "nasional";
 
-=======
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 function loadQris() {
     const { data } = supabaseClient
         .storage
@@ -564,7 +473,6 @@ function loadQris() {
 
     document.getElementById("qrisImage").src = data.publicUrl;
 }
-<<<<<<< HEAD
 
 function setQrisType(type) {
     currentQrisType = type;
@@ -575,8 +483,6 @@ function setQrisType(type) {
     loadQris();
 }
 
-=======
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 loadQris();
 
 /* =========================
@@ -622,8 +528,6 @@ async function loadProducts() {
         select.appendChild(option);
 
     });
-
-    updateSummary();
 }
 
 loadProducts();
@@ -631,36 +535,6 @@ function rupiah(x){
     return "Rp" + Number(x).toLocaleString("id-ID");
 }
 
-<<<<<<< HEAD
-=======
-function updateSummary(){
-
-    const select=document.getElementById("productSelect");
-
-    if(!select.value){
-        document.getElementById("priceText").textContent="Rp0";
-        document.getElementById("totalText").textContent="Rp0";
-        return;
-    }
-
-    const price=Number(
-        select.options[select.selectedIndex].dataset.price
-    );
-
-    const qty=Math.max(
-        1,
-        Number(document.getElementById("quantity").value)
-    );
-
-    document.getElementById("priceText").textContent =
-        rupiah(price);
-
-    document.getElementById("totalText").textContent =
-        rupiah(price * qty);
-
-}
-
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 function changeQty(v){
 
     const qty=document.getElementById("quantity");
@@ -670,7 +544,6 @@ function changeQty(v){
         Number(qty.value)+v
     );
 
-<<<<<<< HEAD
 }
 
 /* =========================
@@ -747,54 +620,25 @@ function renderCart() {
 
     document.getElementById("grandTotalText").textContent = rupiah(grandTotal);
 }
-=======
-    updateSummary();
-
-}
-
-document
-.getElementById("productSelect")
-.addEventListener("change", updateSummary);
-
-document
-.getElementById("quantity")
-.addEventListener("input", updateSummary);
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 /* =========================
    SUBMIT ORDER
 ========================= */
 async function submitOrder() {
     const submitBtn = document.getElementById("submitBtn");
-<<<<<<< HEAD
 
-=======
-    
-    // Mendapatkan Element Select & Teks Nama Produk yang dipilih
-    const productSelect = document.getElementById("productSelect");
-    const productId = productSelect.value;
-    const productName = productSelect.options[productSelect.selectedIndex]?.dataset.name || "";
-    const quantity=parseInt(document.getElementById("quantity").value)||1;
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     const username = document.getElementById("username").value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const id_transaksi_payment = document.getElementById("id_transaksi_payment").value.trim();
     const payment = document.getElementById("payment").value;
-    const unitPrice=Number(productSelect.options[productSelect.selectedIndex].dataset.price);
-    const totalPrice=unitPrice*quantity;
 
     // Validasi input kosong
     if (!username || !gamertag || !phone) {
         alert("Isi semua data!");
         return;
     }
-<<<<<<< HEAD
     if (cart.length === 0) {
         alert("Keranjang masih kosong! Tambahkan produk terlebih dahulu.");
-=======
-    if (!productId) {
-        alert("Pilih produk terlebih dahulu!");
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
         return;
     }
     if (!id_transaksi_payment) {
@@ -850,23 +694,7 @@ async function submitOrder() {
     // INSERT KE TABEL orders
     const { error } = await supabaseClient
         .from("orders")
-<<<<<<< HEAD
         .insert(rows);
-=======
-        .insert({
-        id_transaksi,
-        id_transaksi_payment,
-        product_id:productId,
-        quantity:quantity,
-        total_price:totalPrice,
-        username,
-        gamertag,
-        phone,
-        payment_method:payment,
-        status:"pending",
-        created_at
-        });
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 
     if (error) {
         console.error(error);
@@ -876,18 +704,11 @@ async function submitOrder() {
         return;
     }
 
-    alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
-<<<<<<< HEAD
-
     // Struktur format teks untuk WhatsApp admin agar lebih rapi
     const itemsText = cart
         .map(item => `- ${item.name} x${item.qty} = ${rupiah(item.price * item.qty)}`)
         .join("\n    ");
 
-=======
-    
-    // Struktur format teks untuk WhatsApp admin agar lebih rapi
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     const waText = `
     Halo Admin Alvelions MC,
     
@@ -897,27 +718,19 @@ async function submitOrder() {
     • Username : ${username}
     • Gamertag : ${gamertag}
     
-<<<<<<< HEAD
     • Produk :
     ${itemsText}
     • Total : ${rupiah(grandTotal)}
     
     • Metode : ${payment.toUpperCase()}
     • Tipe QRIS : ${currentQrisType.toUpperCase()}
-=======
-    • Produk : ${productName}
-    • Harga : ${rupiah(unitPrice)}
-    • Jumlah : ${quantity}
-    • Total : ${rupiah(totalPrice)}
-    
-    • Metode : ${payment.toUpperCase()}
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     • Ref ID : ${id_transaksi_payment}
     
     Mohon segera diproses.
     `;
     alert(
-    "Pesanan berhasil!\n\n"+
+    "Pesanan berhasil dikirim!\n\n"+
+    "ID: " + id_transaksi + "\n"+
     "Invoice berhasil disalin."
     );
     navigator.clipboard.writeText(id_transaksi);
