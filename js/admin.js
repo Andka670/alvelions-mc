@@ -202,10 +202,7 @@ async function loadOrders() {
             <td>${o.gamertag}</td>
             <td>${o.phone}</td>
             <td>${o.payment_method}</td>
-<<<<<<< HEAD
             <td>${o.qris_type ? o.qris_type.toUpperCase() : "-"}</td>
-=======
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
             <td>${o.quantity ?? 1}</td>
             <td>Rp ${Number(o.total_price ?? 0).toLocaleString("id-ID")}</td>
             <td>
@@ -340,7 +337,6 @@ async function init() {
     await loadProducts();
     await loadOrders();
     await loadIncome();
-<<<<<<< HEAD
     await loadUsers();
 }
 
@@ -465,11 +461,6 @@ async function submitResetPassword() {
         messageEl.textContent = "Terjadi kesalahan: " + err.message;
     }
 }
-=======
-}
-
-init();
->>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 
 async function deleteOrder(id) {
     if (!confirm("Yakin mau hapus order ini?")) return;
