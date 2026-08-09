@@ -210,6 +210,138 @@
             font-weight:bold;
             color:var(--primary);
         }
+<<<<<<< HEAD
+
+        /* QRIS TYPE TOGGLE */
+        .qris-type-toggle{
+            display:flex;
+            gap:8px;
+            margin-bottom:12px;
+        }
+
+        .qris-type-btn{
+            flex:1;
+            padding:8px 6px;
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:10px;
+            color:#94a3b8;
+            font-size:0.7rem;
+            font-weight:700;
+            cursor:pointer;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+            transition:0.2s;
+        }
+
+        .qris-type-btn.active{
+            background:var(--primary);
+            color:#000;
+            border-color:var(--primary);
+            box-shadow:0 0 10px rgba(250,204,21,.3);
+        }
+
+        /* CART */
+        .cart-section{
+            margin:16px 0;
+            background:rgba(0,0,0,0.25);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:14px;
+            padding:14px;
+        }
+
+        .cart-section-title{
+            font-size:0.7rem;
+            font-weight:700;
+            color:#94a3b8;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+            margin-bottom:10px;
+        }
+
+        .cart-empty{
+            font-size:0.75rem;
+            color:rgba(255,255,255,0.3);
+            text-align:center;
+            padding:10px 0;
+        }
+
+        .cart-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:8px 0;
+            border-bottom:1px solid rgba(255,255,255,0.06);
+            gap:8px;
+        }
+
+        .cart-item:last-child{
+            border-bottom:none;
+        }
+
+        .cart-item-name{
+            font-size:0.8rem;
+            font-weight:600;
+        }
+
+        .cart-item-price{
+            font-size:0.7rem;
+            color:#94a3b8;
+            margin-top:2px;
+        }
+
+        .cart-item-actions{
+            display:flex;
+            align-items:center;
+            gap:6px;
+            flex-shrink:0;
+        }
+
+        .qty-btn-sm{
+            width:26px;
+            height:26px;
+            border:none;
+            border-radius:8px;
+            background:rgba(250,204,21,0.15);
+            color:var(--primary);
+            font-size:15px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .btn-remove{
+            width:26px;
+            height:26px;
+            border:none;
+            border-radius:8px;
+            background:rgba(239,68,68,0.15);
+            color:var(--danger);
+            font-size:13px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .btn-add-cart{
+            width:100%;
+            padding:10px;
+            background:rgba(250,204,21,0.12);
+            border:1px solid var(--primary);
+            color:var(--primary);
+            border-radius:10px;
+            font-weight:700;
+            font-size:0.75rem;
+            cursor:pointer;
+            margin-top:8px;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+        }
+
+        .btn-add-cart:hover{
+            background:var(--primary);
+            color:#000;
+        }
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     </style>
 </head>
 <body>
@@ -219,6 +351,97 @@
 
         <div class="qris-box">
             <p>QRIS Pembayaran</p>
+<<<<<<< HEAD
+
+            <div class="qris-type-toggle">
+                <button type="button" id="btnQrisNasional" class="qris-type-btn active" onclick="setQrisType('nasional')">Nasional</button>
+                <button type="button" id="btnQrisInternasional" class="qris-type-btn" onclick="setQrisType('internasional')">Internasional</button>
+            </div>
+
+            <img id="qrisImage" alt="Memuat QRIS...">
+        </div>
+
+        <h1>Checkout Order</h1>
+
+        <div class="form-group">
+            <label>Username Akun Web</label>
+            <input id="username" placeholder="Masukkan username terdaftar">
+        </div>
+
+        <div class="form-group">
+            <label>Gamertag Minecraft</label>
+            <input id="gamertag" placeholder="Contoh: SteveAlvelions">
+        </div>
+
+        <div class="form-group">
+            <label>Nomor HP / WhatsApp</label>
+            <input id="phone" placeholder="Contoh: 0851xxxxxxxx">
+        </div>
+
+        <div class="form-group">
+            <label>Pilih Produk</label>
+            <select id="productSelect">
+                <option value="">-- Pilih Produk --</option>
+            </select>
+        </div>
+        <div class="form-group">
+        <label>Jumlah</label>
+        
+        <div class="quantity-box">
+        
+        <button
+        type="button"
+        class="qty-btn"
+        onclick="changeQty(-1)">−</button>
+        
+        <input
+        id="quantity"
+        type="number"
+        value="1"
+        min="1">
+        
+        <button
+        type="button"
+        class="qty-btn"
+        onclick="changeQty(1)">+</button>
+        
+        </div>
+
+        <button type="button" class="btn-add-cart" onclick="addToCart()">+ Tambah ke Keranjang</button>
+        </div>
+
+        <div class="cart-section">
+            <div class="cart-section-title">🛒 Keranjang Belanja</div>
+            <div id="cartEmpty" class="cart-empty">Keranjang masih kosong</div>
+            <div id="cartList"></div>
+        </div>
+
+        <div class="summary-card">
+        <div class="summary-row">
+        <span>Total Belanja</span>
+        <span id="grandTotalText">Rp0</span>
+        </div>
+        </div>
+        <div class="form-group">
+            <label>Metode Pembayaran</label>
+            <select id="payment">
+                <option value="dana">DANA</option>
+                <option value="gopay">GOPAY</option>
+                <option value="ovo">OVO</option>
+                <option value="shopeepay">SHOPEEPAY</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>ID Transaksi Payment (Dari Aplikasi E-Wallet)</label>
+            <input id="id_transaksi_payment" placeholder="Masukkan Kode / Ref ID Transaksi">
+        </div>
+
+        <button id="submitBtn" class="btn" onclick="submitOrder()">
+            Kirim Pesanan
+        </button>
+
+=======
             <img id="qrisImage" alt="Memuat QRIS...">
         </div>
 
@@ -301,6 +524,7 @@
             Kirim Pesanan
         </button>
 
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
         <a href="index.html" class="back-link">← Kembali ke Home</a>
     </div>
 </div>
@@ -320,16 +544,39 @@ function getWIBTime() {
 }
 
 /* =========================
-   LOAD QRIS
+   QRIS (NASIONAL / INTERNASIONAL)
 ========================= */
+<<<<<<< HEAD
+const QRIS_FILES = {
+    nasional: "alvelions.jpeg",
+    internasional: "alvelions-intl.jpeg"
+};
+
+let currentQrisType = "nasional";
+
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 function loadQris() {
     const { data } = supabaseClient
         .storage
         .from("qris")
-        .getPublicUrl("alvelions.jpeg");
+        .getPublicUrl(QRIS_FILES[currentQrisType]);
 
     document.getElementById("qrisImage").src = data.publicUrl;
 }
+<<<<<<< HEAD
+
+function setQrisType(type) {
+    currentQrisType = type;
+
+    document.getElementById("btnQrisNasional").classList.toggle("active", type === "nasional");
+    document.getElementById("btnQrisInternasional").classList.toggle("active", type === "internasional");
+
+    loadQris();
+}
+
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 loadQris();
 
 /* =========================
@@ -384,6 +631,8 @@ function rupiah(x){
     return "Rp" + Number(x).toLocaleString("id-ID");
 }
 
+<<<<<<< HEAD
+=======
 function updateSummary(){
 
     const select=document.getElementById("productSelect");
@@ -411,6 +660,7 @@ function updateSummary(){
 
 }
 
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 function changeQty(v){
 
     const qty=document.getElementById("quantity");
@@ -420,6 +670,84 @@ function changeQty(v){
         Number(qty.value)+v
     );
 
+<<<<<<< HEAD
+}
+
+/* =========================
+   KERANJANG (CART)
+========================= */
+let cart = [];
+
+function addToCart() {
+    const select = document.getElementById("productSelect");
+
+    if (!select.value) {
+        alert("Pilih produk terlebih dahulu!");
+        return;
+    }
+
+    const id = select.value;
+    const name = select.options[select.selectedIndex].dataset.name;
+    const price = Number(select.options[select.selectedIndex].dataset.price);
+    const qty = Math.max(1, parseInt(document.getElementById("quantity").value) || 1);
+
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        cart.push({ id, name, price, qty });
+    }
+
+    document.getElementById("quantity").value = 1;
+    renderCart();
+}
+
+function changeCartQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+
+    item.qty = Math.max(1, item.qty + delta);
+    renderCart();
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    renderCart();
+}
+
+function renderCart() {
+    const list = document.getElementById("cartList");
+    const emptyMsg = document.getElementById("cartEmpty");
+
+    list.innerHTML = "";
+    emptyMsg.style.display = cart.length === 0 ? "block" : "none";
+
+    let grandTotal = 0;
+
+    cart.forEach(item => {
+        const subtotal = item.price * item.qty;
+        grandTotal += subtotal;
+
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML = `
+            <div>
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">${rupiah(item.price)} x ${item.qty} = ${rupiah(subtotal)}</div>
+            </div>
+            <div class="cart-item-actions">
+                <button type="button" class="qty-btn-sm" onclick="changeCartQty('${item.id}', -1)">−</button>
+                <span>${item.qty}</span>
+                <button type="button" class="qty-btn-sm" onclick="changeCartQty('${item.id}', 1)">+</button>
+                <button type="button" class="btn-remove" onclick="removeFromCart('${item.id}')">✕</button>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+
+    document.getElementById("grandTotalText").textContent = rupiah(grandTotal);
+}
+=======
     updateSummary();
 
 }
@@ -431,17 +759,22 @@ document
 document
 .getElementById("quantity")
 .addEventListener("input", updateSummary);
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 /* =========================
    SUBMIT ORDER
 ========================= */
 async function submitOrder() {
     const submitBtn = document.getElementById("submitBtn");
+<<<<<<< HEAD
+
+=======
     
     // Mendapatkan Element Select & Teks Nama Produk yang dipilih
     const productSelect = document.getElementById("productSelect");
     const productId = productSelect.value;
     const productName = productSelect.options[productSelect.selectedIndex]?.dataset.name || "";
     const quantity=parseInt(document.getElementById("quantity").value)||1;
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     const username = document.getElementById("username").value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
     const phone = document.getElementById("phone").value.trim();
@@ -455,8 +788,13 @@ async function submitOrder() {
         alert("Isi semua data!");
         return;
     }
+<<<<<<< HEAD
+    if (cart.length === 0) {
+        alert("Keranjang masih kosong! Tambahkan produk terlebih dahulu.");
+=======
     if (!productId) {
         alert("Pilih produk terlebih dahulu!");
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
         return;
     }
     if (!id_transaksi_payment) {
@@ -491,10 +829,30 @@ async function submitOrder() {
 
     const id_transaksi = generateID();
     const created_at = getWIBTime();
+    const grandTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    // INSERT KE TABEL orders - satu baris per item keranjang, berbagi id_transaksi yang sama
+    const rows = cart.map(item => ({
+        id_transaksi,
+        id_transaksi_payment,
+        product_id: item.id,
+        quantity: item.qty,
+        total_price: item.price * item.qty,
+        username,
+        gamertag,
+        phone,
+        payment_method: payment,
+        qris_type: currentQrisType,
+        status: "pending",
+        created_at
+    }));
 
     // INSERT KE TABEL orders
     const { error } = await supabaseClient
         .from("orders")
+<<<<<<< HEAD
+        .insert(rows);
+=======
         .insert({
         id_transaksi,
         id_transaksi_payment,
@@ -508,6 +866,7 @@ async function submitOrder() {
         status:"pending",
         created_at
         });
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 
     if (error) {
         console.error(error);
@@ -518,8 +877,17 @@ async function submitOrder() {
     }
 
     alert("Pesanan berhasil dikirim!\nID: " + id_transaksi);
+<<<<<<< HEAD
+
+    // Struktur format teks untuk WhatsApp admin agar lebih rapi
+    const itemsText = cart
+        .map(item => `- ${item.name} x${item.qty} = ${rupiah(item.price * item.qty)}`)
+        .join("\n    ");
+
+=======
     
     // Struktur format teks untuk WhatsApp admin agar lebih rapi
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     const waText = `
     Halo Admin Alvelions MC,
     
@@ -529,12 +897,21 @@ async function submitOrder() {
     • Username : ${username}
     • Gamertag : ${gamertag}
     
+<<<<<<< HEAD
+    • Produk :
+    ${itemsText}
+    • Total : ${rupiah(grandTotal)}
+    
+    • Metode : ${payment.toUpperCase()}
+    • Tipe QRIS : ${currentQrisType.toUpperCase()}
+=======
     • Produk : ${productName}
     • Harga : ${rupiah(unitPrice)}
     • Jumlah : ${quantity}
     • Total : ${rupiah(totalPrice)}
     
     • Metode : ${payment.toUpperCase()}
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
     • Ref ID : ${id_transaksi_payment}
     
     Mohon segera diproses.
