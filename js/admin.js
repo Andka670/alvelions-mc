@@ -202,6 +202,10 @@ async function loadOrders() {
             <td>${o.gamertag}</td>
             <td>${o.phone}</td>
             <td>${o.payment_method}</td>
+<<<<<<< HEAD
+            <td>${o.qris_type ? o.qris_type.toUpperCase() : "-"}</td>
+=======
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
             <td>${o.quantity ?? 1}</td>
             <td>Rp ${Number(o.total_price ?? 0).toLocaleString("id-ID")}</td>
             <td>
@@ -336,9 +340,136 @@ async function init() {
     await loadProducts();
     await loadOrders();
     await loadIncome();
+<<<<<<< HEAD
+    await loadUsers();
 }
 
 init();
+
+// =====================
+// USERS (RESET PASSWORD)
+// =====================
+let resetPasswordUserId = null;
+
+async function loadUsers() {
+    const { data, error } = await supabaseClient.from("users_profile").select("*");
+
+    const list = document.getElementById("userList");
+    if (!list) return;
+
+    if (error) {
+        console.error("Gagal memuat pengguna:", error);
+        list.innerHTML = `<tr><td colspan="3">Gagal memuat data pengguna: ${error.message}</td></tr>`;
+        return;
+    }
+
+    list.innerHTML = "";
+
+    (data || []).forEach(u => {
+        const safeUsername = (u.username || "-").replace(/'/g, "\\'");
+        list.innerHTML += `
+        <tr>
+            <td>${u.username || "-"}</td>
+            <td>${u.role || "user"}</td>
+            <td>
+                <button class="btn-edit" onclick="openResetPasswordModal('${u.id}', '${safeUsername}')">
+                    Reset Password
+                </button>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+function openResetPasswordModal(id, username) {
+    resetPasswordUserId = id;
+    document.getElementById("resetPasswordUsername").textContent = "Pengguna: " + username;
+    document.getElementById("newPasswordInput").value = "";
+    document.getElementById("confirmPasswordInput").value = "";
+    document.getElementById("resetPasswordMessage").textContent = "";
+    document.getElementById("resetPasswordModal").style.display = "flex";
+}
+
+function closeResetPasswordModal() {
+    resetPasswordUserId = null;
+    document.getElementById("resetPasswordModal").style.display = "none";
+}
+
+async function submitResetPassword() {
+    const newPassword = document.getElementById("newPasswordInput").value;
+    const confirmPassword = document.getElementById("confirmPasswordInput").value;
+    const messageEl = document.getElementById("resetPasswordMessage");
+
+    if (!newPassword || !confirmPassword) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Kedua kolom password wajib diisi.";
+        return;
+    }
+    if (newPassword.length < 6) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Password minimal 6 karakter.";
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Konfirmasi password tidak cocok.";
+        return;
+    }
+    if (!resetPasswordUserId) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Pengguna tidak valid, coba buka ulang.";
+        return;
+    }
+
+    messageEl.style.color = "#facc15";
+    messageEl.textContent = "Memproses...";
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Sesi tidak ditemukan, silakan login ulang.";
+        return;
+    }
+
+    try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-reset-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`,
+                "apikey": SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({
+                user_id: resetPasswordUserId,
+                new_password: newPassword
+            })
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            messageEl.style.color = "#ef4444";
+            messageEl.textContent = result.error || "Gagal reset password.";
+            return;
+        }
+
+        messageEl.style.color = "#22c55e";
+        messageEl.textContent = "Password berhasil diubah!";
+
+        setTimeout(() => {
+            closeResetPasswordModal();
+        }, 1200);
+
+    } catch (err) {
+        messageEl.style.color = "#ef4444";
+        messageEl.textContent = "Terjadi kesalahan: " + err.message;
+    }
+}
+=======
+}
+
+init();
+>>>>>>> c8a05eb14ada418ae787e0a3656e7ba543e34d59
 
 async function deleteOrder(id) {
     if (!confirm("Yakin mau hapus order ini?")) return;
