@@ -305,7 +305,7 @@ async function loadAnnouncements() {
 // ======================
 async function loadServerStatus() {
     try {
-        const response = await fetch("https://api.mcsrvstat.us/bedrock/3/play.alvelions.my.id:25513");
+        const response = await fetch("https://api.mcsrvstat.us/bedrock/3/ap2.nzb.zelpstore.id:25626");
         const data = await response.json();
 
         const statusEl = document.getElementById("serverStatus");
