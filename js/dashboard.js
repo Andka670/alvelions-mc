@@ -304,29 +304,57 @@ async function loadAnnouncements() {
 // STATUS SERVER (BEDROCK)
 // ======================
 async function loadServerStatus() {
+    const statusEl = document.getElementById("serverStatus");
+    const countEl = document.getElementById("playerCount");
+    const pingEl = document.getElementById("serverPing");
+    const tpsEl = document.getElementById("serverTps");
+
+    if (!statusEl || !countEl) return;
+
+    const address = "alvelionssmp.my.id:25812";
+    const endpoint = `https://minecraftstatus.com/api/v1/status/bedrock?address=${encodeURIComponent(address)}`;
+
     try {
-        const response = await fetch("https://api.mcsrvstat.us/bedrock/3/ap2.nzb.zelpstore.id:25626");
+        const response = await fetch(endpoint, {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            cache: "no-store"
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         const data = await response.json();
+        const online = data.verdict === "online";
 
-        const statusEl = document.getElementById("serverStatus");
-        const countEl = document.getElementById("playerCount");
-
-        if (!statusEl || !countEl) return;
-
-        if (data.online) {
+        if (online) {
             statusEl.textContent = "ONLINE";
-            statusEl.style.color = "#22c55e"; 
-            countEl.textContent = `${data.players?.online || 0} pemain online`;
-        } else {
+            statusEl.style.color = "#22c55e";
+            countEl.textContent = `${data.players?.online ?? 0} / ${data.players?.max ?? "?"} pemain online`;
+            if (pingEl) pingEl.textContent = Number.isFinite(data.latencyMs) ? `${Math.round(data.latencyMs)} ms` : "--";
+            if (tpsEl) tpsEl.textContent = "N/A";
+        } else if (data.verdict === "offline") {
             statusEl.textContent = "OFFLINE";
-            statusEl.style.color = "#ef4444"; 
+            statusEl.style.color = "#ef4444";
             countEl.textContent = "Server tidak tersedia";
+            if (pingEl) pingEl.textContent = "--";
+            if (tpsEl) tpsEl.textContent = "N/A";
+        } else {
+            statusEl.textContent = "UNKNOWN";
+            statusEl.style.color = "#f59e0b";
+            countEl.textContent = "Status belum dapat dipastikan";
+            if (pingEl) pingEl.textContent = "--";
+            if (tpsEl) tpsEl.textContent = "N/A";
         }
     } catch (err) {
-        if (document.getElementById("serverStatus")) document.getElementById("serverStatus").textContent = "ERROR";
-        if (document.getElementById("playerCount")) document.getElementById("playerCount").textContent = "Gagal mengambil data";
+        console.error("Server status error:", err);
+        statusEl.textContent = "ERROR";
+        statusEl.style.color = "#ef4444";
+        countEl.textContent = "Gagal mengambil data server";
+        if (pingEl) pingEl.textContent = "--";
+        if (tpsEl) tpsEl.textContent = "N/A";
     }
 }
+
+setInterval(loadServerStatus, 30000);
 
 // ======================
 // CHART TREND PLAYER
