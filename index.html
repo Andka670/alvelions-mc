@@ -658,8 +658,8 @@
                 <div class="status-row-main">
                     <div class="ip-port-text" onclick="copyIP()" title="Klik untuk Salin IP">alvelionssmp.my.id<span>:</span>25812</div>
                     <div class="online-indicator">
-                        <span id="status-dot" class="dot dot-online"></span>
-                        <span class="online-label">ONLINE:</span>
+                        <span id="status-dot" class="dot"></span>
+                        <span id="status-label" class="online-label">STATUS:</span>
                         <span id="online-count" class="player-count-pill">0</span>
                     </div>
                 </div>
@@ -683,8 +683,8 @@
                                 <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
                             </svg>
                         </span>
-                        <span class="perf-label">TPS:</span>
-                        <span class="perf-value" id="perf-tps-val">20.00</span>
+                        <span class="perf-label" title="TPS real memerlukan data langsung dari server">TPS:</span>
+                        <span class="perf-value" id="perf-tps-val">18.00</span>
                     </div>
                 </div>
             </div>
@@ -1079,32 +1079,57 @@
     BEDROCK SERVER STATUS LIVE
     ========================================== */
     async function updateServerStatus() {
+        const address = "alvelionssmp.my.id:25812";
+        const endpoint = `https://minecraftstatus.com/api/v1/status/bedrock?address=${encodeURIComponent(address)}`;
+        const onlineCount = document.getElementById("online-count");
+        const statusDot = document.getElementById("status-dot");
+        const statusLabel = document.getElementById("status-label");
+        const pingVal = document.getElementById("perf-ping-val");
+        const tpsVal = document.getElementById("perf-tps-val");
+
+        const randomTps = () => (18 + Math.random() * 2).toFixed(2);
+
+        const setStatus = (label, color, online) => {
+            statusLabel.textContent = `${label}:`;
+            statusLabel.style.color = color;
+            statusDot.classList.toggle("dot-online", online);
+        };
+
         try {
-            const response = await fetch("https://api.mcsrvstat.us/bedrock/3/alvelionssmp.my.id:25812");
+            const response = await fetch(endpoint, {
+                method: "GET",
+                headers: { "Accept": "application/json" },
+                cache: "no-store"
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
             const data = await response.json();
+            const verdict = String(data.verdict || "unknown").toLowerCase();
+            const fresh = data.freshness === "fresh";
 
-            const onlineCount = document.getElementById("online-count");
-            const statusDot = document.getElementById("status-dot");
-            const pingVal = document.getElementById("perf-ping-val");
-            const tpsVal = document.getElementById("perf-tps-val");
-
-            if (data.online) {
-                onlineCount.textContent = data.players?.online ?? 0;
-                statusDot.classList.add("dot-online");
-                pingVal.textContent = Math.floor(Math.random() * 20) + 25 + "ms";
-                const randomTPS = (19.50 + Math.random() * 0.50).toFixed(2);
-                tpsVal.textContent = randomTPS;
-            } else {
+            if (fresh && verdict === "online") {
+                setStatus("ONLINE", "#eab308", true);
+                onlineCount.textContent = Number.isFinite(data.players?.online) ? data.players.online : 0;
+            } else if (fresh && verdict === "offline") {
+                setStatus("OFFLINE", "#ef4444", false);
                 onlineCount.textContent = "0";
-                statusDot.classList.remove("dot-online");
-                pingVal.textContent = "--";
-                tpsVal.textContent = "--";
+            } else {
+                // Jangan tampilkan UNKNOWN atau data kedaluwarsa di halaman.
+                setStatus("CEK", "#f59e0b", false);
+                onlineCount.textContent = "--";
             }
+
+            // Ping diambil langsung dari latency observasi API, bukan angka random.
+            pingVal.textContent = Number.isFinite(data.latencyMs) ? `${Math.round(data.latencyMs)}ms` : "--";
+            // TPS sengaja random sesuai permintaan, karena API ini tidak menyediakan TPS server.
+            tpsVal.textContent = randomTps();
         } catch (err) {
             console.error("Status Error:", err);
-            document.getElementById("online-count").textContent = "?";
-            document.getElementById("perf-ping-val").textContent = "--";
-            document.getElementById("perf-tps-val").textContent = "--";
+            // Jangan memalsukan ONLINE ketika API monitoring gagal.
+            setStatus("CEK", "#f59e0b", false);
+            onlineCount.textContent = "--";
+            pingVal.textContent = "--";
+            tpsVal.textContent = randomTps();
         }
     }
 
