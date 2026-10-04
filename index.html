@@ -515,6 +515,85 @@
             margin-top: 15px;
         }
         .warning-text { font-size: 0.65rem; color: #bdc3c7; line-height: 1.5; text-align: center; }
+
+        /* =========================================================
+           DESKTOP RESPONSIVE LAYOUT
+           Mobile layout stays unchanged (<= 767px).
+           ========================================================= */
+        @media (min-width: 768px) {
+            body {
+                min-width: 100%;
+            }
+
+            .navbar-container {
+                width: 100%;
+                max-width: none;
+                margin: 22px auto 10px auto;
+                padding: 0 clamp(20px, 4vw, 64px);
+            }
+
+            .navbar {
+                width: 100%;
+            }
+
+            .container {
+                width: 100%;
+                max-width: none;
+                margin: 0 auto;
+                padding: 24px clamp(20px, 4vw, 64px) 40px;
+            }
+
+            .brand-title {
+                font-size: clamp(2.4rem, 4vw, 4rem);
+                margin-top: 16px;
+            }
+
+            .welcome-badge {
+                font-size: clamp(0.75rem, 1vw, 0.95rem);
+            }
+
+            .brand-desc {
+                max-width: 720px;
+                font-size: clamp(0.75rem, 1vw, 0.9rem);
+            }
+
+            .glass-card {
+                padding: 22px;
+                border-radius: 22px;
+            }
+
+            .community-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 14px;
+            }
+
+            .rank-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .staff-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+            }
+
+            .join-btn {
+                min-height: 60px;
+                height: auto;
+                font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            }
+
+            .modal-c {
+                width: min(700px, 80vw);
+                max-width: none;
+            }
+
+            .side-menu {
+                width: 0;
+                max-width: 420px;
+            }
+        }
+
     </style>
 </head>
 <body>
