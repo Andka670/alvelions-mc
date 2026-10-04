@@ -433,6 +433,30 @@
 
         @media(min-width: 431px) {
             body {
+                padding: 0;
+            }
+
+            .container {
+                width: 100%;
+                max-width: none;
+                min-height: 100vh;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .navbar {
+                padding-left: clamp(24px, 4vw, 64px);
+                padding-right: clamp(24px, 4vw, 64px);
+            }
+
+            .content {
+                width: 100%;
+                padding-left: clamp(24px, 4vw, 64px);
+                padding-right: clamp(24px, 4vw, 64px);
+            }
+
+            body {
                 padding: 20px;
             }
             .container {
@@ -442,6 +466,37 @@
                 min-height: calc(100vh - 40px);
             }
         }
+    
+
+        /* Desktop visual scale: larger controls/text, mobile stays unchanged */
+        @media (min-width: 768px) {
+            .navbar-container { padding: 20px clamp(28px, 4vw, 64px); }
+            .logo-title { font-size: clamp(22px, 1.8vw, 28px); }
+            .burger-icon { font-size: 30px; }
+            .content { padding-top: 28px; padding-bottom: 40px; }
+            .card { padding: 26px; border-radius: 20px; }
+            .card h2 { font-size: clamp(21px, 1.6vw, 26px); }
+            .card p { font-size: 15px; }
+            .stats-grid, .dashboard-layout { gap: 18px; }
+            .stat-card { padding: 22px; gap: 18px; border-radius: 18px; }
+            .stat-icon { width: 54px; height: 54px; font-size: 21px; border-radius: 14px; }
+            .stat-info h3 { font-size: 13px; }
+            .stat-info p { font-size: 20px; }
+            .stat-info span { font-size: 14px; }
+            .chart-container { height: 280px; }
+            .news-date { font-size: 11px; }
+            .news-title { font-size: 15px; }
+            .news-preview { font-size: 13px; }
+            table th { font-size: 13px; padding: 14px; }
+            table td { font-size: 13px; padding: 14px; }
+            .badge { font-size: 11px; padding: 5px 10px; }
+            button { font-size: 16px; padding: 15px; border-radius: 15px; }
+            .btn-action { font-size: 13px; padding: 7px 11px; }
+            .side-menu a { font-size: 17px; padding: 18px 28px; }
+            button:hover, .stat-card:hover, .side-menu a:hover { transform: translateY(-2px) scale(1.02); }
+            .btn-locked:hover { transform: none !important; }
+        }
+
     </style>
 </head>
 
