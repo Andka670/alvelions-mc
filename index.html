@@ -688,6 +688,7 @@
                     </div>
                 </div>
             </div>
+            <div style="text-align:center; margin-top:4px; font-size:9px; color:#64748b;">Status by <a href="https://minecraftstatus.com/" target="_blank" rel="nofollow noopener" style="color:#64748b;">MinecraftStatus.com</a></div>
             <div class="join-wrapper">
                 <button onclick="joinServer()" class="join-btn">
                     <span class="lightning">⚡</span>
@@ -1087,79 +1088,100 @@
         const pingVal = document.getElementById("perf-ping-val");
         const tpsVal = document.getElementById("perf-tps-val");
 
+        if (!onlineCount || !statusDot || !statusLabel || !pingVal || !tpsVal) return;
+
         const randomTps = () => (18 + Math.random() * 2).toFixed(2);
 
-        const setStatus = (label, color, online) => {
+        const setStatus = (label, online, color) => {
             statusLabel.textContent = `${label}:`;
             statusLabel.style.color = color;
             statusDot.classList.toggle("dot-online", online);
         };
 
-        // MinecraftStatus v1 dapat mengembalikan 202 + pollUrl ketika probe masih diproses.
-        // Poll job-nya supaya status/ping benar-benar berasal dari hasil probe final.
-        const fetchObservation = async () => {
-            const response = await fetch(endpoint, {
+        const showChecking = () => {
+            setStatus("MENGECEK", false, "#f59e0b");
+            onlineCount.textContent = "...";
+            pingVal.textContent = "...";
+            tpsVal.textContent = randomTps();
+        };
+
+        const fetchJson = async (url) => {
+            const response = await fetch(url, {
                 method: "GET",
                 headers: { "Accept": "application/json" },
                 cache: "no-store"
             });
             const body = await response.json().catch(() => ({}));
+            return { response, body };
+        };
 
-            if (response.status === 202 && body.pollUrl) {
+        const fetchObservation = async () => {
+            const { response, body } = await fetchJson(endpoint);
+
+            if (response.status === 202) {
+                if (!body.pollUrl) throw new Error("API pending tanpa pollUrl");
+
                 const pollUrl = new URL(body.pollUrl, endpoint).href;
-                for (let attempt = 0; attempt < 5; attempt++) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    const pollResponse = await fetch(pollUrl, {
-                        method: "GET",
-                        headers: { "Accept": "application/json" },
-                        cache: "no-store"
-                    });
-                    const pollBody = await pollResponse.json().catch(() => ({}));
-                    if (pollResponse.status === 202) continue;
-                    if (!pollResponse.ok) throw new Error(`HTTP ${pollResponse.status}`);
-                    return pollBody;
+                // Job 202 bisa butuh beberapa detik. Poll sampai 12 detik.
+                for (let attempt = 0; attempt < 12; attempt++) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const result = await fetchJson(pollUrl);
+                    if (result.response.status === 202) continue;
+                    if (!result.response.ok) {
+                        throw new Error(`Poll HTTP ${result.response.status}`);
+                    }
+                    return result.body;
                 }
-                throw new Error("Observation masih pending");
+                throw new Error("Observasi masih pending setelah 12 detik");
             }
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if (response.status === 429) {
+                throw new Error("API rate limit");
+            }
+            if (!response.ok) {
+                throw new Error(`API HTTP ${response.status}`);
+            }
             return body;
         };
+
+        showChecking();
 
         try {
             const data = await fetchObservation();
             const verdict = String(data.verdict || "unknown").toLowerCase();
-            const fresh = data.freshness === "fresh";
+            const fresh = String(data.freshness || "").toLowerCase() === "fresh";
 
             if (fresh && verdict === "online") {
-                setStatus("ONLINE", "#eab308", true);
-                onlineCount.textContent = Number.isFinite(data.players?.online) ? data.players.online : 0;
+                setStatus("ONLINE", true, "#eab308");
+                onlineCount.textContent = Number.isFinite(data.players?.online) ? data.players.online : "0";
             } else if (fresh && verdict === "offline") {
-                setStatus("OFFLINE", "#ef4444", false);
+                setStatus("OFFLINE", false, "#ef4444");
                 onlineCount.textContent = "0";
             } else {
-                // Jangan tampilkan UNKNOWN atau data kedaluwarsa di halaman.
-                setStatus("CEK", "#f59e0b", false);
+                // Jangan mengarang ONLINE/OFFLINE ketika evidence API tidak fresh/unknown.
+                setStatus("CEK", false, "#f59e0b");
                 onlineCount.textContent = "--";
             }
 
-            // Ping diambil langsung dari latency observasi API, bukan angka random.
+            // Ping REAL dari observasi API.
             const latency = Number(data.latencyMs ?? data.latency);
-            pingVal.textContent = Number.isFinite(latency) ? `${Math.round(latency)}ms` : "CEK";
-            // TPS sengaja random sesuai permintaan, karena API ini tidak menyediakan TPS server.
+            pingVal.textContent = Number.isFinite(latency) ? `${Math.round(latency)}ms` : "--";
+
+            // TPS sengaja random sesuai permintaan user.
             tpsVal.textContent = randomTps();
         } catch (err) {
             console.error("Status Error:", err);
-            // Jangan memalsukan ONLINE ketika API monitoring gagal.
-            setStatus("CEK", "#f59e0b", false);
+            setStatus("API GAGAL", false, "#f59e0b");
             onlineCount.textContent = "--";
-            pingVal.textContent = "CEK";
+            pingVal.textContent = "--";
             tpsVal.textContent = randomTps();
         }
     }
 
+    // Jalankan segera saat script siap, lalu refresh berkala.
     updateServerStatus();
     setInterval(updateServerStatus, 30000);
+
     function joinServer() {
         navigator.clipboard.writeText("alvelionssmp.my.id:25812");
     
