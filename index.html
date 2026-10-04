@@ -1095,15 +1095,39 @@
             statusDot.classList.toggle("dot-online", online);
         };
 
-        try {
+        // MinecraftStatus v1 dapat mengembalikan 202 + pollUrl ketika probe masih diproses.
+        // Poll job-nya supaya status/ping benar-benar berasal dari hasil probe final.
+        const fetchObservation = async () => {
             const response = await fetch(endpoint, {
                 method: "GET",
                 headers: { "Accept": "application/json" },
                 cache: "no-store"
             });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const body = await response.json().catch(() => ({}));
 
-            const data = await response.json();
+            if (response.status === 202 && body.pollUrl) {
+                const pollUrl = new URL(body.pollUrl, endpoint).href;
+                for (let attempt = 0; attempt < 5; attempt++) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    const pollResponse = await fetch(pollUrl, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" },
+                        cache: "no-store"
+                    });
+                    const pollBody = await pollResponse.json().catch(() => ({}));
+                    if (pollResponse.status === 202) continue;
+                    if (!pollResponse.ok) throw new Error(`HTTP ${pollResponse.status}`);
+                    return pollBody;
+                }
+                throw new Error("Observation masih pending");
+            }
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return body;
+        };
+
+        try {
+            const data = await fetchObservation();
             const verdict = String(data.verdict || "unknown").toLowerCase();
             const fresh = data.freshness === "fresh";
 
@@ -1120,7 +1144,8 @@
             }
 
             // Ping diambil langsung dari latency observasi API, bukan angka random.
-            pingVal.textContent = Number.isFinite(data.latencyMs) ? `${Math.round(data.latencyMs)}ms` : "--";
+            const latency = Number(data.latencyMs ?? data.latency);
+            pingVal.textContent = Number.isFinite(latency) ? `${Math.round(latency)}ms` : "CEK";
             // TPS sengaja random sesuai permintaan, karena API ini tidak menyediakan TPS server.
             tpsVal.textContent = randomTps();
         } catch (err) {
@@ -1128,7 +1153,7 @@
             // Jangan memalsukan ONLINE ketika API monitoring gagal.
             setStatus("CEK", "#f59e0b", false);
             onlineCount.textContent = "--";
-            pingVal.textContent = "--";
+            pingVal.textContent = "CEK";
             tpsVal.textContent = randomTps();
         }
     }
