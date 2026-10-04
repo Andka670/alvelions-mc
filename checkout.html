@@ -339,6 +339,40 @@
             background:var(--primary);
             color:#000;
         }
+    
+
+        /* Desktop layout */
+        @media (min-width: 768px) {
+            .auth-container {
+                max-width: 900px;
+            }
+            .auth-card {
+                padding: 36px;
+            }
+        }
+
+
+        /* Desktop visual scale: larger controls/text, mobile stays unchanged */
+        @media (min-width: 768px) {
+            .auth-card { padding: 44px; border-radius: 28px; }
+            h1 { font-size: 1.9rem; margin-bottom: 26px; }
+            .qris-box p { font-size: 0.9rem; }
+            .form-group { margin-bottom: 18px; }
+            .form-group label { font-size: 0.8rem; margin-bottom: 7px; }
+            input, select { padding: 15px 17px; font-size: 1rem; border-radius: 12px; }
+            .btn { padding: 15px 18px; font-size: 1rem; }
+            .btn-add-cart { padding: 13px; font-size: 0.95rem; }
+            .qris-type-btn { padding: 11px 10px; font-size: 0.85rem; }
+            .qty-btn { width: 48px; height: 48px; font-size: 25px; }
+            .cart-section { padding: 18px; }
+            .cart-section-title { font-size: 0.85rem; }
+            .cart-empty { font-size: 0.85rem; }
+            .cart-item-name { font-size: 0.95rem; }
+            .cart-item-price { font-size: 0.8rem; }
+            .qty-btn-sm, .btn-remove { width: 32px; height: 32px; font-size: 17px; }
+            .btn-add-cart:hover, .btn:hover, .qty-btn:hover, .qris-type-btn:hover, .qty-btn-sm:hover, .btn-remove:hover { transform: scale(1.035); }
+        }
+
     </style>
 </head>
 <body>
