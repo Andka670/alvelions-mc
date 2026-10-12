@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <script>
+    (function(){
+      // Use WIB (Asia/Jakarta) rather than relying on the visitor device timezone.
+      var theme='dark';
+      function jakartaHour(){
+        try {
+          var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+          var hourPart=parts.find(function(part){return part.type==='hour';});
+          if(hourPart) return Number(hourPart.value);
+        } catch(e) {}
+        return new Date(Date.now() + 7 * 60 * 60 * 1000).getUTCHours();
+      }
+      try {
+        var hour=jakartaHour();
+        theme=(hour>=6 && hour<18)?'light':'dark';
+        // V5 key ignores stale overrides from older versions so the WIB schedule wins by default.
+        var raw=localStorage.getItem('alvelions-theme-override-v5');
+        if(raw){
+          var choice=JSON.parse(raw);
+          if(choice && (choice.theme==='light'||choice.theme==='dark') && Number.isFinite(choice.until) && choice.until>Date.now()) theme=choice.theme;
+          else localStorage.removeItem('alvelions-theme-override-v5');
+        }
+      } catch(e) { var h=jakartaHour(); theme=(h>=6 && h<18)?'light':'dark'; }
+      document.documentElement.setAttribute('data-theme',theme);
+    })();
+    </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard - Alvelions MC</title>
@@ -227,14 +254,16 @@ table tr:hover{
 }
 
     </style>
+    <link rel="stylesheet" href="css/alvelions-theme.css?v=yellow-light-dark-wib-v4">
+    <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
 
-<body>
+<body class="theme-admin">
 
 <div class="admin-container">
 
 <div class="sidebar">
-    <h2>ADMIN</h2>
+    <div class="av-admin-brand"><img class="av-brand-logo av-brand-logo-admin" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="86" height="84"><h2>ADMIN</h2></div>
 
     <a class="active" onclick="showPage('dashboard', this)">
         <i class="fa fa-home"></i> Dashboard
@@ -435,5 +464,6 @@ async function logout() {
 }
 </script>
 
+    <script src="js/theme-toggle.js?v=auto-time-wib-v5"></script>
 </body>
 </html>
