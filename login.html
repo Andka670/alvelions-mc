@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <script>
+    (function(){
+      // Use WIB (Asia/Jakarta) rather than relying on the visitor device timezone.
+      var theme='dark';
+      function jakartaHour(){
+        try {
+          var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+          var hourPart=parts.find(function(part){return part.type==='hour';});
+          if(hourPart) return Number(hourPart.value);
+        } catch(e) {}
+        return new Date(Date.now() + 7 * 60 * 60 * 1000).getUTCHours();
+      }
+      try {
+        var hour=jakartaHour();
+        theme=(hour>=6 && hour<18)?'light':'dark';
+        // V5 key ignores stale overrides from older versions so the WIB schedule wins by default.
+        var raw=localStorage.getItem('alvelions-theme-override-v5');
+        if(raw){
+          var choice=JSON.parse(raw);
+          if(choice && (choice.theme==='light'||choice.theme==='dark') && Number.isFinite(choice.until) && choice.until>Date.now()) theme=choice.theme;
+          else localStorage.removeItem('alvelions-theme-override-v5');
+        }
+      } catch(e) { var h=jakartaHour(); theme=(h>=6 && h<18)?'light':'dark'; }
+      document.documentElement.setAttribute('data-theme',theme);
+    })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -171,12 +198,14 @@
         }
 
     </style>
+    <link rel="stylesheet" href="css/alvelions-theme.css?v=yellow-light-dark-wib-v4">
+    <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
-<body>
+<body class="theme-auth">
 
 <div class="auth-container">
     <div class="auth-card">
-        <div class="logo">ALVELIONS MC</div>
+        <div class="logo av-auth-brand"><img class="av-brand-logo av-brand-logo-auth" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="112" height="110"><span>ALVELIONS MC</span></div>
 
         <div class="subtitle">
             Login ke akun Alvelions MC Anda.
@@ -258,5 +287,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 </script>
+    <script src="js/theme-toggle.js?v=auto-time-wib-v5"></script>
 </body>
 </html>
