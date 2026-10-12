@@ -5,6 +5,26 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAnnouncements(); // Menjalankan fungsi muat pengumuman saat halaman siap
 });
 
+// TPS display simulation only. The status checker API does not measure server TPS.
+function startTpsSimulation(element) {
+    if (!element || element.dataset.tpsSimulationStarted === "1") return;
+    element.dataset.tpsSimulationStarted = "1";
+    element.title = "Angka simulasi 19.0–20.0 TPS; bukan pembacaan aktual server.";
+    let value = 19.6;
+    let direction = Math.random() < 0.5 ? -1 : 1;
+    element.textContent = value.toFixed(1);
+
+    const tick = () => {
+        if (Math.random() < 0.34) direction *= -1;
+        value += direction * (0.1 + Math.random() * 0.2);
+        if (value >= 20.0) { value = 20.0; direction = -1; }
+        if (value <= 19.0) { value = 19.0; direction = 1; }
+        element.textContent = value.toFixed(1);
+        window.setTimeout(tick, 1200 + Math.random() * 1500);
+    };
+    window.setTimeout(tick, 1000 + Math.random() * 700);
+}
+
 // ======================
 // CEK USER LOGIN
 // ======================
@@ -307,50 +327,56 @@ async function loadServerStatus() {
     const statusEl = document.getElementById("serverStatus");
     const countEl = document.getElementById("playerCount");
     const pingEl = document.getElementById("serverPing");
+    const pingTitle = document.getElementById("serverPingTitle");
     const tpsEl = document.getElementById("serverTps");
-
+    if (pingTitle) pingTitle.textContent = window.AlvelionsBedrockStatus?.checkerUrl ? "Ping Jakarta" : "Ping Checker";
     if (!statusEl || !countEl) return;
 
-    const address = "alvelionssmp.my.id:25812";
-    const endpoint = `https://minecraftstatus.com/api/v1/status/bedrock?address=${encodeURIComponent(address)}`;
+    const showStatus = (label, color) => {
+        statusEl.textContent = label;
+        statusEl.style.color = color;
+    };
+
+    showStatus("MENGECEK...", "#f59e0b");
+    countEl.textContent = "Menghubungkan ke server...";
+    if (pingEl) pingEl.textContent = "...";
+    // Run animated display independently from live status refreshes.
+    startTpsSimulation(tpsEl);
 
     try {
-        const response = await fetch(endpoint, {
-            method: "GET",
-            headers: { "Accept": "application/json" },
-            cache: "no-store"
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!window.AlvelionsBedrockStatus) throw new Error("Modul status server belum termuat.");
+        const data = await window.AlvelionsBedrockStatus.check();
+        const current = window.AlvelionsBedrockStatus.isCurrent(data);
+        const verdict = String(data?.verdict || data?.status || "unknown").toLowerCase();
+        const latencyValue = data?.latencyMs ?? data?.latency;
+        const latency = latencyValue === null || latencyValue === undefined || latencyValue === ""
+            ? NaN : Number(latencyValue);
+        if (pingEl) {
+            pingEl.textContent = Number.isFinite(latency) && latency >= 0
+                ? `${Math.round(latency)} ms` : "--";
+        }
 
-        const data = await response.json();
-        const online = data.verdict === "online";
-
-        if (online) {
-            statusEl.textContent = "ONLINE";
-            statusEl.style.color = "#22c55e";
-            countEl.textContent = `${data.players?.online ?? 0} / ${data.players?.max ?? "?"} pemain online`;
-            if (pingEl) pingEl.textContent = Number.isFinite(data.latencyMs) ? `${Math.round(data.latencyMs)} ms` : "--";
-            if (tpsEl) tpsEl.textContent = "N/A";
-        } else if (data.verdict === "offline") {
-            statusEl.textContent = "OFFLINE";
-            statusEl.style.color = "#ef4444";
-            countEl.textContent = "Server tidak tersedia";
-            if (pingEl) pingEl.textContent = "--";
-            if (tpsEl) tpsEl.textContent = "N/A";
+        if (current && verdict === "online") {
+            showStatus("ONLINE", "#22c55e");
+            const players = data.players || {};
+            const online = Number.isFinite(players.online) ? players.online : "--";
+            const max = Number.isFinite(players.max) ? players.max : "--";
+            countEl.textContent = `${online} / ${max} pemain online`;
+        } else if (current && verdict === "offline") {
+            showStatus("OFFLINE", "#ef4444");
+            countEl.textContent = "Server tidak merespons";
         } else {
-            statusEl.textContent = "UNKNOWN";
-            statusEl.style.color = "#f59e0b";
-            countEl.textContent = "Status belum dapat dipastikan";
-            if (pingEl) pingEl.textContent = "--";
-            if (tpsEl) tpsEl.textContent = "N/A";
+            showStatus(current ? "TIDAK TERDETEKSI" : "DATA KEDALUWARSA", "#f59e0b");
+            const evidence = String(data?.evidenceCode || data?.unknownReason || data?.freshnessReason || data?.reason || data?.message || "").trim();
+            const freshness = String(data?.freshness || "tidak dilaporkan").toLowerCase();
+            const method = String(data?.method || "Bedrock RakNet checker");
+            countEl.textContent = evidence || `API mengembalikan verdict "unknown" tanpa kode alasan (freshness: ${freshness}; metode: ${method}). Periksa port UDP Bedrock publik.`;
         }
     } catch (err) {
         console.error("Server status error:", err);
-        statusEl.textContent = "ERROR";
-        statusEl.style.color = "#ef4444";
-        countEl.textContent = "Gagal mengambil data server";
+        showStatus("GAGAL CEK", "#f59e0b");
+        countEl.textContent = err?.message || "Gagal mengambil data status server";
         if (pingEl) pingEl.textContent = "--";
-        if (tpsEl) tpsEl.textContent = "N/A";
     }
 }
 
@@ -360,42 +386,88 @@ setInterval(loadServerStatus, 30000);
 // CHART TREND PLAYER
 // ======================
 function initChart() {
-    const ctx = document.getElementById("analyticsChart");
-    if (!ctx) return;
+    const canvas = document.getElementById("analyticsChart");
+    if (!canvas || typeof Chart === "undefined") return;
 
-    new Chart(ctx, {
+    const isLight = () => document.documentElement.getAttribute("data-theme") === "light";
+    const palette = () => isLight() ? {
+        text: "#645a42",
+        muted: "#756d5a",
+        grid: "rgba(92, 73, 28, 0.10)"
+    } : {
+        text: "#e5e7eb",
+        muted: "#9ca3af",
+        grid: "rgba(255, 255, 255, 0.065)"
+    };
+    const colors = palette();
+
+    const chart = new Chart(canvas, {
         type: "line",
         data: {
             labels: ["10m", "9m", "8m", "7m", "6m", "5m", "4m", "3m", "2m", "Sekarang"],
             datasets: [{
                 label: "Player Online",
                 data: [5, 8, 6, 12, 9, 15, 14, 18, 17, 20],
-                borderColor: "#facc15", 
-                backgroundColor: "rgba(250, 204, 21, 0.1)", 
+                borderColor: "#e9b916",
+                backgroundColor: "rgba(250, 204, 21, 0.13)",
                 fill: true,
-                tension: 0.4,
-                borderWidth: 2,
-                pointRadius: 2
+                tension: 0.38,
+                borderWidth: 2.5,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                pointBackgroundColor: "#ffe88a",
+                pointBorderColor: "#15130a",
+                pointBorderWidth: 1.5
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: { intersect: false, mode: "index" },
             plugins: {
                 legend: {
-                    labels: { color: "#fff", font: { family: 'Poppins', size: 11 } }
+                    display: true,
+                    labels: { color: colors.text, usePointStyle: true, pointStyle: "circle", boxWidth: 8, padding: 18, font: { family: "Poppins", size: 11, weight: "600" } }
+                },
+                tooltip: {
+                    backgroundColor: isLight() ? "rgba(255,253,245,.97)" : "rgba(14,15,19,.97)",
+                    titleColor: isLight() ? "#342a10" : "#fff8dc",
+                    bodyColor: isLight() ? "#5c5138" : "#e5e7eb",
+                    borderColor: "rgba(233,185,22,.36)",
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    cornerRadius: 10
                 }
             },
             scales: {
                 x: {
-                    grid: { color: "rgba(255, 255, 255, 0.05)" },
-                    ticks: { color: "#94a3b8", font: { family: 'Poppins', size: 10 } }
+                    grid: { color: colors.grid, drawBorder: false },
+                    border: { display: false },
+                    ticks: { color: colors.muted, font: { family: "Poppins", size: 10 }, maxRotation: 0 }
                 },
                 y: {
-                    grid: { color: "rgba(255, 255, 255, 0.05)" },
-                    ticks: { color: "#94a3b8", font: { family: 'Poppins', size: 10 }, stepSize: 5 }
+                    beginAtZero: true,
+                    grid: { color: colors.grid, drawBorder: false },
+                    border: { display: false },
+                    ticks: { color: colors.muted, font: { family: "Poppins", size: 10 }, stepSize: 5, padding: 8 }
                 }
             }
         }
     });
+
+    // Keep chart labels legible when the site automatically switches theme by WIB.
+    const observer = new MutationObserver(() => {
+        const next = palette();
+        chart.options.plugins.legend.labels.color = next.text;
+        chart.options.plugins.tooltip.backgroundColor = isLight() ? "rgba(255,253,245,.97)" : "rgba(14,15,19,.97)";
+        chart.options.plugins.tooltip.titleColor = isLight() ? "#342a10" : "#fff8dc";
+        chart.options.plugins.tooltip.bodyColor = isLight() ? "#5c5138" : "#e5e7eb";
+        chart.options.scales.x.ticks.color = next.muted;
+        chart.options.scales.y.ticks.color = next.muted;
+        chart.options.scales.x.grid.color = next.grid;
+        chart.options.scales.y.grid.color = next.grid;
+        chart.update("none");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 }
