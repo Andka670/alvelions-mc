@@ -401,7 +401,7 @@
         }
 
     </style>
-    <link rel="stylesheet" href="css/alvelions-theme.css?v=yellow-light-dark-wib-v4">
+    <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
     <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
 <body class="theme-checkout">
@@ -424,8 +424,9 @@
         <h1>Checkout Order</h1>
 
         <div class="form-group">
-            <label>Username Akun Web</label>
-            <input id="username" placeholder="Masukkan username terdaftar">
+            <label for="username" id="usernameLabel">Username Akun Web</label>
+            <input id="username" placeholder="Masukkan username terdaftar" autocomplete="username">
+            <small id="usernameAutoHint" style="display:none;margin-top:7px;color:#a3a3a3;line-height:1.5;">Username akan diisi otomatis dari akun yang sedang login.</small>
         </div>
 
         <div class="form-group">
@@ -489,6 +490,7 @@
                 <option value="gopay">GOPAY</option>
                 <option value="ovo">OVO</option>
                 <option value="shopeepay">SHOPEEPAY</option>
+                <option value="lainnya">Lainnya</option>
             </select>
         </div>
 
@@ -548,6 +550,63 @@ function setQrisType(type) {
 }
 
 loadQris();
+
+/* =========================
+   AUTO USERNAME DARI SESI LOGIN
+   Jika pengguna sudah login, username diambil dari users_profile
+   berdasarkan ID autentikasi, bukan diminta ketik ulang.
+========================= */
+let authenticatedCheckoutUsername = "";
+
+function setCheckoutUsernameLocked(username) {
+    const input = document.getElementById("username");
+    const label = document.getElementById("usernameLabel");
+    const hint = document.getElementById("usernameAutoHint");
+    if (!input || !username) return;
+
+    authenticatedCheckoutUsername = String(username).trim();
+    input.value = authenticatedCheckoutUsername;
+    input.readOnly = true;
+    input.setAttribute("aria-readonly", "true");
+    input.style.borderColor = "rgba(250, 204, 21, .42)";
+    input.style.background = "rgba(250, 204, 21, .06)";
+    if (label) label.textContent = "Username Akun Web (otomatis)";
+    if (hint) {
+        hint.textContent = "Username diambil dari akun yang sedang login dan tidak perlu diisi ulang.";
+        hint.style.display = "block";
+        hint.style.color = "#facc15";
+    }
+}
+
+async function initializeCheckoutUsername() {
+    try {
+        const { data: authData, error: authError } = await supabaseClient.auth.getUser();
+        if (authError) throw authError;
+        const currentUser = authData?.user;
+        if (!currentUser) return; // Pengunjung tanpa sesi tetap dapat mengisi manual seperti sebelumnya.
+
+        const { data: profile, error: profileError } = await supabaseClient
+            .from("users_profile")
+            .select("username")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+        if (profileError) throw profileError;
+
+        if (profile?.username) {
+            setCheckoutUsernameLocked(profile.username);
+        } else {
+            const hint = document.getElementById("usernameAutoHint");
+            if (hint) {
+                hint.textContent = "Sesi login terdeteksi, tetapi username profil belum tersedia. Lengkapi profil atau hubungi admin.";
+                hint.style.display = "block";
+            }
+        }
+    } catch (error) {
+        console.warn("Tidak dapat mengisi username checkout otomatis:", error);
+    }
+}
+
+initializeCheckoutUsername();
 
 /* =========================
    LOAD PRODUCTS
@@ -689,12 +748,36 @@ function renderCart() {
 ========================= */
 async function submitOrder() {
     const submitBtn = document.getElementById("submitBtn");
-
-    const username = document.getElementById("username").value.trim();
+    const usernameInput = document.getElementById("username");
+    let username = authenticatedCheckoutUsername || usernameInput.value.trim();
     const gamertag = document.getElementById("gamertag").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const id_transaksi_payment = document.getElementById("id_transaksi_payment").value.trim();
     const payment = document.getElementById("payment").value;
+
+    // Ambil ulang sesi untuk memastikan username akun login tidak bisa diganti melalui input.
+    try {
+        const { data: authData, error: authError } = await supabaseClient.auth.getUser();
+        if (authError) throw authError;
+        if (authData?.user) {
+            const { data: profile, error: profileError } = await supabaseClient
+                .from("users_profile")
+                .select("username")
+                .eq("id", authData.user.id)
+                .maybeSingle();
+            if (profileError) throw profileError;
+            if (!profile?.username) {
+                alert("Username akun login belum tersedia di profil. Silakan periksa profil atau hubungi admin.");
+                return;
+            }
+            username = String(profile.username).trim();
+            setCheckoutUsernameLocked(username);
+        }
+    } catch (error) {
+        console.error("Gagal memeriksa sesi checkout:", error);
+        alert("Tidak dapat memverifikasi sesi akun. Coba muat ulang halaman dan login kembali.");
+        return;
+    }
 
     // Validasi input kosong
     if (!username || !gamertag || !phone) {
@@ -805,6 +888,6 @@ async function submitOrder() {
 }
 </script>
 
-    <script src="js/theme-toggle.js?v=auto-time-wib-v5"></script>
+    <script src="js/theme-toggle.js?v=checkout-auto-user-v1"></script>
 </body>
 </html>
