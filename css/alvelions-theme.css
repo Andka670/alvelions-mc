@@ -1161,3 +1161,51 @@ html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-lightning-ov
   body:is(.theme-dashboard, .theme-home) .av-lightning-overlay { display: none !important; }
 }
 
+
+
+/* FINAL UI TUNE — compact circular theme switch, tucked away from navigation. */
+.av-theme-toggle {
+  left: 14px !important;
+  right: auto !important;
+  bottom: 14px !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  border-radius: 50% !important;
+  z-index: 900 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.av-theme-toggle .av-theme-toggle-label { display: none !important; }
+.av-theme-toggle svg { width: 19px !important; height: 19px !important; }
+.av-theme-toggle:hover { transform: translateY(-2px) scale(1.04); }
+
+/* Desktop dashboard has a 258px fixed sidebar; keep the switch outside it. */
+@media (min-width: 900px) {
+  body.theme-dashboard .av-theme-toggle {
+    left: 272px !important;
+    right: auto !important;
+    bottom: 16px !important;
+  }
+  body.theme-admin .av-theme-toggle {
+    left: 252px !important;
+    right: auto !important;
+    bottom: 16px !important;
+  }
+}
+
+/* On mobile the dashboard drawer sits above the switch while open, so links remain clickable. */
+@media (max-width: 899px) {
+  body.theme-dashboard .av-theme-toggle,
+  body.theme-admin .av-theme-toggle {
+    left: 12px !important;
+    right: auto !important;
+    bottom: 12px !important;
+  }
+}
