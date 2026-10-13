@@ -30,7 +30,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard - Alvelions MC</title>
+<title>Admin Console — Alvelions MC</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -254,7 +254,8 @@ table tr:hover{
 }
 
     </style>
-    <link rel="stylesheet" href="css/alvelions-theme.css?v=yellow-light-dark-wib-v4">
+    <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
+<link rel="stylesheet" href="css/admin-professional.css?v=admin-pro-v1">
     <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
 
@@ -262,53 +263,97 @@ table tr:hover{
 
 <div class="admin-container">
 
-<div class="sidebar">
-    <div class="av-admin-brand"><img class="av-brand-logo av-brand-logo-admin" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="86" height="84"><h2>ADMIN</h2></div>
+<aside class="sidebar" aria-label="Navigasi admin">
+    <div class="av-admin-brand"><img class="av-brand-logo av-brand-logo-admin" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="86" height="84"><div class="admin-brand-copy"><h2>ALVE LIONS</h2><span>ADMIN CONSOLE</span></div></div>
+    <div class="sidebar-section-label">WORKSPACE</div>
 
-    <a class="active" onclick="showPage('dashboard', this)">
+    <a class="active" data-page="dashboard" onclick="showPage('dashboard', this)">
         <i class="fa fa-home"></i> Dashboard
     </a>
 
-    <a onclick="showPage('products', this)">
+    <a data-page="products" onclick="showPage('products', this)">
         <i class="fa fa-box"></i> Produk
     </a>
 
-    <a onclick="showPage('orders', this)">
+    <a data-page="orders" onclick="showPage('orders', this)">
         <i class="fa fa-shopping-cart"></i> Orders
     </a>
 
-    <a onclick="showPage('income', this)">
+    <a data-page="income" onclick="showPage('income', this)">
         <i class="fa fa-dollar-sign"></i> Pendapatan
     </a>
 
-    <a onclick="showPage('users', this)">
+    <a data-page="users" onclick="showPage('users', this)">
         <i class="fa fa-users"></i> Pengguna
     </a>
-    <a onclick="logout()" style="margin-top:20px;background:#ef4444;color:#fff;">
-    <i class="fa fa-right-from-bracket"></i> Logout
-</a>
-</div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-section-label sidebar-system-label">SYSTEM</div>
+    <a class="sidebar-logout" onclick="logout()">
+      <i class="fa fa-right-from-bracket"></i> Keluar
+    </a>
+    <div class="sidebar-footer"><span class="sidebar-status-dot"></span> Panel aman <span class="sidebar-version">ALV / ADMIN</span></div>
+</aside>
 
-<div class="content">
-
-<div id="dashboard" class="page active">
-    <div class="card">
-        <h2>Dashboard</h2>
-        <p>Selamat datang Admin</p>
+<main class="content">
+  <header class="admin-topbar">
+    <div class="admin-page-heading">
+      <div class="admin-eyebrow"><span class="eyebrow-line"></span> ALVELIONS CONTROL CENTER</div>
+      <h1 id="adminPageTitle">Dashboard Overview</h1>
+      <p id="adminPageSubtitle">Ringkasan dan akses cepat untuk mengelola server.</p>
     </div>
-</div>
+    <div class="admin-topbar-actions">
+      <span class="admin-console-badge"><i class="fa-solid fa-shield-halved"></i> ADMIN CONSOLE</span>
+      <a class="admin-view-site" href="index.html" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Lihat website</a>
+    </div>
+  </header>
+
+<section id="dashboard" class="page active" aria-labelledby="adminPageTitle">
+    <div class="admin-welcome-card card">
+      <div class="welcome-copy">
+        <span class="welcome-overline"><i class="fa-solid fa-sparkles"></i> CONTROL PANEL</span>
+        <h2>Selamat datang,<br><span>Admin Alvelions.</span></h2>
+        <p>Kelola katalog rank, pantau transaksi, tinjau pendapatan, dan atur pengguna dari satu tempat.</p>
+        <div class="welcome-actions">
+          <button type="button" class="welcome-primary" onclick="openAdminPage('orders')"><i class="fa-solid fa-receipt"></i> Tinjau pesanan</button>
+          <button type="button" class="welcome-secondary" onclick="openAdminPage('products')"><i class="fa-solid fa-box"></i> Kelola produk</button>
+        </div>
+      </div>
+      <div class="welcome-emblem" aria-hidden="true">
+        <div class="emblem-orbit orbit-one"></div><div class="emblem-orbit orbit-two"></div>
+        <div class="emblem-core"><img src="assets/alvelions-logo.png" alt=""></div>
+        <span class="emblem-star star-one">✦</span><span class="emblem-star star-two">✧</span>
+      </div>
+      <div class="welcome-bottom-line"><span><i class="fa-solid fa-lock"></i> Area administrasi</span><span><i class="fa-regular fa-circle-check"></i> Sesi terautentikasi</span></div>
+    </div>
+
+    <div class="admin-section-heading"><div><span class="admin-section-kicker">QUICK ACCESS</span><h2>Akses cepat</h2><p>Pilih bagian yang ingin kamu kelola.</p></div><span class="quick-count">04 MODUL</span></div>
+    <div class="admin-quick-grid">
+      <button type="button" class="admin-quick-card" onclick="openAdminPage('products')"><span class="quick-icon"><i class="fa-solid fa-cubes-stacked"></i></span><span class="quick-card-copy"><strong>Produk & rank</strong><small>Tambah, edit, atau hapus katalog.</small></span><i class="fa-solid fa-arrow-up-right-from-square quick-arrow"></i></button>
+      <button type="button" class="admin-quick-card" onclick="openAdminPage('orders')"><span class="quick-icon"><i class="fa-solid fa-receipt"></i></span><span class="quick-card-copy"><strong>Pesanan</strong><small>Cari transaksi dan perbarui status.</small></span><i class="fa-solid fa-arrow-up-right-from-square quick-arrow"></i></button>
+      <button type="button" class="admin-quick-card" onclick="openAdminPage('income')"><span class="quick-icon"><i class="fa-solid fa-chart-line"></i></span><span class="quick-card-copy"><strong>Pendapatan</strong><small>Lihat ringkasan pemasukan.</small></span><i class="fa-solid fa-arrow-up-right-from-square quick-arrow"></i></button>
+      <button type="button" class="admin-quick-card" onclick="openAdminPage('users')"><span class="quick-icon"><i class="fa-solid fa-user-shield"></i></span><span class="quick-card-copy"><strong>Pengguna</strong><small>Kelola akun dan peran pengguna.</small></span><i class="fa-solid fa-arrow-up-right-from-square quick-arrow"></i></button>
+    </div>
+
+    <div class="admin-note-card"><span class="admin-note-icon"><i class="fa-regular fa-lightbulb"></i></span><div><strong>Tips pengelolaan</strong><p>Pastikan status pesanan diperbarui setelah pembayaran diverifikasi agar laporan pendapatan tetap akurat.</p></div></div>
+</section>
 
 <div id="products" class="page">
     <div class="card">
-        <h2>CRUD Produk</h2>
+        <h2>Produk & Rank</h2>
+        <p>Tambahkan produk baru dan perbarui katalog yang tersedia di website.</p>
 
-        <input id="name" placeholder="Nama Produk">
-        <input id="price" type="number" placeholder="Harga">
-        <input id="desc" placeholder="Deskripsi">
+        <div class="product-form-panel">
+          <div class="product-form-heading"><span class="product-form-icon"><i class="fa-solid fa-box-open"></i></span><div><h3>Tambah produk baru</h3><p>Isi nama, harga, dan deskripsi produk.</p></div></div>
+          <div class="product-form-grid">
+            <input id="name" aria-label="Nama Produk" placeholder="Nama Produk">
+            <input id="price" type="number" min="0" aria-label="Harga" placeholder="Harga (Rp)">
+            <input id="desc" aria-label="Deskripsi" placeholder="Deskripsi">
+          </div>
+          <div class="product-form-actions"><button onclick="addProduct()"><i class="fa-solid fa-plus"></i> Tambah Produk</button></div>
+        </div>
 
-        <button onclick="addProduct()">+ Tambah Produk</button>
-
-        <table>
+        <div class="admin-table-heading"><div><h3>Daftar katalog</h3><p>Produk yang tersimpan di database.</p></div><span class="data-label"><i class="fa-solid fa-database"></i> DATA PRODUK</span></div>
+        <div class="admin-table-scroll"><table>
             <thead>
                 <tr>
                     <th>Nama</th>
@@ -317,13 +362,14 @@ table tr:hover{
                 </tr>
             </thead>
             <tbody id="productList"></tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
 <div id="orders" class="page">
     <div class="card">
-        <h2>Orders</h2>
+        <h2>Manajemen Pesanan</h2>
+        <p>Gunakan pencarian dan filter untuk menemukan transaksi secara cepat.</p>
 
         <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 200px;">
@@ -352,7 +398,7 @@ table tr:hover{
             </div>
         </div>
 
-        <table>
+        <div class="admin-table-scroll"><table>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -372,17 +418,18 @@ table tr:hover{
                 </tr>
             </thead>
             <tbody id="orderList"></tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 <div id="income" class="page">
     <div class="card">
-        <h2>Pendapatan</h2>
+        <h2>Laporan Pendapatan</h2>
+        <p>Ringkasan pemasukan dihitung dari transaksi berstatus selesai.</p>
         <h3 id="incomeTotal">Rp 0</h3>
 
         <canvas id="incomeChart" style="margin-top:20px;"></canvas>
 
-        <table>
+        <div class="admin-table-scroll"><table>
             <thead>
                 <tr>
                     <th>Product</th>
@@ -392,15 +439,16 @@ table tr:hover{
                 </tr>
             </thead>
             <tbody id="incomeTable"></tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
 <div id="users" class="page">
     <div class="card">
-        <h2>Pengguna</h2>
+        <h2>Manajemen Pengguna</h2>
+        <p>Tinjau akun yang terdaftar dan gunakan reset password bila diperlukan.</p>
 
-        <table>
+        <div class="admin-table-scroll"><table>
             <thead>
                 <tr>
                     <th>Username</th>
@@ -409,11 +457,12 @@ table tr:hover{
                 </tr>
             </thead>
             <tbody id="userList"></tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
-</div>
+  <footer class="admin-footer"><span>© <span id="adminYear"></span> ALVE LIONS</span><span>Made for Alvelions MC <i class="fa-solid fa-bolt"></i></span></footer>
+</main>
 </div>
 
 <div id="resetPasswordModal" class="modal-overlay">
@@ -438,13 +487,32 @@ table tr:hover{
 <script src="js/admin.js"></script>
 
 <script>
+const ADMIN_PAGE_META = {
+    dashboard: { title: 'Dashboard Overview', subtitle: 'Ringkasan dan akses cepat untuk mengelola server.' },
+    products: { title: 'Produk & Rank', subtitle: 'Kelola katalog produk, harga, dan deskripsi yang ditampilkan di website.' },
+    orders: { title: 'Manajemen Pesanan', subtitle: 'Cari transaksi, periksa detail pembelian, dan perbarui status pesanan.' },
+    income: { title: 'Laporan Pendapatan', subtitle: 'Tinjau pemasukan berdasarkan pesanan yang sudah diselesaikan.' },
+    users: { title: 'Manajemen Pengguna', subtitle: 'Kelola akses akun dan peran pengguna website.' }
+};
 function showPage(page, el){
+    const target = document.getElementById(page);
+    if (!target) return;
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(page).classList.add('active');
+    target.classList.add('active');
 
-    document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-    el.classList.add('active');
+    document.querySelectorAll('.sidebar a[data-page]').forEach(a=>a.classList.toggle('active', a.dataset.page === page));
+    const meta = ADMIN_PAGE_META[page] || ADMIN_PAGE_META.dashboard;
+    const title = document.getElementById('adminPageTitle');
+    const subtitle = document.getElementById('adminPageSubtitle');
+    if (title) title.textContent = meta.title;
+    if (subtitle) subtitle.textContent = meta.subtitle;
 }
+function openAdminPage(page){
+    const link = document.querySelector('.sidebar a[data-page="' + page + '"]');
+    showPage(page, link);
+}
+const adminYear = document.getElementById('adminYear');
+if (adminYear) adminYear.textContent = new Date().getFullYear();
 
 /* Pemanggilan fungsi filter jika file admin.js dimuat ulang */
 function filterOrders() {
@@ -464,6 +532,6 @@ async function logout() {
 }
 </script>
 
-    <script src="js/theme-toggle.js?v=auto-time-wib-v5"></script>
+    <script src="js/theme-toggle.js?v=theme-fab-left-v1"></script>
 </body>
 </html>
