@@ -524,8 +524,41 @@
             .btn-locked:hover { transform: none !important; }
         }
 
+        .transactions-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .transactions-heading h2 { margin-bottom: 7px; }
+        .transactions-description { max-width: 520px; }
+        .download-history-btn {
+            width: auto;
+            min-width: 150px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            flex-shrink: 0;
+            padding: 11px 15px;
+            border: 1px solid rgba(250, 204, 21, .32);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #facc15, #eab308);
+            color: #17130a;
+            font-size: 13px;
+            font-weight: 800;
+            box-shadow: 0 8px 22px rgba(250, 204, 21, .12);
+        }
+        .download-history-btn i { font-size: 15px; }
+        .download-history-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        @media (max-width: 560px) {
+            .transactions-heading { flex-direction: column; align-items: stretch; }
+            .download-history-btn { width: 100%; }
+        }
+
     </style>
-    <link rel="stylesheet" href="css/alvelions-theme.css?v=home-cinematic-v3">
+    <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
     <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
 
@@ -629,7 +662,7 @@
                         <div class="stat-info">
                             <h3>TPS (Simulasi)</h3>
                             <p id="serverTps" title="Angka simulasi 19.0–20.0 TPS; bukan pembacaan aktual server">19.6</p>
-                            <span>TPS Server</span>
+                            <span>Angka animasi 19.0–20.0; bukan TPS aktual</span>
                         </div>
                     </div>
                 </div>
@@ -666,7 +699,16 @@
             <!-- PAGE 3: TRANSACTIONS -->
             <div id="transactions" class="page">
                 <div class="card">
-                    <h2>Riwayat Transaksi</h2>
+                    <div class="transactions-heading">
+                        <div>
+                            <h2>Riwayat Transaksi</h2>
+                            <p class="transactions-description">Unduh salinan riwayat transaksi akun kamu untuk disimpan sebagai arsip.</p>
+                        </div>
+                        <button type="button" id="downloadTransactionsBtn" class="download-history-btn" onclick="downloadTransactionHistory()">
+                            <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i>
+                            <span>Download CSV</span>
+                        </button>
+                    </div>
                     <div class="table-wrapper">
                         <table>
                             <thead>
@@ -995,7 +1037,7 @@
     };
 })();
 </script>
-    <script src="js/dashboard.js?v=dashboard-pro-v1"></script>
+    <script src="js/dashboard.js?v=transactions-export-v1"></script>
 
     <script>
         function openSideMenu() {
@@ -1040,6 +1082,6 @@
         }
     </script>
     <script src="js/atmosphere-effects.js?v=home-cinematic-v3"></script>
-    <script src="js/theme-toggle.js?v=auto-time-wib-v5"></script>
+    <script src="js/theme-toggle.js?v=transactions-export-v1"></script>
 </body>
 </html>
