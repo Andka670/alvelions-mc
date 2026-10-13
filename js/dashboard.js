@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAnnouncements(); // Menjalankan fungsi muat pengumuman saat halaman siap
 });
 
+// Data ini hanya diisi dari riwayat pengguna yang telah lolos pemeriksaan login.
+let cachedUserTransactions = [];
+let cachedProductNames = {};
+let cachedTransactionUsername = "";
+
 // TPS display simulation only. The status checker API does not measure server TPS.
 function startTpsSimulation(element) {
     if (!element || element.dataset.tpsSimulationStarted === "1") return;
@@ -115,6 +120,9 @@ async function loadTransactions(username) {
         ]);
         
         if (ordersError || productsError) {
+            cachedUserTransactions = [];
+            cachedProductNames = {};
+            cachedTransactionUsername = username;
             console.error("Gagal memuat data:", ordersError || productsError);
         
             if (tbody) {
@@ -129,6 +137,14 @@ async function loadTransactions(username) {
             if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses";
             return;
         }
+
+        // Simpan salinan data yang sudah difilter untuk akun ini, dipakai tombol ekspor CSV.
+        cachedUserTransactions = Array.isArray(orders) ? orders : [];
+        cachedProductNames = {};
+        (products || []).forEach(product => {
+            cachedProductNames[product.id] = product.name;
+        });
+        cachedTransactionUsername = username;
 
         // Jika data transaksi kosong / belum pernah belanja
         if (!orders || orders.length === 0) {
@@ -223,8 +239,80 @@ async function loadTransactions(username) {
         }
 
     } catch (err) {
+        cachedUserTransactions = [];
+        cachedProductNames = {};
+        cachedTransactionUsername = username || "";
         console.error("Sistem crash di fungsi loadTransactions:", err);
         if (totalPurchaseEl) totalPurchaseEl.textContent = "0 Sukses";
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#ef4444;">Riwayat belum bisa dimuat.</td></tr>`;
+        }
+    }
+}
+
+// ======================
+// DOWNLOAD RIWAYAT TRANSAKSI (CSV)
+// Ekspor hanya memakai data transaksi milik pengguna yang sedang login.
+// ======================
+function downloadTransactionHistory() {
+    const button = document.getElementById("downloadTransactionsBtn");
+    if (!cachedTransactionUsername) {
+        alert("Data akun belum siap. Tunggu sampai riwayat transaksi selesai dimuat.");
+        return;
+    }
+    if (!cachedUserTransactions.length) {
+        alert("Belum ada riwayat transaksi yang dapat diunduh.");
+        return;
+    }
+
+    const headers = [
+        "ID Order", "ID Invoice", "ID Payment", "Username", "Gamertag Minecraft",
+        "Produk", "Jumlah", "Total (IDR)", "Metode Pembayaran", "Status", "Tanggal"
+    ];
+    const safeCsvCell = (value) => {
+        let text = value == null ? "" : String(value);
+        // Cegah CSV/formula injection saat berkas dibuka lewat aplikasi spreadsheet.
+        if (/^[\s]*[=+@\-]/.test(text)) text = "'" + text;
+        return '"' + text.replace(/"/g, '""') + '"';
+    };
+
+    const rows = cachedUserTransactions.map(order => {
+        const productName = cachedProductNames[order.product_id] || `Produk #${order.product_id ?? "?"}`;
+        const dateText = order.created_at ? new Date(order.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "-";
+        return [
+            order.id,
+            order.id_transaksi || "",
+            order.id_transaksi_payment || "",
+            order.username || cachedTransactionUsername,
+            order.gamertag || "",
+            productName,
+            order.quantity ?? 1,
+            Number(order.total_price) || 0,
+            order.payment_method || "",
+            String(order.status || "PENDING").toUpperCase(),
+            dateText
+        ];
+    });
+
+    const csv = "\uFEFF" + [headers, ...rows].map(row => row.map(safeCsvCell).join(",")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    const timestamp = new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit"
+    }).format(new Date());
+    anchor.href = url;
+    anchor.download = `riwayat-transaksi-alvelions-${timestamp}.csv`;
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    if (button) {
+        const original = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>CSV Diunduh</span>';
+        window.setTimeout(() => { button.innerHTML = original; }, 1800);
     }
 }
 
