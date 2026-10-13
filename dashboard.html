@@ -564,9 +564,10 @@
 
 <body class="theme-dashboard">
 
-    <div class="menu-overlay" id="overlay" onclick="closeSideMenu()"></div>
-
     <div class="container">
+        <!-- Keep the dim backdrop and side menu inside the same stacking context.
+             Otherwise the backdrop can sit above the drawer on mobile and block taps. -->
+        <div class="menu-overlay" id="overlay" onclick="closeSideMenu()" aria-hidden="true"></div>
 
         <div class="navbar-container">
             <div class="logo-title av-dashboard-brand"><img class="av-brand-logo av-brand-logo-dashboard" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="44" height="43"><span>ALVELIONS MC</span></div>
