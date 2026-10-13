@@ -1209,3 +1209,45 @@ html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-lightning-ov
     bottom: 12px !important;
   }
 }
+
+
+/* MOBILE DASHBOARD DRAWER FIX
+   The backdrop and drawer use global stacking levels so the dimmer cannot cover the drawer.
+   Remove the dashboard container stacking context on mobile/desktop; otherwise child z-index
+   values are trapped below the body-level dimmer and theme toggle. Keep inactive backdrop click-through. */
+body.theme-dashboard > .container {
+  z-index: auto !important;
+  isolation: auto !important;
+}
+body.theme-dashboard .menu-overlay {
+  z-index: 1250 !important;
+  pointer-events: none;
+}
+body.theme-dashboard .menu-overlay.active {
+  z-index: 1250 !important;
+  pointer-events: auto;
+}
+body.theme-dashboard .side-menu {
+  z-index: 1300 !important;
+  pointer-events: auto;
+}
+@media (max-width: 899px) {
+  body.theme-dashboard .side-menu {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  body.theme-dashboard .side-menu a,
+  body.theme-dashboard .side-menu .close-btn {
+    position: relative;
+    z-index: 1;
+    touch-action: manipulation;
+    pointer-events: auto;
+  }
+}
