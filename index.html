@@ -693,7 +693,7 @@
         <div id="home" class="tab-content active">
             <div class="status-panel-wrapper">
                 <div class="status-row-main">
-                    <div class="ip-port-text" onclick="copyIP()" title="Klik untuk Salin IP">alvelionssmp.my.id<span>:</span>25812</div>
+                    <div class="ip-port-text" onclick="copyIP()" title="Klik untuk Salin IP">alvelionssmp.my.id<span>:</span>26714</div>
                     <div class="online-indicator">
                         <span id="status-dot" class="dot"></span>
                         <span id="status-label" class="online-label">MENGECEK:</span>
@@ -986,7 +986,7 @@
     "use strict";
 
     // IMPORTANT: use the public join port shown on the website, not Bedrock's default.
-    const SERVER_ADDRESS = "alvelionssmp.my.id:25812";
+    const SERVER_ADDRESS = "alvelionssmp.my.id:26714";
     const SERVER_HOST = SERVER_ADDRESS.slice(0, SERVER_ADDRESS.lastIndexOf(":"));
     const SERVER_PORT = SERVER_ADDRESS.slice(SERVER_ADDRESS.lastIndexOf(":") + 1);
     const JAKARTA_CHECKER_URL = String(window.ALVELIONS_JAKARTA_CHECKER_URL || "").trim();
@@ -1301,7 +1301,7 @@
 
     // --- COPY IP TOAST ---
     function copyIP() {
-        navigator.clipboard.writeText("alvelionssmp.my.id:25812");
+        navigator.clipboard.writeText("alvelionssmp.my.id:26714");
         const toast = document.getElementById("toast");
         toast.classList.add("show");
         setTimeout(() => { toast.classList.remove("show"); }, 2000);
@@ -1514,7 +1514,7 @@
                 const evidence = String(data?.evidenceCode || data?.unknownReason || data?.freshnessReason || data?.reason || data?.message || "").trim();
                 const freshness = String(data?.freshness || "tidak dilaporkan").toLowerCase();
                 const method = String(data?.method || "Bedrock RakNet checker");
-                const targetAddress = window.AlvelionsBedrockStatus?.address || "alvelionssmp.my.id:25812";
+                const targetAddress = window.AlvelionsBedrockStatus?.address || "alvelionssmp.my.id:26714";
                 const targetPort = targetAddress.slice(targetAddress.lastIndexOf(":") + 1);
                 const reason = evidence || (current
                     ? `API mengembalikan verdict "unknown" tanpa kode alasan (freshness: ${freshness}; metode: ${method}). Pastikan port UDP ${targetPort} adalah port Bedrock publik yang benar dan dapat dijangkau checker.`
@@ -1541,10 +1541,10 @@
     setInterval(updateServerStatus, 30000);
 
     function joinServer() {
-        navigator.clipboard.writeText("alvelionssmp.my.id:25812");
+        navigator.clipboard.writeText("alvelionssmp.my.id:26714");
     
         window.location.href =
-            "minecraft://?addExternalServer=ALVELIONS SMP|alvelionssmp.my.id:25812";
+            "minecraft://?addExternalServer=ALVELIONS SMP|alvelionssmp.my.id:26714";
     }
 </script>
     <script src="js/desktop-navbar.js?v=reference-bar-v1"></script>
