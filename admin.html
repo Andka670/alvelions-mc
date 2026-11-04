@@ -255,15 +255,30 @@ table tr:hover{
 
     </style>
     <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
-<link rel="stylesheet" href="css/admin-professional.css?v=admin-pro-v1">
+<link rel="stylesheet" href="css/admin-professional.css?v=admin-mobile-v2">
     <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
 </head>
 
 <body class="theme-admin">
 
+<header class="admin-mobile-topbar">
+    <a class="admin-mobile-brand" href="admin.html" aria-label="ALVELIONS Admin">
+        <img src="assets/alvelions-logo.png" alt="" width="36" height="36">
+        <span><strong>ALVELIONS MC</strong><small>ADMIN CONSOLE</small></span>
+    </a>
+    <div class="admin-mobile-topbar-right">
+        <span class="admin-mobile-status"><i></i> ADMIN</span>
+        <button class="admin-menu-toggle" id="adminMenuToggle" type="button" onclick="openAdminMenu()" aria-label="Buka menu admin" aria-controls="adminSidebar" aria-expanded="false">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+    </div>
+</header>
+<div class="admin-sidebar-overlay" id="adminMenuOverlay" onclick="closeAdminMenu()" aria-hidden="true"></div>
+
 <div class="admin-container">
 
-<aside class="sidebar" aria-label="Navigasi admin">
+<aside class="sidebar" id="adminSidebar" aria-label="Navigasi admin">
+    <button class="admin-sidebar-close" type="button" onclick="closeAdminMenu()" aria-label="Tutup menu admin"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     <div class="av-admin-brand"><img class="av-brand-logo av-brand-logo-admin" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="86" height="84"><div class="admin-brand-copy"><h2>ALVE LIONS</h2><span>ADMIN CONSOLE</span></div></div>
     <div class="sidebar-section-label">WORKSPACE</div>
 
@@ -494,13 +509,47 @@ const ADMIN_PAGE_META = {
     income: { title: 'Laporan Pendapatan', subtitle: 'Tinjau pemasukan berdasarkan pesanan yang sudah diselesaikan.' },
     users: { title: 'Manajemen Pengguna', subtitle: 'Kelola akses akun dan peran pengguna website.' }
 };
+function openAdminMenu(){
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('adminMenuOverlay');
+    const toggle = document.getElementById('adminMenuToggle');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-visible');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('admin-menu-open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+}
+function closeAdminMenu(){
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('adminMenuOverlay');
+    const toggle = document.getElementById('adminMenuToggle');
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (overlay) { overlay.classList.remove('is-visible'); overlay.setAttribute('aria-hidden', 'true'); }
+    document.body.classList.remove('admin-menu-open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('keydown', function(event){
+    if (event.key === 'Escape') closeAdminMenu();
+});
+window.addEventListener('resize', function(){
+    if (window.innerWidth > 740) closeAdminMenu();
+});
+
 function showPage(page, el){
     const target = document.getElementById(page);
     if (!target) return;
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     target.classList.add('active');
 
-    document.querySelectorAll('.sidebar a[data-page]').forEach(a=>a.classList.toggle('active', a.dataset.page === page));
+    document.querySelectorAll('.sidebar a[data-page]').forEach(a=>{
+        const active = a.dataset.page === page;
+        a.classList.toggle('active', active);
+        if (active) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+    });
+    closeAdminMenu();
     const meta = ADMIN_PAGE_META[page] || ADMIN_PAGE_META.dashboard;
     const title = document.getElementById('adminPageTitle');
     const subtitle = document.getElementById('adminPageSubtitle');
