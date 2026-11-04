@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tes iceFetch - ALVELIONS SMP</title>
+<style>
+body{font-family:system-ui,Arial,sans-serif;background:#0b1220;color:#e5e7eb;max-width:760px;margin:36px auto;padding:0 18px}
+.card{background:#111c2e;border:1px solid #26354d;border-radius:14px;padding:20px;margin:14px 0}
+button{background:#16a34a;color:white;border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#08101d;padding:14px;border-radius:8px}
+.good{color:#4ade80}.bad{color:#fbbf24}.muted{color:#94a3b8}
+a{color:#7dd3fc}
+</style>
+</head>
+<body>
+<h1>Tes NetherNet iceFetch</h1>
+<p class="muted">Halaman ini menguji akses browser ke API iceFetch. Tidak memakai MinecraftStatus maupun Supabase untuk pengecekan server.</p>
+<div class="card">
+  <p><b>Target:</b> alvelionssmp.my.id:26714</p>
+  <p><b>Endpoint API:</b> <code>https://icefetch.tools.kt04.com/api/info</code></p>
+  <button id="run">Tes sekarang</button>
+  <p id="result" class="muted">Belum dites.</p>
+  <pre id="output">Menunggu hasil...</pre>
+</div>
+<p><a href="https://icefetch.tools.kt04.com/" target="_blank" rel="noopener">Buka iceFetch checker</a> · <a href="https://icefetch.tools.kt04.com/api-docs" target="_blank" rel="noopener">Dokumentasi API</a></p>
+<script>
+const url = "https://icefetch.tools.kt04.com/api/info?host=alvelionssmp.my.id&port=26714&tls=false";
+const result = document.getElementById("result");
+const output = document.getElementById("output");
+document.getElementById("run").addEventListener("click", async () => {
+  result.className = "muted"; result.textContent = "Menghubungi iceFetch...";
+  output.textContent = "";
+  const started = performance.now();
+  try {
+    const response = await fetch(url, { method: "GET", headers: { Accept: "application/json" }, mode: "cors", credentials: "omit", cache: "no-store" });
+    const raw = await response.text();
+    let body; try { body = JSON.parse(raw); } catch { throw new Error(`HTTP ${response.status}: respons bukan JSON: ${raw.slice(0,400)}`); }
+    output.textContent = JSON.stringify({ httpStatus: response.status, elapsedMs: Math.round(performance.now()-started), response: body }, null, 2);
+    if (!response.ok || body.ok !== true || !body.info) {
+      result.className = "bad"; result.textContent = "API dapat dijangkau, tetapi pemeriksaan server belum berhasil. Lihat JSON.";
+    } else {
+      result.className = "good"; result.textContent = `ONLINE — ${body.info.players ?? "?"}/${body.info.maxPlayers ?? "?"} pemain · ${body.info.version ?? "versi tidak diketahui"}`;
+    }
+  } catch (error) {
+    result.className = "bad";
+    result.textContent = "Gagal membaca API dari browser. Ini bisa disebabkan CORS atau koneksi ke iceFetch; belum membuktikan server offline.";
+    output.textContent = String(error && error.message || error);
+  }
+});
+</script>
+</body>
+</html>
