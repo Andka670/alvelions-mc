@@ -417,7 +417,7 @@ async function loadServerStatus() {
     const pingEl = document.getElementById("serverPing");
     const pingTitle = document.getElementById("serverPingTitle");
     const tpsEl = document.getElementById("serverTps");
-    if (pingTitle) pingTitle.textContent = window.AlvelionsBedrockStatus?.checkerUrl ? "Ping Jakarta" : "Ping Checker";
+    if (pingTitle) pingTitle.textContent = "RTT iceFetch";
     if (!statusEl || !countEl) return;
 
     const showStatus = (label, color) => {
@@ -457,8 +457,8 @@ async function loadServerStatus() {
             showStatus(current ? "TIDAK TERDETEKSI" : "DATA KEDALUWARSA", "#f59e0b");
             const evidence = String(data?.evidenceCode || data?.unknownReason || data?.freshnessReason || data?.reason || data?.message || "").trim();
             const freshness = String(data?.freshness || "tidak dilaporkan").toLowerCase();
-            const method = String(data?.method || "Bedrock RakNet checker");
-            countEl.textContent = evidence || `API mengembalikan verdict "unknown" tanpa kode alasan (freshness: ${freshness}; metode: ${method}). Periksa port UDP Bedrock publik.`;
+            const method = String(data?.method || "NetherNet HTTP /v1/join via iceFetch");
+            countEl.textContent = evidence || `API mengembalikan verdict "unknown" tanpa kode alasan (freshness: ${freshness}; metode: ${method}). Periksa endpoint TCP NetherNet /v1/join.`;
         }
     } catch (err) {
         console.error("Server status error:", err);
@@ -468,7 +468,7 @@ async function loadServerStatus() {
     }
 }
 
-setInterval(loadServerStatus, 30000);
+setInterval(loadServerStatus, 300000);
 
 // ======================
 // CHART TREND PLAYER
