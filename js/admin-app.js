@@ -1,6 +1,7 @@
 (async()=>{
-const SEL=window.SEL=new Set(),sb=supabaseClient;let P=[],O=[],U=[],N=[],G=[],PN={},lastO=[];
+const SEL=window.SEL=new Set(),sb=supabaseClient;let P=[],O=[],U=[],N=[],G=[],PN={},lastO=[],ME=null;
 try{const {data:{session}}=await sb.auth.getSession();if(!session){location.replace("login.html");return}
+ ME=session.user.id;
  const {data:pr}=await sb.from("users_profile").select("role").eq("id",session.user.id).maybeSingle();
  if(!pr||pr.role!=="admin"){location.replace("dashboard.html");return}}catch(e){location.replace("login.html");return}
 const jk=d=>new Date(d).toLocaleDateString("sv-SE",{timeZone:"Asia/Jakarta"});
@@ -69,13 +70,15 @@ function rInc(){const r=$("ir").value,lim=r==="all"?0:Date.now()-Number(r)*864e5
  k.forEach(x=>{const tr=el("tr");td(tr,el("b","",x));td(tr,String(by[x].qty));td(tr,rp(by[x].tot));b.append(tr)})}
 $("ir").onchange=rInc;
 /* ---- pengguna ---- */
-let resetId=null;
+let resetId=null,delId=null,delName="";
 function rUsers(){const q=$("uq").value.trim().toLowerCase(),b=$("userB");b.textContent="";
  const l=U.filter(u=>!q||(u.username||"").toLowerCase().includes(q));
  if(!l.length)return empty(b,5,"Tidak ada pengguna yang cocok.");
  l.forEach(u=>{const mine=G.filter(g=>g.user===u.username),tr=el("tr");td(tr,el("b","",u.username||"-"));
   td(tr,el("span","bdg "+(u.role==="admin"?"b-done":"b-pending"),u.role||"user"));td(tr,String(mine.length));td(tr,rp(sumT(mine.filter(g=>g.status==="done"))));
-  const r=el("button","btn sm","Reset password");r.onclick=()=>{resetId=u.id;$("rU").textContent="Pengguna: "+u.username;$("rP").value=$("rC").value="";$("rM").textContent="";$("dPass").showModal()};const dt=el("button","btn sm","Detail");dt.onclick=()=>window.admUser&&admUser(u);const ac=el("div","act");ac.append(dt,r);td(tr,ac);b.append(tr)})}
+  const r=el("button","btn sm","Reset password");r.onclick=()=>{resetId=u.id;$("rU").textContent="Pengguna: "+u.username;$("rP").value=$("rC").value="";$("rM").textContent="";$("dPass").showModal()};const dt=el("button","btn sm","Detail");dt.onclick=()=>window.admUser&&admUser(u);const xb=el("button","btn sm dng","Hapus"),lock=u.id===ME||u.role==="admin";xb.disabled=lock;if(lock)xb.title=u.id===ME?"Tidak bisa menghapus akun sendiri":"Cabut akses admin dulu (lewat Detail) sebelum menghapus";
+  xb.onclick=()=>{delId=u.id;delName=u.username||"HAPUS";$("xU").textContent="Pengguna: "+(u.username||"-")+"\nAkun login dihapus permanen dan tidak bisa dikembalikan. Riwayat pesanan tetap tersimpan di laporan.";$("xL").textContent="Ketik "+delName+" untuk konfirmasi";$("xI").value="";$("xS").disabled=true;$("xM").textContent="";$("dDelU").showModal()};
+  const ac=el("div","act");ac.append(dt,r,xb);td(tr,ac);b.append(tr)})}
 $("uq").oninput=rUsers;$("rX").onclick=()=>$("dPass").close();
 $("rS").onclick=async()=>{const a=$("rP").value,c=$("rC").value,m=$("rM");m.style.color="var(--red)";
  if(a.length<6){m.textContent="Password minimal 6 karakter.";return}if(a!==c){m.textContent="Konfirmasi password tidak cocok.";return}
@@ -84,6 +87,12 @@ $("rS").onclick=async()=>{const a=$("rP").value,c=$("rC").value,m=$("rM");m.styl
   const res=await fetch(SUPABASE_URL+"/functions/v1/admin-reset-password",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token,apikey:SUPABASE_ANON_KEY},body:JSON.stringify({user_id:resetId,new_password:a})});
   const j=await res.json();if(!res.ok){m.style.color="var(--red)";m.textContent=j.error||"Gagal reset password.";return}
   $("dPass").close();toast("Password berhasil diubah")}catch(e){m.style.color="var(--red)";m.textContent="Terjadi kesalahan: "+e.message}};
+$("xX").onclick=()=>$("dDelU").close();$("xI").oninput=()=>{$("xS").disabled=$("xI").value.trim()!==delName};
+$("xS").onclick=async()=>{const m=$("xM"),b=$("xS");m.style.color="var(--mute)";m.textContent="Menghapus akun…";b.disabled=true;
+ try{const {data:{session}}=await sb.auth.getSession();
+  const res=await fetch(SUPABASE_URL+"/functions/v1/delete-account",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token,apikey:SUPABASE_ANON_KEY},body:JSON.stringify({user_id:delId})});
+  const j=await res.json().catch(()=>({}));if(!res.ok){m.style.color="var(--red)";m.textContent=j.error||"Gagal menghapus akun.";b.disabled=false;return}
+  $("dDelU").close();toast("Akun pengguna dihapus");load()}catch(e){m.style.color="var(--red)";m.textContent="Terjadi kesalahan: "+e.message;b.disabled=false}};
 /* ---- pengumuman ---- */
 function rNews(){const b=$("newsL");b.textContent="";
  if(!N.length){b.append(el("div","empty-s","Belum ada pengumuman. Yang kamu tulis di sini tampil di dashboard semua member."));return}
