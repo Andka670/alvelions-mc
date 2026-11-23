@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<script>(function(){var r=document.documentElement,t='dark';try{var h=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).format(new Date()));t=(h>=6&&h<18)?'light':'dark';var c=JSON.parse(localStorage.getItem('alvelions-theme-override-v5')||'null');if(c&&(c.theme==='light'||c.theme==='dark')&&c.until>Date.now())t=c.theme}catch(e){}r.setAttribute('data-theme',t)})()</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store – ALVELIONS MC</title>
+<meta name="description" content="Beli rank dan item ALVELIONS MC. Bayar dengan DANA atau QRIS.">
+<link rel="icon" type="image/png" href="assets/alvelions-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/pro.css">
+<link rel="stylesheet" href="css/effects.css">
+</head>
+<body class="theme-home">
+<div class="progress" id="prog"></div>
+<header class="top"><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/alvelions-logo.png" alt="">ALVELIONS MC</a>
+  <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
+  <nav class="nav" id="nav" aria-label="Utama">
+    <a href="index.html#fitur">Fitur</a><a href="store.html">Store</a><a href="index.html#join">Cara join</a><a href="index.html#komunitas">Komunitas</a>
+    <a href="login.html">Masuk</a>
+  </nav>
+  <button class="btn icon-btn" id="themeBtn" aria-label="Ganti tema"></button>
+  <a class="btn btn-gold" id="acctBtn" href="register.html">Daftar</a>
+</div></header>
+
+<main><section class="sec" style="border-top:0;padding-top:56px"><div class="wrap">
+<h2>Store</h2><p class="lead">Pilih rank atau item, lalu selesaikan pembayaran di checkout. Admin memproses pesananmu setelah pembayaran terverifikasi.</p>
+<div class="trust"><div><i class="fa-solid fa-wallet"></i>Bayar dengan DANA atau QRIS</div><div><i class="fa-solid fa-user-check"></i>Isi gamertag Bedrock saat checkout</div><div><i class="fa-solid fa-shield-halved"></i>Diproses setelah pembayaran valid</div></div>
+<div class="tools"><label class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="q" type="search" placeholder="Cari rank atau item" aria-label="Cari produk"></label>
+<select class="sort" id="sort" aria-label="Urutkan"><option value="lo">Termurah</option><option value="hi">Termahal</option><option value="az">Nama A–Z</option></select></div>
+<div class="chips" id="chips"><button class="chip on" data-c="all">Semua</button><button class="chip" data-c="perm">Rank permanen</button><button class="chip" data-c="bulan">Rank bulanan</button><button class="chip" data-c="lain">Item lainnya</button></div>
+<p class="cnt" id="count" aria-live="polite"></p><div class="pgrid" id="grid"><p class="empty">Memuat produk…</p></div>
+<div class="buy"><p><strong>Beli money: Rp5.000 = 1M.</strong> Beli banyak, dapat bonus. Pilih produk di halaman checkout.</p><a class="btn btn-gold" href="checkout.html"><i class="fa-solid fa-cart-shopping"></i> Ke checkout</a></div>
+</div></section></main>
+<footer><div class="wrap">
+  <span>© <span id="yr"></span> ALVELIONS MC. Bukan produk resmi Minecraft dan tidak berafiliasi dengan Mojang atau Microsoft.</span>
+  <span><button data-info="syarat">Syarat dan ketentuan</button> · <button data-info="privasi">Kebijakan privasi</button></span>
+</div></footer>
+
+<dialog id="dlg"><h3 id="dT"></h3><p id="dB"></p><button class="btn" id="dClose">Tutup</button><a class="btn btn-gold" id="dBuy" href="checkout.html" hidden>Beli di checkout</a></dialog>
+<div class="toast" id="toast" role="status">IP server disalin</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script>
+const $=id=>document.getElementById(id),rp=n=>"Rp"+(Number(n)||0).toLocaleString("id-ID");
+function setT(t,s){const r=document.documentElement,b=document.getElementById("themeBtn");r.setAttribute("data-theme",t);b.innerHTML='<i class="fa-solid fa-'+(t==="dark"?"sun":"moon")+'"></i>';b.setAttribute("aria-label",t==="dark"?"Ganti ke tema siang":"Ganti ke tema malam");if(s)try{localStorage.setItem("alvelions-theme-override-v5",JSON.stringify({theme:t,until:Date.now()+12*36e5}))}catch(e){}}
+setT(document.documentElement.getAttribute("data-theme"),false);
+document.getElementById("themeBtn").onclick=()=>setT(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark",true);
+$("yr").textContent=new Date().getFullYear();
+addEventListener("scroll",()=>{const e=document.documentElement;$("prog").style.width=(scrollY/Math.max(1,e.scrollHeight-innerHeight)*100)+"%"},{passive:true});
+$("menuBtn").onclick=e=>{const o=$("nav").classList.toggle("open");e.currentTarget.setAttribute("aria-expanded",o)};
+const INFO={syarat:["Syarat dan ketentuan","Donasi bersifat sukarela.\nItem atau rank diproses setelah pembayaran terverifikasi.\nTidak ada refund uang."],privasi:["Kebijakan privasi","Gamertag, nomor HP, dan data transaksi hanya dipakai untuk memproses pesanan in-game.\nData tidak dibagikan ke pihak lain."]};
+function openDlg(t,b,buy){$("dT").textContent=t;$("dB").textContent=b;$("dBuy").hidden=!buy;$("dlg").showModal()}
+$("dClose").onclick=()=>$("dlg").close();
+document.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>openDlg(...INFO[b.dataset.info]));
+let ALL=[],cat="all";
+const ICON={perm:"crown",bulan:"clock",lain:"cube"};
+function render(){
+ const q=$("q").value.trim().toLowerCase(),s=$("sort").value,g=$("grid");
+ const l=ALL.filter(p=>(cat==="all"||p.cat===cat)&&(!q||(p.label+" "+p.desc).toLowerCase().includes(q)));
+ l.sort(s==="hi"?(a,b)=>b.price-a.price:s==="az"?(a,b)=>a.label.localeCompare(b.label):(a,b)=>a.price-b.price);
+ g.textContent="";$("count").textContent=l.length+" produk";
+ if(!l.length){g.innerHTML='<p class="empty">Tidak ada produk yang cocok. Hapus kata kunci atau pilih kategori lain.</p>';return}
+ l.forEach(p=>{const b=document.createElement("button");b.className="item";
+  const ic=document.createElement("span");ic.className="ic";ic.innerHTML='<i class="fa-solid fa-'+ICON[p.cat]+'"></i>';
+  const n=document.createElement("b");n.textContent=p.label;const d=document.createElement("p");d.textContent=p.desc||"Belum ada deskripsi.";
+  const pr=document.createElement("span");pr.textContent=rp(p.price);b.append(ic,n,d,pr);
+  b.onclick=()=>{$("dBuy").href="checkout.html?add="+encodeURIComponent(p.id);openDlg(p.label+" · "+rp(p.price),p.desc||"Belum ada deskripsi.",true)};g.appendChild(b)})}
+$("q").oninput=render;$("sort").onchange=render;
+$("chips").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");cat=c.dataset.c;render()};
+(async()=>{try{const {data,error}=await supabaseClient.from("products").select("id,name,description,price");if(error)throw error;
+ ALL=(data||[]).map(p=>{const n=(p.name||"").toLowerCase();return{id:p.id,label:(p.name||"").replace(/\s*\/monthly/i,""),desc:p.description||"",price:Number(p.price)||0,cat:n.includes("/monthly")?"bulan":n.includes("rank")?"perm":"lain"}});
+ ALL.length?render():($("grid").innerHTML='<p class="empty">Belum ada produk yang dijual.</p>',$("count").textContent="")}
+ catch(e){$("grid").innerHTML='<p class="empty">Produk gagal dimuat. Muat ulang halaman, atau hubungi admin lewat WhatsApp.</p>'}})();
+</script>
+<script src="js/atmosphere-effects.js"></script>
+</body></html>
