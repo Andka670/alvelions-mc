@@ -1,1246 +1,200 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <script>
-    (function(){
-      // Use WIB (Asia/Jakarta) rather than relying on the visitor device timezone.
-      var theme='dark';
-      function jakartaHour(){
-        try {
-          var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
-          var hourPart=parts.find(function(part){return part.type==='hour';});
-          if(hourPart) return Number(hourPart.value);
-        } catch(e) {}
-        return new Date(Date.now() + 7 * 60 * 60 * 1000).getUTCHours();
-      }
-      try {
-        var hour=jakartaHour();
-        theme=(hour>=6 && hour<18)?'light':'dark';
-        // V5 key ignores stale overrides from older versions so the WIB schedule wins by default.
-        var raw=localStorage.getItem('alvelions-theme-override-v5');
-        if(raw){
-          var choice=JSON.parse(raw);
-          if(choice && (choice.theme==='light'||choice.theme==='dark') && Number.isFinite(choice.until) && choice.until>Date.now()) theme=choice.theme;
-          else localStorage.removeItem('alvelions-theme-override-v5');
-        }
-      } catch(e) { var h=jakartaHour(); theme=(h>=6 && h<18)?'light':'dark'; }
-      document.documentElement.setAttribute('data-theme',theme);
-    })();
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALVELIONS MC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* TEMA DIUBAH KE KUNING */
-            --primary: #facc15; /* Kuning Cyber / Neon */
-            --secondary: #fbbf24; /* Amber / Emas Sekunder */
-            --blue-rank: #3b82f6;
-            --bg-dark: #07050f; --card-bg: rgba(255, 255, 255, 0.03);
-            --gold: #f59e0b; --wa-green: #22c55e; --online-green: #eab308;
-            --danger: #ef4444;
-            --yt-red: #ff0000; --dc-blue: #5865F2; --tt-black: #00f2fe;
-            --cyber-glow: 0 0 15px rgba(250, 204, 21, 0.3);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-dark);
-            /* Gradient diubah dari ungu ke kuning */
-            background-image: radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.08) 0%, transparent 80%);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            line-height: 1.4;
-            overflow-x: hidden;
-        }
-
-        /* --- NAVBAR CONTAINER --- */
-        .navbar-container {
-            position: relative;
-            max-width: 390px;
-            margin: 15px auto 5px auto;
-            padding: 0 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        /* --- NAVBAR STYLE --- */
-        .navbar {
-            flex: 1;
-            padding: 8px 10px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 40px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-            border: 0.5px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .navbar ul {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            list-style: none;
-            width: 100%;
-        }
-
-        .navbar ul li a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.65rem;
-            font-weight: 600;
-            padding: 6px 8px;
-            display: block;
-            transition: 0.3s;
-            opacity: 0.7;
-        }
-
-        .navbar ul li a:hover,
-        .navbar ul li.active a {
-            opacity: 1;
-            color: #000000; /* Teks hitam saat aktif agar kontras dengan warna kuning */
-            background: var(--primary);
-            border-radius: 30px;
-            box-shadow: 0 0 10px var(--primary);
-        }
-        .join-wrapper{
-            margin-top:15px;
-        }
-        
-        .join-btn{
-            width:100%;
-            height:52px;
-            border:none;
-            cursor:pointer;
-            border-radius:14px;
-            font-family:'Orbitron',sans-serif;
-            font-size:.9rem;
-            font-weight:900;
-            letter-spacing:2px;
-            color:#000;
-            background:linear-gradient(
-                90deg,
-                #facc15,
-                #fff7a8,
-                #f59e0b,
-                #facc15
-            );
-            background-size:300% 100%;
-            animation:
-                joinGradient 4s linear infinite,
-                joinPulse 1.5s ease-in-out infinite;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:12px;
-            position:relative;
-            overflow:hidden;
-        }
-        
-        .join-btn::before{
-            content:"";
-            position:absolute;
-            top:0;
-            left:-100%;
-            width:50%;
-            height:100%;
-            background:linear-gradient(
-                90deg,
-                transparent,
-                rgba(255,255,255,.7),
-                transparent
-            );
-            animation:shineJoin 2.5s infinite;
-        }
-        
-        .lightning{
-            font-size:1.2rem;
-            animation:lightningFlash .8s infinite alternate;
-        }
-        
-        @keyframes joinGradient{
-            0%{background-position:0% 50%;}
-            100%{background-position:300% 50%;}
-        }
-        
-        @keyframes joinPulse{
-            0%{
-                box-shadow:
-                0 0 10px rgba(250,204,21,.5),
-                0 0 20px rgba(250,204,21,.3);
-            }
-            100%{
-                box-shadow:
-                0 0 25px rgba(250,204,21,.9),
-                0 0 45px rgba(250,204,21,.6);
-            }
-        }
-        
-        @keyframes lightningFlash{
-            from{
-                transform:scale(1);
-                text-shadow:0 0 5px #fff;
-            }
-            to{
-                transform:scale(1.2);
-                text-shadow:
-                0 0 10px #fff,
-                0 0 20px #facc15,
-                0 0 30px #facc15;
-            }
-        }
-        
-        @keyframes shineJoin{
-            100%{
-                left:150%;
-            }
-        }
-        .com-icon{
-            width:40px;
-            height:40px;
-            border-radius:10px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:1.3rem;
-            flex-shrink:0;
-        }
-        
-        .tiktok .com-icon{
-            background:rgba(0,242,254,.12);
-            color:#00f2fe;
-        }
-        
-        .discord .com-icon{
-            background:rgba(88,101,242,.12);
-            color:#5865F2;
-        }
-        
-        .whatsapp .com-icon{
-            background:rgba(34,197,94,.12);
-            color:#22c55e;
-        }
-        
-        .instagram .com-icon{
-            background:rgba(255,0,128,.12);
-            color:#ff4da6;
-        }
-        /* BURGER ICON */
-        .burger-icon { 
-            cursor: pointer; z-index: 1000; font-size: 1.2rem; color: var(--primary); 
-            background: rgba(255, 255, 255, 0.04); padding: 4px 10px; border-radius: 50%;
-            border: 0.5px solid rgba(255, 255, 255, 0.12); display: flex; align-items: center;
-            justify-content: center; height: 38px; width: 38px; transition: 0.2s;
-        }
-        
-        .side-menu { height: 100%; width: 0; position: fixed; z-index: 2000; top: 0; right: 0; background: #0c091a; overflow-x: hidden; transition: 0.4s; padding-top: 60px; border-left: 1px solid var(--primary); }
-        .side-menu a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #fff; display: block; transition: 0.3s; }
-        .close-btn { position: absolute; top: 10px; left: 20px; font-size: 2rem; cursor: pointer; }
-        .bug-desc { font-size: 0.65rem; color: #888; padding: 0 25px 10px 25px; font-style: italic; }
-
-        .container { max-width: 420px; margin: 0 auto 20px auto; padding: 15px; position: relative; }
-        
-        /* --- BRAND TITLE LOGO --- */
-        .brand-title { 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: 2.1rem; 
-            font-weight: 900; 
-            text-align: center; 
-            /* Gradient diubah ke tema kuning emas */
-            background: linear-gradient(90deg, #facc15, #f59e0b, #fff, #fbbf24, #facc15); 
-            background-size: 200% auto; 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            animation: shine 4s linear infinite, float 3s ease-in-out infinite, cyberGlow 2s alternate infinite ease-in-out; 
-            margin-top: 10px; 
-            letter-spacing: 1.5px;
-        }
-
-        @keyframes shine { to { background-position: 200% center; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-        
-        @keyframes cyberGlow {
-            0% { filter: drop-shadow(0 0 2px rgba(250, 204, 21, 0.4)); }
-            100% { filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.7)); }
-        }
-
-        .welcome-badge { display: block; text-align: center; font-size: 0.7rem; letter-spacing: 3px; color: var(--secondary); opacity: 0.9; margin-bottom: 4px; font-family: 'Orbitron', sans-serif; }
-        
-        /* --- DESKRIPSI --- */
-        .brand-desc {
-            display: block;
-            text-align: center;
-            font-size: 0.62rem;
-            line-height: 1.4;
-            color: #cbd5e1;
-            max-width: 340px;
-            margin: 0 auto 15px auto;
-            opacity: 0.85;
-            font-weight: 400;
-        }
-
-        /* Tab Content */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 18px; padding: 15px; margin-bottom: 15px; }
-        
-        /* --- STATUS BAR --- */
-        .status-panel-wrapper {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 8px 10px;
-        }
-        
-        .status-row-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .ip-port-text { font-size: 0.65rem; font-weight: 700; color: #eee; display: flex; gap: 3px; font-family: 'Orbitron', sans-serif; letter-spacing: 0.5px; cursor: pointer; transition: 0.2s; }
-        .ip-port-text:hover { color: var(--primary); }
-        .ip-port-text span { color: var(--secondary); }
-        
-        .online-indicator { display: flex; align-items: center; gap: 5px; }
-        .online-label { font-size: 0.58rem; font-weight: 800; color: rgba(250, 204, 21, 0.8); letter-spacing: 0.5px; }
-        .dot { height: 5px; width: 5px; background-color: #444; border-radius: 50%; transition: 0.3s; }
-        .dot-online { background-color: var(--online-green); box-shadow: 0 0 6px var(--online-green); }
-        .player-count-pill { background: rgba(250, 204, 21, 0.1); color: var(--online-green); padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.58rem; border: 0.5px solid rgba(250, 204, 21, 0.2); font-family: 'Orbitron', sans-serif; }
-        
-        .status-row-perf {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            padding: 4px 0;
-            border: 0.5px solid rgba(255, 255, 255, 0.01);
-        }
-        
-        .perf-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.55rem;
-            color: #94a3b8;
-        }
-        .perf-box:first-child { border-right: 1px solid rgba(255, 255, 255, 0.05); }
-        .perf-box .perf-label { font-weight: 500; opacity: 0.5; font-size: 0.52rem; letter-spacing: 0.5px; }
-        .perf-box .perf-value { font-weight: 700; }
-        #perf-ping-val { color: var(--blue-rank); }
-        #perf-tps-val { color: var(--gold); }
-
-        .signal-bar-anim { opacity: 0.3; }
-        .bar-1 { animation: pulseBar 1.2s infinite ease-in-out; }
-        .bar-2 { animation: pulseBar 1.2s infinite ease-in-out 0.3s; }
-        .bar-3 { animation: pulseBar 1.2s infinite ease-in-out 0.6s; }
-        @keyframes pulseBar { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        .gear-spin-anim { animation: spinGear 3.5s infinite linear; transform-origin: center; }
-        @keyframes spinGear { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--primary); margin-bottom: 15px; text-align: center; letter-spacing: 1.5px; }
-
-        /* --- COMMUNITY GRID --- */
-        .community-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .com-box { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.06); padding: 12px; border-radius: 14px; text-decoration: none; color: #ffffff; transition: all 0.3s ease; }
-        .com-box:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.04); }
-        .com-box.youtube:hover { border-color: var(--yt-red); box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
-        .com-box.discord:hover { border-color: var(--dc-blue); box-shadow: 0 0 10px rgba(88, 101, 242, 0.2); }
-        .com-box.whatsapp:hover { border-color: var(--wa-green); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
-        .com-box.tiktok:hover { border-color: var(--tt-black); box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
-        .com-info { display: flex; flex-direction: column; }
-        .com-title { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
-        .com-sub { font-size: 0.55rem; opacity: 0.5; text-transform: uppercase; margin-top: 1px; }
-
-        /* --- RANK GRID --- */
-        .rank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .rank-box { background: rgba(250, 204, 21, 0.02); padding: 10px; border-radius: 12px; border: 1px solid rgba(250, 204, 21, 0.15); text-align: center; cursor: pointer; transition: 0.2s; }
-        .rank-box:hover { background: rgba(250, 204, 21, 0.1); transform: scale(1.02); border-color: var(--primary); }
-        .rank-n { font-size: 0.75rem; font-weight: 800; color: var(--primary); display: block; }
-        .rank-p { font-size: 0.65rem; color: #fff; opacity: 0.7; }
-        
-        .money-info { text-align: center; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 12px; padding-top: 12px; }
-        .money-price { color: var(--secondary); font-weight: 800; font-size: 0.9rem; }
-        .bonus-text { font-size: 0.65rem; color: var(--gold); margin-top: 4px; opacity: 0.8; font-style: italic; }
-        .rule-item { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 5px; padding-left: 10px; border-left: 2px solid var(--primary); }
-        /* --- STAFF SECTION --- */
-        .staff-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .staff-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 12px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-        }
-        
-        .staff-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            color: #000;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-        
-        .staff-info h4 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            color: var(--primary);
-        }
-        
-        .staff-info p {
-            font-size: 0.6rem;
-            opacity: 0.7;
-            text-transform: uppercase;
-        }
-        
-        .staff-badge {
-            margin-left: auto;
-            font-size: 0.5rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        /* --- BUTTONS --- */
-        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px 16px; border-radius: 12px; text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; }
-        .btn-split-buy { background: var(--primary) !important; color: #000000 !important; margin: 15px auto 0 auto; width: max-content; gap: 12px; padding: 8px 16px; border-radius: 30px; animation: neonPulse 2s infinite alternate; border: none; }
-        .btn-split-buy:hover { background: #ffffff !important; color: #000000 !important; transform: translateY(-2px); box-shadow: 0 0 20px var(--primary); }
-        .btn-split-buy .left-side { display: flex; align-items: center; }
-        .btn-split-buy .buy-text { font-weight: 900; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
-        .btn-split-buy .right-side { display: flex; align-items: center; gap: 10px; }
-        .btn-split-buy .divider { width: 1px; height: 14px; background: rgba(0, 0, 0, 0.3); }
-        .inner-logos { display: flex; align-items: center; gap: 8px; }
-        .logo-wrapper { display: flex; align-items: center; }
-
-        @keyframes neonPulse {
-            0% { box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
-            100% { box-shadow: 0 0 14px var(--primary); }
-        }
-        
-        .small-links-container { display: flex; justify-content: center; gap: 15px; margin-top: 15px; margin-bottom: 20px; }
-        .small-link { font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); text-decoration: none; text-transform: uppercase; }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-c { background: #0e0a21; width: 85%; max-width: 350px; padding: 25px; border-radius: 20px; border: 1px solid var(--primary); position: relative; }
-        .modal-close { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #fff; opacity: 0.5; }
-        .modal-close:hover { opacity: 1; }
-        .b-list { list-style: none; font-size: 0.75rem; max-height: 50vh; overflow-y: auto; margin-top: 10px;}
-        .b-list li { margin-bottom: 8px; padding: 10px; border-left: 3px solid var(--primary); background: rgba(255,255,255,0.01); border-radius: 0 6px 6px 0; }
-        footer { text-align: center; font-size: 0.6rem; opacity: 0.3; margin-top: 30px; padding-bottom: 10px; letter-spacing: 1px; }
-
-        /* --- ABOUT (PANDUAN JOIN) --- */
-        .about-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.00) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-        }
-        .about-section-title {
-            font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px; color: #ffffff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; justify-content: center;
-        }
-        .guide-container { text-align: left; margin-top: 5px; }
-        .guide-welcome { font-size: 0.62rem; color: #94a3b8; text-align: center; line-height: 1.4; margin-bottom: 12px; }
-        .guide-item { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
-        .guide-item:last-of-type { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-        .guide-header { font-family: 'Orbitron', sans-serif; font-size: 0.68rem; font-weight: 700; color: var(--secondary); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-        .guide-sublist { list-style: none; padding-left: 16px; }
-        .guide-sublist li { font-size: 0.62rem; color: #94a3b8; margin-bottom: 3px; position: relative; }
-        .guide-sublist li::before { content: ""; width: 3px; height: 3px; background: var(--primary); border-radius: 50%; position: absolute; left: -10px; top: 6px; }
-        
-        /* --- FEATURE CONTENT --- */
-        .feature-item { background: rgba(255,255,255,0.01); padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .feature-name { font-size: 0.75rem; font-weight: 700; color: var(--secondary); }
-        .feature-desc { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
-
-        /* TOAST POPUP */
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: #000; font-weight: 700; font-size: 0.7rem; padding: 8px 16px; border-radius: 20px; box-shadow: 0 5px 15px rgba(250,204,21,0.4); transition: 0.3s ease; z-index: 9999; opacity: 0; }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        
-        /* Loading Text Style */
-        .loading-text { font-size: 0.7rem; text-align: center; color: var(--secondary); grid-column: span 2; padding: 15px; font-style: italic;}
-        .youtube-tutorial {
-            margin-top: 12px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(250, 204, 21, 0.15);
-            background: rgba(255,255,255,0.02);
-        }
-        
-        .youtube-tutorial iframe {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border: none;
-            display: block;
-        }
-        
-        .youtube-title {
-            padding: 10px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--primary);
-            font-family: 'Orbitron', sans-serif;
-        }
-        /* --- STAFF CONTACT SECTION --- */
-        .staff-header { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 0.9rem; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .staff-desc { font-size: 0.7rem; color: #a4a4b5; text-align: center; margin-bottom: 20px; line-height: 1.4; }
-        
-        .staff-contact-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 15px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-        
-        .staff-left { display: flex; align-items: center; gap: 12px; }
-        .avatar-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-family: 'Orbitron'; }
-        .staff-meta h4 { font-size: 0.85rem; font-family: 'Orbitron'; }
-        .staff-meta p { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .wa-btn {
-            background: #25d366; color: #000; padding: 8px 12px; border-radius: 8px;
-            font-size: 0.7rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
-        }
-        
-        .offline-text { font-size: 0.7rem; color: #444; font-weight: 700; margin-right: 10px; }
-        
-        .warning-box {
-            border: 1px dashed rgba(255, 71, 87, 0.4);
-            background: rgba(255, 71, 87, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-        .warning-text { font-size: 0.65rem; color: #bdc3c7; line-height: 1.5; text-align: center; }
-
-        /* =========================================================
-           DESKTOP RESPONSIVE LAYOUT
-           Mobile layout stays unchanged (<= 767px).
-           ========================================================= */
-        @media (min-width: 768px) {
-            body {
-                min-width: 100%;
-            }
-
-            .navbar-container {
-                width: 100%;
-                max-width: none;
-                margin: 22px auto 10px auto;
-                padding: 0 clamp(20px, 4vw, 64px);
-            }
-
-            .navbar {
-                width: 100%;
-            }
-
-            .container {
-                width: 100%;
-                max-width: none;
-                margin: 0 auto;
-                padding: 24px clamp(20px, 4vw, 64px) 40px;
-            }
-
-            .brand-title {
-                font-size: clamp(2.4rem, 4vw, 4rem);
-                margin-top: 16px;
-            }
-
-            .welcome-badge {
-                font-size: clamp(0.75rem, 1vw, 0.95rem);
-            }
-
-            .brand-desc {
-                max-width: 720px;
-                font-size: clamp(0.75rem, 1vw, 0.9rem);
-            }
-
-            .glass-card {
-                padding: 22px;
-                border-radius: 22px;
-            }
-
-            .community-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 14px;
-            }
-
-            .rank-grid {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 12px;
-            }
-
-            .staff-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 14px;
-            }
-
-            .join-btn {
-                min-height: 60px;
-                height: auto;
-                font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-            }
-
-            .modal-c {
-                width: min(700px, 80vw);
-                max-width: none;
-            }
-
-            .side-menu {
-                width: 0;
-                max-width: 420px;
-            }
-        }
-
-    
-
-        /* Desktop visual scale: larger controls/text, mobile stays unchanged */
-        @media (min-width: 768px) {
-            .navbar ul li a { font-size: clamp(0.82rem, 1vw, 1rem); padding: 9px 14px; }
-            .navbar { padding: 10px 14px; }
-            .join-btn { min-height: 72px; font-size: clamp(1.15rem, 1.45vw, 1.35rem); border-radius: 16px; }
-            .btn { font-size: 1rem; padding: 13px 20px; }
-            .btn-split-buy { padding: 11px 22px; gap: 14px; }
-            .btn-split-buy .buy-text { font-size: 1.05rem; }
-            .btn-split-buy .divider { height: 18px; }
-            .small-link { font-size: 0.78rem; }
-            .wa-btn { font-size: 0.85rem; padding: 10px 15px; }
-            .warning-text { font-size: 0.78rem; }
-            .modal-c { padding: 30px; }
-            .modal-close { font-size: 1.8rem; }
-            .glass-card { padding: 28px; border-radius: 24px; }
-            .glass-card p, .glass-card li { font-size: 1rem; }
-            .feature-name { font-size: 0.95rem; }
-            .feature-desc { font-size: 0.82rem; }
-            .staff-meta h4 { font-size: 1rem; }
-            .staff-meta p { font-size: 0.72rem; }
-            .btn:hover, .btn-split-buy:hover, .join-btn:hover, .wa-btn:hover { transform: translateY(-2px) scale(1.025); }
-            .navbar ul li a:hover { transform: scale(1.04); }
-        }
-
-    </style>
-    <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
-    <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
+<script>(function(){var r=document.documentElement,t='dark';try{var h=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).format(new Date()));t=(h>=6&&h<18)?'light':'dark';var c=JSON.parse(localStorage.getItem('alvelions-theme-override-v5')||'null');if(c&&(c.theme==='light'||c.theme==='dark')&&c.until>Date.now())t=c.theme}catch(e){}r.setAttribute('data-theme',t)})()</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALVELIONS MC – Server Minecraft Bedrock Survival Economy Faction</title>
+<meta name="description" content="Server Minecraft Bedrock Indonesia dengan ekonomi, faction, claim land, dan store rank. IP: alvelionssmp.my.id:26714">
+<link rel="icon" type="image/png" href="assets/alvelions-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/pro.css">
+<link rel="stylesheet" href="css/effects.css">
 </head>
 <body class="theme-home">
+<div class="progress" id="prog"></div>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><img src="assets/alvelions-logo.png" alt="">ALVELIONS MC</a>
+  <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
+  <nav class="nav" id="nav" aria-label="Utama">
+    <a href="#fitur">Fitur</a><a href="#store">Store</a><a href="#join">Cara join</a><a href="#komunitas">Komunitas</a>
+    <a href="login.html">Masuk</a>
+  </nav>
+  <button class="btn icon-btn" id="themeBtn" aria-label="Ganti tema"></button>
+  <a class="btn btn-gold" id="acctBtn" href="register.html">Daftar</a>
+</div></header>
 
-    <div class="navbar-container" id="avDesktopNav">
-        <a class="av-nav-brand" href="#" aria-label="Alvelions MC beranda" onclick="document.querySelector('#navLinks li[data-tab=\"home\"] a')?.click(); return false;">
-            <img src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="42" height="42">
-            <span class="av-nav-brand-copy"><strong>ALVELIONS <b>MC</b></strong><small>BEDROCK SURVIVAL</small></span>
-        </a>
-        <nav class="navbar" aria-label="Navigasi utama">
-            <ul id="navLinks">
-                <li class="active" data-tab="home"><a href="#">ʜᴏᴍᴇ</a></li>
-                <li data-tab="about"><a href="#">ᴀʙᴏᴜᴛ</a></li>
-                <li data-tab="services"><a href="#">ᴄᴏᴍᴍᴜɴɪᴛʏ</a></li>
-                <li data-tab="feature"><a href="#">ғɪᴛᴜʀ</a></li>
-                <li data-tab="contact"><a href="#">ᴄᴏɴᴛᴀᴄᴛ</a></li>
-            </ul>
-        </nav>
-        <div class="av-nav-actions">
-            <button class="av-nav-cta" type="button" onclick="joinServer()"><span aria-hidden="true">⚡</span> MAIN SEKARANG</button>
-            <button class="burger-icon" type="button" onclick="openSideMenu()" aria-label="Buka menu lainnya" title="Menu lainnya"><span></span><span></span><span></span></button>
-        </div>
+<main>
+<section class="hero"><div class="wrap">
+  <div>
+    <span class="pill"><i class="fa-solid fa-gamepad"></i> Minecraft Bedrock Indonesia</span>
+    <h1>Survival, ekonomi, dan faction dalam <em>satu server.</em></h1>
+    <p>Gabung lewat Minecraft Bedrock, ambil starter kit gratis, lalu klaim tanah dan bangun basemu bersama komunitas Indonesia.</p>
+    <div class="acts">
+      <button class="btn btn-gold btn-join" id="joinBtn"><i class="fa-solid fa-bolt bolt-i"></i> JOIN SERVER <i class="fa-solid fa-bolt bolt-i"></i></button>
+      <a class="btn" href="#store"><i class="fa-solid fa-store"></i> Lihat store</a>
     </div>
-    <div class="av-scroll-progress" aria-hidden="true"><span id="avScrollProgressBar"></span></div>
-    
-    <div id="sideMenu" class="side-menu">
-        <span class="close-btn" onclick="closeSideMenu()">&times;</span>
-        <h2 style="padding: 10px 25px; color: var(--primary); text-align: left;">MENU</h2>
-        <a href="register.html" style="color: yellow;" target="_blank">👤 REGISTER</a>
-        <a href="login.html" style="color: yellow;" target="_blank">🔑 LOGIN</a>
-        <a href="https://wa.me/628994491500?text=Halo%20Owner%2C%20saya%20ingin%20klaim%20reward%20promosi%201k%20Money%20In-Game.%0A%0AUsername:%0ABukti%20Promosi:" style="color: #22c55e;" target="_blank">💰 ᴄʟᴀɪᴍ ᴘʀᴏᴍᴏsɪ</a>
-        <div class="bug-desc">1ᴋ ᴍᴏɴᴇʏ ᴘᴇʀ ᴘʀᴏᴍᴏsɪ (ғᴏᴛᴏ, ᴠɪᴅᴇᴏ)</div>
-        <a href="https://wa.me/628994491500?text=Halo%20min%2C%20saya%20ingin%20melaporkan%20bug%20di%20AlvelionsMC.%0A%0A- Nama Bug:%0A- Cara Terjadi:%0A- Bukti:" style="color: var(--danger);" target="_blank">🚩 ʟᴀᴘᴏʀᴋᴀɴ ʙᴜɢ</a>
-        <div class="bug-desc">sᴇᴍᴀᴋɪɴ ʙᴀʜᴀʏᴀ ʙᴜɢ sᴇᴍᴀᴋɪɴ ᴛɪɴɢɢɪ ʜᴀᴅɪᴀʜ ɴʏᴀ</div>
+  </div>
+  <div class="srv" aria-label="Status server">
+    <div class="srv-row">
+      <img class="float" src="assets/alvelions-logo.png" alt="">
+      <div class="srv-info"><b id="sName">ALVELIONS SMP</b><span id="sMeta">Survival · Economy · Faction</span></div>
+      <div class="srv-stat"><b id="sPlayers">--</b><span>pemain<span class="bars" id="bars" title="Waktu respons API pengecek, bukan ping dalam game"><i></i><i></i><i></i><i></i></span></span></div>
     </div>
+    <div class="state" id="state"><span class="dot"></span><span id="stateTxt">Memeriksa status…</span></div>
+    <div class="ip"><code>alvelionssmp.my.id:26714</code><button class="btn" id="copyBtn"><i class="fa-regular fa-copy"></i> Salin</button></div>
+    <p class="note" id="sNote">Status dibaca langsung dari server lewat iceFetch.</p>
+  </div>
+</div></section>
 
-    <div class="container">
-        <div class="av-home-brand"><img class="av-brand-logo av-brand-logo-home" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="148" height="145"><h1 class="brand-title">ALVELIONS MC</h1></div>
-        <span class="welcome-badge">ALVELIONS SURVIVAL MULTIPLAYERS</span>
-        <span class="brand-desc">sᴇʟᴀᴍᴀᴛ ᴅᴀᴛᴀɴɢ ᴅɪ ᴡᴇʙ ᴀʟᴠᴇʟɪᴏɴs ᴍᴄ, sᴇʀᴠᴇʀ ᴇᴄᴏɴᴏᴍʏ-ғᴀᴄᴛɪᴏɴ ᴏɴʟʏ ʙᴇᴅʀᴏᴄᴋ, ᴀʏᴏ ᴊᴏɪɴ ᴅᴀɴ ʀᴀsᴀᴋᴀɴ ғɪᴛᴜʀ ᴍᴇʟɪᴍᴘᴀʜ!</span>
+<section class="sec" id="fitur"><div class="wrap">
+  <h2>Yang bisa kamu lakukan di server</h2>
+  <p class="lead">Fitur utama yang aktif dan bisa langsung dipakai sejak hari pertama.</p>
+  <div class="feat">
+    <div><span class="ic"><i class="fa-solid fa-coins"></i></span><section><h3>Ekonomi server</h3><p>Jual dan beli item dengan mata uang server. Ketik <code>/shop</code> untuk membuka toko.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-shield-halved"></i></span><section><h3>Faction dan perang wilayah</h3><p>Bentuk tim, klaim wilayah, dan pertahankan basemu dari faction lain.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-map-location-dot"></i></span><section><h3>Claim land</h3><p>Beli tanah dengan money in-game, lalu lindungi bangunanmu.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-wand-magic-sparkles"></i></span><section><h3>Tree Capitator, Vein Miner, Harvest Hoe</h3><p>Mempermudah anda dalam menebang, menggali ores, dan memanen tanaman.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-wand-magic-sparkles"></i></span><section><h3>Better Tree, Portable Bases</h3><p>Generate pohon yang diperbagus dan base player yang dapat dipindahkan kemanapun.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-table-cells-large"></i></span><section><h3>Antarmuka custom</h3><p>Menu in-game yang bersih dan mudah dipakai di layar HP. Ketik <code>/menu</code>.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-location-crosshairs"></i></span><section><h3>Teleport dan kembali</h3><p>Ketik <code>/back</code> untuk kembali ke lokasi terakhir kamu mati.</p></section></div>
+  </div>
+</div></section>
 
-        <div id="home" class="tab-content active">
-            <div class="status-panel-wrapper">
-                <div class="status-row-main">
-                    <div class="ip-port-text" onclick="copyIP()" title="Klik untuk Salin IP">alvelionssmp.my.id<span>:</span>26714</div>
-                    <div class="online-indicator">
-                        <span id="status-dot" class="dot"></span>
-                        <span id="status-label" class="online-label">MENGECEK:</span>
-                        <span id="online-count" class="player-count-pill">...</span>
-                    </div>
-                </div>
-                
-                <div class="status-row-perf">
-                    <div class="perf-box">
-                        <span class="perf-icon-svg">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--blue-rank)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path class="signal-bar-anim bar-1" d="M5 20v-3"/>
-                                <path class="signal-bar-anim bar-2" d="M11 20v-8"/>
-                                <path class="signal-bar-anim bar-3" d="M17 20V4"/>
-                            </svg>
-                        </span>
-                        <span class="perf-label" id="perf-ping-label" title="Latensi dari probe jaringan, bukan ping semua pemain">Ping (checker):</span>
-                        <span class="perf-value" id="perf-ping-val">--</span>
-                    </div>
-                    <div class="perf-box">
-                        <span class="perf-icon-svg">
-                            <svg class="gear-spin-anim" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-                            </svg>
-                        </span>
-                        <span class="perf-label" title="Angka simulasi visual, bukan TPS aktual server">TPS :</span>
-                        <span class="perf-value" id="perf-tps-val" title="Angka simulasi yang bergerak di rentang 19.0–20.0 TPS; bukan hasil pengukuran server">19.6</span>
-                    </div>
-                </div>
-                <div id="server-status-detail" role="status" aria-live="polite" style="display:none; margin:6px 4px 0; font-size:10px; line-height:1.4; color:#fbbf24; overflow-wrap:anywhere;"></div>
-            </div>
-            <div style="text-align:center; margin-top:4px; font-size:9px; color:#64748b;">Status via <a href="https://icefetch.tools.kt04.com/" target="_blank" rel="nofollow noopener" style="color:#64748b;">iceFetch NetherNet</a></div>
-            <div class="join-wrapper">
-                <button onclick="joinServer()" class="join-btn">
-                    <span class="lightning">⚡</span>
-                    <span>JOIN SERVER</span>
-                    <span class="lightning">⚡</span>
-                </button>
-            </div>
-            <div class="glass-card" style="margin-top:15px;">
-                <h2>💎 LIST RANK PERMANEN</h2>
-                <div class="rank-grid" id="rankGridContainer">
-                    <div class="loading-text">Memuat list rank dari database...</div>
-                </div>
-                <h2 style="margin-top: 20px;">⏳ LIST RANK PERBULAN</h2>
-                <div class="rank-grid" id="rankMonthlyContainer">
-                    <div class="loading-text">Memuat...</div>
-                </div>
-                <div class="money-info">
-                    <p class="money-price">💰 BUY MONEY: 5K = 1M!</p>
-                    <p class="bonus-text">ʙᴜʏ ʙᴀɴʏᴀᴋ? ʙᴏɴᴜs ᴍᴇʟɪᴍᴘᴀʜ</p>
-                </div>
-                
-                <a href="checkout.html" class="btn btn-split-buy">
-                    <div class="left-side"><span class="buy-text">BELI</span></div>
-                    <div class="right-side">
-                        <div class="divider"></div>
-                        <div class="inner-logos">
-                            <div class="logo-wrapper" title="DANA">
-                                <svg width="52" height="15" viewBox="0 0 120 40" fill="none">
-                                    <circle cx="20" cy="20" r="18" fill="#108EE9"/>
-                                    <path d="M11 20C11 16.5 14.5 14 20 14C25.5 14 29 16.5 29 20C29 23.5 25.5 26 20 26C14.5 26 11 23.5 11 20Z" fill="white"/>
-                                    <path d="M17 19.5L20 16.5L23 19.5" stroke="#108EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <text x="44" y="27" fill="#108EE9" font-family="'Inter', sans-serif" font-weight="900" font-size="22" letter-spacing="0.5">DANA</text>
-                                </svg>
-                            </div>
-                            <div class="logo-wrapper" title="QRIS">
-                                <svg width="45" height="15" viewBox="0 0 80 25" fill="none">
-                                    <text x="2" y="21" fill="#E61C24" font-family="'Inter', sans-serif" font-weight="900" font-size="23" font-style="italic" letter-spacing="0.5">QR</text>
-                                    <text x="36" y="21" fill="#1A2B56" font-family="'Inter', sans-serif" font-weight="900" font-size="23" font-style="italic" letter-spacing="0.5">IS</text>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
+<section class="sec" id="store"><div class="wrap">
+  <h2>Store</h2>
+  <p class="lead">Rank dan item dibeli lewat checkout. Pesanan diproses admin setelah pembayaran terverifikasi.</p>
+  <div id="storeBody"><p class="empty">Memuat produk…</p></div>
+  <div class="buy">
+    <p><strong>Beli money: Rp5.000 = 1M.</strong> Bayar dengan DANA atau QRIS. Beli banyak, dapat bonus.</p>
+    <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="store.html">Semua produk</a><a class="btn btn-gold" href="checkout.html">Ke checkout</a></span>
+  </div>
+</div></section>
 
-            <div class="glass-card">
-                <h2>📜 RULES </h2>
-                <div class="rule-item">- NO SARA / RASIS</div>
-                <div class="rule-item">- NO 18+ (SEMACAMNYA)</div>
-                <div class="rule-item">- NO SPAM / SEMACAMNYA</div>
-                <div class="rule-item">- SALING HARGAI & HORMATI SESAMA MEMBER</div>
-            </div>
-        </div>
+<section class="sec" id="join"><div class="wrap">
+  <h2>Cara join</h2>
+  <p class="lead">Empat langkah dari instalasi sampai punya base sendiri.</p>
+  <ol class="steps">
+    <li><h3>Tambah server</h3><p>Tekan tombol di atas, atau tambahkan manual: <code>alvelionssmp.my.id</code> port <code>26714</code>.</p></li>
+    <li><h3>Ambil hadiah awal</h3><p>Di lobby: NPC Starter Kit, Daily Reward, dan Redeem Code dengan kode <code>ALVELIONS</code>.</p></li>
+    <li><h3>Mulai membangun</h3><p>Ketik <code>/rtp</code> untuk teleport ke luar zona aman, lalu dirikan basemu.</p></li>
+    <li><h3>Cari money</h3><p>Bertani, ikut quest, jual hasil ke <code>/shop</code> atau merchant, atau buka jasa untuk pemain lain.</p></li>
+  </ol>
+</div></section>
 
-        <div id="about" class="tab-content">
-            <div class="glass-card about-card">
-                <div class="about-section-title">
-                    PANDUAN JOIN SERVER
-                </div>
-                <div class="guide-container">
-                    <p class="guide-welcome">Ikuti langkah dasar berikut untuk memulai petualangan di ALVELIONS MC:</p>
-                    <div class="guide-item">
-                        <div class="guide-header">1. Langkah Awal &amp; Hadiah Gratis</div>
-                        <ul class="guide-sublist">
-                            <li><strong>Starter Kit:</strong> Ambil perlengkapan awal kamu gratis pada npc starter kits di lobby.</li>
-                            <li><strong>Hadiah Harian:</strong> Dapatkan modal tambahan setiap hari pada npc daily reward .</li>
-                            <li><strong>Reedem Code</strong> Masukin code ALVELIONS pada npc Redeem Code di lobby.</li>
-                        </ul>
-                    </div>
-
-                    <div class="guide-item">
-                        <div class="guide-header">2. Mulai Petualangan</div>
-                        <ul class="guide-sublist">
-                            <li><strong>Random Teleport:</strong> Langsung berteleportasi ke luar wilayah aman untuk membangun base dengan command <code>/rtp</code>.</li>
-                            <li><strong>Menu Member:</strong> Membuka menu member dengan command <code>/menu</code>.</li>
-                        </ul>
-                    </div>
-
-                    <div class="guide-item">
-                        <div class="guide-header">3. Cara Cari Duit (Money)</div>
-                        <ul class="guide-sublist">
-                            <li>Membuka jasa ekonomi atau menjual hasil grinding ke player lain.</li>
-                            <li>Mengambil Quest dan Melakukan aktivitas bertani, berkebun, dan mengelola hasil lahan peternakan.</li>
-                            <li>Menjual item ke /shop atau merchant</li>
-                            <li>Mengambil kode reedem di saluran wa</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="services" class="tab-content">
-            <div class="glass-card">
-                <h2 style="color: var(--primary);">🌐 KOMUNITAS KAMI</h2>
-                <div class="community-grid">
-                    <a href="https://discord.com/invite/YDxcMPjXMV" class="com-box discord">
-                        <div class="com-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.103 18.055a.07.07 0 0 0 .026.046c1.37 1.01 2.68 1.624 3.96 2.03a.07.07 0 0 0 .079-.037c.453-.774.86-1.59 1.213-2.434a.07.07 0 0 0-.037-.096c-1.125-.42-2.182-.94-3.21-1.56a.07.07 0 0 1-.006-.118c.214-.158.428-.323.639-.488a.07.07 0 0 1 .075-.008c3.74 1.71 7.8 1.71 11.516 0a.07.07 0 0 1 .075.008c.21.165.425.33.64.488a.07.07 0 0 1-.006.118c-1.028.62-2.085 1.14-3.21 1.56a.07.07 0 0 0-.037.096c.353.844.76 1.66 1.213 2.434a.07.07 0 0 0 .079.037c1.28-.406 2.59-1.02 3.96-2.03a.07.07 0 0 0 .026-.046c.55-5.757-.96-10.744-4.354-13.658a.068.068 0 0 0-.032-.027zM8.02 15.332c-1.18 0-2.158-1.085-2.158-2.418 0-1.333.955-2.418 2.158-2.418 1.21 0 2.183 1.097 2.158 2.418 0 1.333-.956 2.418-2.158 2.418zm7.96 0c-1.18 0-2.158-1.085-2.158-2.418 0-1.333.955-2.418 2.158-2.418 1.21 0 2.183 1.097 2.158 2.418 0 1.333-.956 2.418-2.158 2.418z"/>
-                            </svg>
-                        </div>
-                        <div class="com-info">
-                            <span class="com-title">DISCORD</span>
-                            <span class="com-sub">Official Server</span>
-                        </div>
-                    </a>
-                
-                    <a href="https://bit.ly/alvelionsgrups" class="com-box whatsapp" target="_blank">
-                        <div class="com-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.11.55 4.168 1.595 5.973L.124 23.336l5.579-1.458C7.439 22.957 9.445 23.47 12 23.47c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.713c-1.84 0-3.645-.494-5.215-1.427l-.374-.222-3.873 1.012 1.033-3.774-.243-.383C2.33 15.684 1.8 13.882 1.8 12c0-5.632 4.581-10.213 10.213-10.213 5.632 0 10.213 4.581 10.213 10.213 0 5.632-4.581 10.213-10.213 10.213z"/>
-                            </svg>
-                        </div>
-                        <div class="com-info">
-                            <span class="com-title">WHATSAPP</span>
-                            <span class="com-sub">Group Member</span>
-                        </div>
-                    </a>
-                
-                    <a href="https://www.tiktok.com/@alvelionsmc" class="com-box tiktok">
-                        <div class="com-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.78 0 2.89 2.89 0 0 1 2.89-2.89h.88V9.12a6.33 6.33 0 1 0 6.33 6.33V8.47a7.65 7.65 0 0 0 3.77 1.05z"/>
-                            </svg>
-                        </div>
-                        <div class="com-info">
-                            <span class="com-title">TIKTOK</span>
-                            <span class="com-sub">Follow Us</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Tambahan jika ingin ada link khusus komunitas -->
-                <div style="text-align: center; margin-top: 20px;">
-                    <p style="font-size: 0.65rem; color: #94a3b8;">Bergabunglah dengan komunitas kami untuk mendapatkan update terbaru, event server, dan giveaway menarik setiap minggunya!</p>
-                </div>
-            </div>
-        </div>
-        <div id="feature" class="tab-content">
-            <div class="glass-card">
-                <h2>🚀 FITUR UNGGULAN SERVER</h2>
-                <div class="feature-item">
-                    <div class="feature-name">💰 Real Economy System</div>
-                    <div class="feature-desc">Sistem jual beli item stabil menggunakan mata uang server yang terintegrasi penuh. Ketik /shop maka membuka shop.</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name">⚔️ Faction Claims & Wars</div>
-                    <div class="feature-desc">Buat tim terkuatmu, klaim wilayah kekuasaan, dan hancurkan base musuh!</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name"> 👺 Weapon, Armors, Magic, Wings, & Structures</div>
-                    <div class="feature-desc">Berpetualangan baru menjadi seru dan jadilah yang terkuat di server.</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name">🎨 Custom Cyber UI</div>
-                    <div class="feature-desc">Tampilan layout interface in-game modern yang bersih dan responsif.</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name">🏝️ Claim Land</div>
-                    <div class="feature-desc">
-                        Beli dengan Money In-Game lalu klaim wilayah yang diinginkan.
-                    </div>
-                
-                    <div class="youtube-tutorial">
-                        <div class="feature-name">📺 Tutorial Claim Land</div>
-                        <iframe
-                            src="https://www.youtube.com/embed/VS0hi_VBVak"
-                            title="Tutorial Claim Land AlvelionsMC"
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name">💀 Back To Last Death</div>
-                    <div class="feature-desc">Ketik /back maka akan di teleport ke tempat terakhir mati.</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-name">🧑 Teleport Players</div>
-                    <div class="feature-desc">Ketik /tpa maka mengirim request teleport ke tempat players tersebut.</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="contact" class="tab-content">
-            <div class="glass-card">
-                <h2 class="staff-header">📞 STAFF CONTACT</h2>
-                <p class="staff-desc">Butuh bantuan premium, konfirmasi pembayaran, atau urusan mendesak lainnya? Hubungi kontak resmi staff ALVELIONS di bawah ini.</p>
-        
-                <div class="staff-contact-card">
-                    <div class="staff-left">
-                        <div class="avatar-circle" style="background:#ff4757; color:#fff;">A</div>
-                        <div class="staff-meta">
-                            <h4>Andka670</h4>
-                            <p style="color:#ff4757;">OWNER</p>
-                        </div>
-                    </div>
-                    <a href="https://wa.me/628994491500" class="wa-btn">💚 0899-4491-500</a>
-                </div>
-        
-                <div class="staff-contact-card">
-                    <div class="staff-left">
-                        <div class="avatar-circle" style="background:#ee00ff; color:#fff;">Z</div>
-                        <div class="staff-meta">
-                            <h4>ZithoCraft44</h4>
-                            <p style="color:#ee00ff;">ADMIN</p>
-                        </div>
-                    </div>
-                    <a href="https://wa.me/6285814575192" class="wa-btn">💚 0858-1457-5192</a>
-                </div>
-        
-                <div class="warning-box">
-                    <p class="warning-text">⚠️ <b>PENTING:</b> Transaksi atau konfirmasi keuangan resmi hanya dilayani via WhatsApp <b>Andka670 (Owner)</b>. Jangan melakukan transaksi di luar kontak yang tertera demi keamanan data Anda!</p>
-                </div>
-            </div>
-        </div>
-        <div class="small-links-container">
-            <a href="#" class="small-link" onclick="openModal('syarat')">Syarat & Ketentuan</a>
-            <a href="#" class="small-link" onclick="openModal('kebijakan')">Kebijakan Privasi</a>
-        </div>
-
-        <footer>&copy; 2026 ALVELIONS MC ALL RIGHTS RESERVED.</footer>
+<section class="sec" id="komunitas"><div class="wrap cols">
+  <div>
+    <h2>Komunitas dan bantuan</h2>
+    <p class="lead">Tanya admin, cari tim, atau laporkan masalah.</p>
+    <div class="links">
+      <a href="https://discord.com/invite/YDxcMPjXMV" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i>Discord <span>Ngobrol dan cari faction</span></a>
+      <a href="https://bit.ly/alvelionsgrups" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>Grup WhatsApp <span>Info dan kode redeem</span></a>
+      <a href="https://www.tiktok.com/@alvelionsmc" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i>TikTok <span>Konten server</span></a>
+      <a href="https://wa.me/628994491500" target="_blank" rel="noopener"><i class="fa-solid fa-crown"></i>Owner <span>0899-4491-500</span></a>
+      <a href="https://wa.me/6285814575192" target="_blank" rel="noopener"><i class="fa-solid fa-user-shield"></i>Admin <span>0858-1457-5192</span></a>
+      <a href="https://wa.me/628994491500?text=Halo%20min%2C%20saya%20ingin%20melaporkan%20bug%20di%20AlvelionsMC.%0A%0A-%20Nama%20Bug%3A%0A-%20Cara%20Terjadi%3A%0A-%20Bukti%3A" target="_blank" rel="noopener"><i class="fa-solid fa-bug"></i>Laporkan bug <span>Lewat WhatsApp</span></a>
     </div>
+  </div>
+  <div>
+    <h2>Aturan server</h2>
+    <p class="lead">Berlaku untuk semua pemain tanpa terkecuali.</p>
+    <ul class="rules">
+      <li><i class="fa-solid fa-ban"></i><span>Tidak boleh SARA atau rasisme.</span></li>
+      <li><i class="fa-solid fa-ban"></i><span>Tidak boleh konten 18+ dan sejenisnya.</span></li>
+      <li><i class="fa-solid fa-ban"></i><span>Tidak boleh spam dan sejenisnya.</span></li>
+      <li><i class="fa-solid fa-handshake"></i><span>Saling menghargai sesama member.</span></li>
+    </ul>
+  </div>
+</div></section>
+</main>
 
-    <div id="infoModal" class="modal">
-        <div class="modal-c">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle">RANK DETAIL</h2>
-            <ul class="b-list" id="modalList"></ul>
-        </div>
-    </div>
+<footer><div class="wrap">
+  <span>© <span id="yr"></span> ALVELIONS MC. Bukan produk resmi Minecraft dan tidak berafiliasi dengan Mojang atau Microsoft.</span>
+  <span><button data-info="syarat">Syarat dan ketentuan</button> · <button data-info="privasi">Kebijakan privasi</button></span>
+</div></footer>
 
-    <div id="toast" class="toast">IP Server berhasil disalin!</div>
+<dialog id="dlg"><h3 id="dT"></h3><p id="dB"></p><button class="btn" id="dClose">Tutup</button><a class="btn btn-gold" id="dBuy" href="checkout.html" hidden>Beli di checkout</a></dialog>
+<div class="toast" id="toast" role="status">IP server disalin</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/bedrock-status.js?v=icefetch-1"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/bedrock-status.js?v=icefetch-1"></script>
 <script>
-    // --- TAB NAVIGATION ---
-    const tabs = document.querySelectorAll('#navLinks li');
-    const contents = document.querySelectorAll('.tab-content');
+const $=id=>document.getElementById(id), ADDR="alvelionssmp.my.id:26714";
+function setT(t,save){const r=document.documentElement,b=$("themeBtn");r.setAttribute("data-theme",t);b.innerHTML='<i class="fa-solid fa-'+(t==="dark"?"sun":"moon")+'"></i>';b.setAttribute("aria-label",t==="dark"?"Ganti ke tema siang":"Ganti ke tema malam");if(save)try{localStorage.setItem("alvelions-theme-override-v5",JSON.stringify({theme:t,until:Date.now()+12*36e5}))}catch(e){}}
+setT(document.documentElement.getAttribute("data-theme"),false);
+$("themeBtn").onclick=()=>setT(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark",true);
+addEventListener("scroll",()=>{const e=document.documentElement;$("prog").style.width=(scrollY/Math.max(1,e.scrollHeight-innerHeight)*100)+"%"},{passive:true});
+$("yr").textContent=new Date().getFullYear();
+$("menuBtn").onclick=e=>{const o=$("nav").classList.toggle("open");e.currentTarget.setAttribute("aria-expanded",o)};
+$("nav").onclick=e=>{if(e.target.tagName==="A")$("nav").classList.remove("open")};
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+function toast(){const t=$("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+$("copyBtn").onclick=()=>{navigator.clipboard.writeText(ADDR).then(toast)};
+$("joinBtn").onclick=()=>{navigator.clipboard.writeText(ADDR).catch(()=>{});location.href="minecraft://?addExternalServer=ALVELIONS SMP|"+ADDR};
 
-            const targetTab = tab.getAttribute('data-tab');
-            contents.forEach(content => {
-                if(content.getAttribute('id') === targetTab) {
-                    content.classList.add('active');
-                } else {
-                    content.classList.remove('active');
-                }
-            });
-        });
-    });
+const INFO={syarat:["Syarat dan ketentuan","Donasi bersifat sukarela.\nItem atau rank diproses setelah pembayaran terverifikasi.\nTidak ada refund uang."],
+privasi:["Kebijakan privasi","Gamertag, nomor HP, dan data transaksi hanya dipakai untuk memproses pesanan in-game.\nData tidak dibagikan ke pihak lain."]};
+function openDlg(t,b,buy){$("dT").textContent=t;$("dB").textContent=b;$("dBuy").hidden=!buy;$("dlg").showModal()}
+$("dClose").onclick=()=>$("dlg").close();
+document.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>openDlg(...INFO[b.dataset.info]));
 
-    // --- SIDEBAR MENU ---
-    function openSideMenu() { document.getElementById('sideMenu').style.width = '250px'; }
-    function closeSideMenu() { document.getElementById('sideMenu').style.width = '0'; }
+/* Status server: hanya data nyata dari checker, tanpa angka simulasi */
+(async()=>{
+  const st=$("state"),tx=$("stateTxt");
+  try{
+    const d=await AlvelionsBedrockStatus.check();
+    const v=String(d.verdict||"").toLowerCase();
+    if(AlvelionsBedrockStatus.isCurrent(d)&&v==="online"){
+      st.className="state ok";tx.textContent="Online"+(d.version?" · Bedrock "+d.version:"");
+      const p=d.players||{};$("sPlayers").textContent=Number.isFinite(p.online)?(p.max?p.online+"/"+p.max:p.online):"--";
+      if(d.name)$("sName").textContent=d.name;
+      const ms=d.latencyMs,lit=ms<150?4:ms<300?3:ms<600?2:1;
+      document.querySelectorAll("#bars i").forEach((b,i)=>b.classList.toggle("on",i<lit));
+      $("sNote").textContent="Respons pengecek "+ms+" ms. Ini bukan ping dalam game.";
+    }else if(v==="offline"){st.className="state bad";tx.textContent="Offline";$("sPlayers").textContent="0"}
+    else{tx.textContent="Status belum dapat dipastikan";$("sNote").textContent="Server tetap bisa dicoba lewat tombol di atas."}
+  }catch(e){tx.textContent="Gagal memeriksa status";$("sNote").textContent="Pemeriksaan gagal, bukan berarti server offline."}
+})();
 
-    // --- COPY IP TOAST ---
-    function copyIP() {
-        navigator.clipboard.writeText("alvelionssmp.my.id:26714");
-        const toast = document.getElementById("toast");
-        toast.classList.add("show");
-        setTimeout(() => { toast.classList.remove("show"); }, 2000);
-    }
+/* Store dari tabel products (teks lewat textContent, aman dari injeksi) */
+(async()=>{
+  const body=$("storeBody"),rp=n=>"Rp"+(Number(n)||0).toLocaleString("id-ID");
+  try{
+    const {data,error}=await supabaseClient.from("products").select("id,name,description,price");
+    if(error)throw error;
+    const g={perm:[],bulan:[],lain:[]};
+    (data||[]).slice().sort((a,b)=>a.price-b.price).forEach(p=>{
+      const n=(p.name||"").toLowerCase();
+      (n.includes("/monthly")?g.bulan:n.includes("rank")?g.perm:g.lain).push(p)});
+    body.textContent="";
+    [["Rank permanen",g.perm],["Rank bulanan",g.bulan],["Item lainnya",g.lain]].forEach(([t,l])=>{
+      if(!l.length)return;
+      const h=document.createElement("h3");h.className="tier-t";h.textContent=t;
+      const w=document.createElement("div");w.className="tier";
+      l.forEach(p=>{
+        const b=document.createElement("button");b.className="item";
+        const nm=document.createElement("b");nm.textContent=(p.name||"").replace(/\s*\/monthly/i,"");
+        const pr=document.createElement("span");pr.textContent=rp(p.price);
+        b.append(nm,pr);b.onclick=()=>{$("dBuy").href="checkout.html?add="+encodeURIComponent(p.id);openDlg(nm.textContent+" · "+rp(p.price),p.description||"Belum ada deskripsi.",true)};
+        w.appendChild(b)});
+      body.append(h,w)});
+    if(!body.children.length)body.innerHTML='<p class="empty">Belum ada produk yang dijual.</p>';
+  }catch(e){body.innerHTML='<p class="empty">Produk gagal dimuat. Muat ulang halaman, atau hubungi admin lewat WhatsApp.</p>'}
+})();
 
-    // --- GENERAL POPUP MODAL FUNCTION ---
-    function openModal(type) {
-        const modal = document.getElementById("infoModal");
-        const title = document.getElementById("modalTitle");
-        const list = document.getElementById("modalList");
-        list.innerHTML = "";
-        modal.style.display = "flex";
-
-        if (type === 'syarat') {
-            title.textContent = "SYARAT & KETENTUAN";
-            list.innerHTML = "<li>Segala bentuk donasi bersifat sukarela.</li><li>Item/Rank diproses setelah mutasi payment valid.</li><li>Tidak ada refund uang kembali.</li>";
-        } else if (type === 'kebijakan') {
-            title.textContent = "KEBIJAKAN PRIVASI";
-            list.innerHTML = "<li>Data akun gamertag, nomor HP, dan transaksi Anda dijamin aman.</li><li>Kami menggunakan data untuk validasi sistem order in-game secara berkala.</li>";
-        }
-    }
-
-    // --- FUNGSI MODAL DETAIL PRODUK ---
-    function openProductModal(product) {
-        const modal = document.getElementById("infoModal");
-        const title = document.getElementById("modalTitle");
-        const list = document.getElementById("modalList");
-    
-        title.textContent = product.name;
-        list.innerHTML = `
-            <li><strong>Harga:</strong> Rp ${product.price.toLocaleString()}</li>
-            <li><strong>Deskripsi:</strong><br>${product.description || 'Tidak ada deskripsi'}</li>
-            <li><strong>Status:</strong> Tersedia</li>
-        `;
-    
-        modal.style.display = "flex";
-    }
-
-    function closeModal() { document.getElementById("infoModal").style.display = "none"; }
-
-    /* ========================================================
-        🔥 DYNAMIC LOAD PRODUCTS FROM SUPABASE DATABASE
-    ======================================================== */
-    async function loadProducts() {
-        const permContainer = document.getElementById("rankGridContainer");
-        const monthContainer = document.getElementById("rankMonthlyContainer");
-    
-        if (!permContainer || !monthContainer) {
-            console.error("Container rank tidak ditemukan.");
-            return;
-        }
-    
-        const client =
-            window.supabaseClient ||
-            window.supabase ||
-            (typeof supabaseClient !== "undefined" ? supabaseClient : null);
-    
-        if (!client) {
-            permContainer.innerHTML =
-                '<div class="loading-text">Supabase belum terhubung.</div>';
-            monthContainer.innerHTML =
-                '<div class="loading-text">Supabase belum terhubung.</div>';
-            return;
-        }
-    
-        try {
-            const { data: products, error } = await client
-                .from("products")
-                .select("id, name, description, price");
-    
-            if (error) throw error;
-    
-            permContainer.innerHTML = "";
-            monthContainer.innerHTML = "";
-    
-            // Sort locally so a database ordering/schema issue does not hide the products.
-            (products || [])
-                .slice()
-                .sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0))
-                .forEach(product => {
-                const div = document.createElement("div");
-                div.className = "rank-box";
-    
-                div.innerHTML = `
-                    <span class="rank-n">${product.name}</span>
-                    <span class="rank-p">Rp ${(product.price || 0).toLocaleString("id-ID")}</span>
-                `;
-    
-                div.onclick = () => openProductModal(product);
-    
-                const name = (product.name || "").toLowerCase();
-    
-                // Rank bulanan
-                if (name.includes("/monthly")) {
-                    monthContainer.appendChild(div);
-                }
-                // Rank permanen
-                else if (name.includes("rank")) {
-                    permContainer.appendChild(div);
-                }
-            });
-    
-            if (!permContainer.children.length) {
-                permContainer.innerHTML =
-                    '<div class="loading-text">Tidak ada rank permanen.</div>';
-            }
-    
-            if (!monthContainer.children.length) {
-                monthContainer.innerHTML =
-                    '<div class="loading-text">Tidak ada rank bulanan.</div>';
-            }
-    
-        } catch (err) {
-            console.error("Gagal memuat daftar rank dari Supabase:", err);
-            const rawMessage = String(err?.message || err || "Kesalahan tidak diketahui");
-            const safeMessage = rawMessage.replace(/[&<>"']/g, ch => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-            })[ch]);
-            const message = `Gagal memuat data: ${safeMessage}`;
-            permContainer.innerHTML = `<div class="loading-text">${message}</div>`;
-            monthContainer.innerHTML = `<div class="loading-text">${message}</div>`;
-        }
-    }
-    
-    window.addEventListener("DOMContentLoaded", loadProducts);
-
-    /* ==========================================
-    TPS DISPLAY SIMULATION
-    Angka ini hanya animasi tampilan, bukan telemetry TPS aktual server.
-    ========================================== */
-    function startTpsSimulation(element) {
-        if (!element || element.dataset.tpsSimulationStarted === "1") return;
-        element.dataset.tpsSimulationStarted = "1";
-        element.title = "Angka simulasi 19.0–20.0 TPS; bukan pembacaan aktual server.";
-        let value = 19.6;
-        let direction = Math.random() < 0.5 ? -1 : 1;
-        element.textContent = value.toFixed(1);
-
-        const tick = () => {
-            // Occasionally reverse direction so the displayed number gently rises and falls.
-            if (Math.random() < 0.34) direction *= -1;
-            value += direction * (0.1 + Math.random() * 0.2);
-            if (value >= 20.0) { value = 20.0; direction = -1; }
-            if (value <= 19.0) { value = 19.0; direction = 1; }
-            element.textContent = value.toFixed(1);
-            window.setTimeout(tick, 1200 + Math.random() * 1500);
-        };
-        window.setTimeout(tick, 1000 + Math.random() * 700);
-    }
-
-    /* ==========================================
-    BEDROCK SERVER STATUS LIVE
-    ========================================== */
-    async function updateServerStatus() {
-        const onlineCount = document.getElementById("online-count");
-        const statusDot = document.getElementById("status-dot");
-        const statusLabel = document.getElementById("status-label");
-        const pingVal = document.getElementById("perf-ping-val");
-        const tpsVal = document.getElementById("perf-tps-val");
-        const statusDetail = document.getElementById("server-status-detail");
-        const pingLabel = document.getElementById("perf-ping-label");
-        if (pingLabel) {
-            const jakartaConfigured = Boolean(window.AlvelionsBedrockStatus?.checkerUrl);
-            pingLabel.textContent = "RTT checker:";
-            pingLabel.title = "Waktu respons browser ke API iceFetch; bukan ping dalam game atau ping pemain.";
-        }
-        if (!onlineCount || !statusDot || !statusLabel || !pingVal || !tpsVal) return;
-
-        const setDetail = (message, visible = false) => {
-            if (!statusDetail) return;
-            statusDetail.textContent = message || "";
-            statusDetail.style.display = visible && message ? "block" : "none";
-        };
-        const setStatus = (label, color, online = false) => {
-            statusLabel.textContent = `${label}:`;
-            statusLabel.style.color = color;
-            statusDot.classList.toggle("dot-online", online);
-            statusDot.style.backgroundColor = online ? "var(--online-green)" : color;
-        };
-
-        setStatus("MENGECEK", "#f59e0b");
-        onlineCount.textContent = "...";
-        pingVal.textContent = "...";
-        // Animated display only; checker API does not provide actual server TPS.
-        startTpsSimulation(tpsVal);
-        setDetail("Memeriksa status server...", false);
-        statusLabel.title = "";
-
-        try {
-            if (!window.AlvelionsBedrockStatus) throw new Error("Modul status server belum termuat.");
-            const data = await window.AlvelionsBedrockStatus.check();
-            const current = window.AlvelionsBedrockStatus.isCurrent(data);
-            const verdict = String(data?.verdict || data?.status || "unknown").toLowerCase();
-            const latencyValue = data?.latencyMs ?? data?.latency;
-            const latency = latencyValue === null || latencyValue === undefined || latencyValue === ""
-                ? NaN : Number(latencyValue);
-
-            // Latency is useful checker evidence even when the verdict is Unknown.
-            pingVal.textContent = Number.isFinite(latency) && latency >= 0
-                ? `${Math.round(latency)} ms` : "--";
-
-            if (current && verdict === "online") {
-                setStatus("ONLINE", "#22c55e", true);
-                const players = data.players || {};
-                onlineCount.textContent = Number.isFinite(players.online) ? String(players.online) : "--";
-            } else if (current && verdict === "offline") {
-                setStatus("OFFLINE", "#ef4444");
-                onlineCount.textContent = "0";
-            } else {
-                const evidence = String(data?.evidenceCode || data?.unknownReason || data?.freshnessReason || data?.reason || data?.message || "").trim();
-                const freshness = String(data?.freshness || "tidak dilaporkan").toLowerCase();
-                const method = String(data?.method || "NetherNet HTTP /v1/join via iceFetch");
-                const targetAddress = window.AlvelionsBedrockStatus?.address || "alvelionssmp.my.id:26714";
-                const targetPort = targetAddress.slice(targetAddress.lastIndexOf(":") + 1);
-                const reason = evidence || (current
-                    ? `API mengembalikan verdict "unknown" tanpa kode alasan (freshness: ${freshness}; metode: ${method}). Pastikan port UDP ${targetPort} adalah port Bedrock publik yang benar dan dapat dijangkau checker.`
-                    : `Hasil pemeriksaan kedaluwarsa atau tidak lengkap (freshness: ${freshness}); perlu observasi baru.`);
-                setStatus(current ? "TIDAK TERDETEKSI" : "DATA KEDALUWARSA", "#f59e0b");
-                onlineCount.textContent = "--";
-                statusLabel.title = reason;
-                setDetail(`Status belum dapat dipastikan: ${reason}`, true);
-            }
-            if (current && (verdict === "online" || verdict === "offline")) setDetail("", false);
-        } catch (err) {
-            console.error("Status server Bedrock gagal diperiksa:", err);
-            const message = err?.message || "Kesalahan tidak diketahui";
-            setStatus("GAGAL CEK", "#f59e0b");
-            statusLabel.title = message;
-            onlineCount.textContent = "--";
-            pingVal.textContent = "--";
-            setDetail(`Pengecekan gagal: ${message}. Checker memakai NetherNet HTTP /v1/join; kegagalan checker tidak otomatis berarti server offline.`, true);
-        }
-    }
-
-    // Refresh tampilan; modul bersama mencegah probe ulang selama data masih fresh.
-    updateServerStatus();
-    setInterval(updateServerStatus, 300000);
-
-    function joinServer() {
-        navigator.clipboard.writeText("alvelionssmp.my.id:26714");
-    
-        window.location.href =
-            "minecraft://?addExternalServer=ALVELIONS SMP|alvelionssmp.my.id:26714";
-    }
+/* Tombol akun: ke dashboard/admin bila sudah login */
+(async()=>{
+  try{
+    const {data:{session}}=await supabaseClient.auth.getSession();if(!session)return;
+    const {data:p}=await supabaseClient.from("users_profile").select("role").eq("id",session.user.id).maybeSingle();
+    const a=$("acctBtn");a.href=p&&p.role==="admin"?"admin.html":"dashboard.html";a.textContent=p&&p.role==="admin"?"Panel admin":"Dashboard";
+    const m=document.querySelector('.nav a[href="login.html"]');if(m){m.href=a.href;m.textContent=a.textContent}
+  }catch(e){}
+})();
 </script>
-    <script src="js/desktop-navbar.js?v=reference-bar-v1"></script>
-    <script src="js/theme-toggle.js?v=theme-fab-left-v1"></script>
-    <script src="js/atmosphere-effects.js?v=home-cinematic-v3"></script>
+<script src="js/atmosphere-effects.js"></script>
 </body>
 </html>
