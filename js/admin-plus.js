@@ -44,7 +44,7 @@ window.admUser=u=>{const mine=D.G.filter(g=>g.user===u.username),done=mine.filte
   if(error)return toast("Gagal: "+error.message+". Periksa RLS users_profile.",1);du.close();toast("Role diperbarui");admReload()};
  const x=el("button","btn sm","Tutup");x.onclick=()=>du.close();a.append(r,x);du.append(a);du.showModal()};
 /* pencarian global */
-const pal=el("dialog","pal"),pi=el("input","inp"),pl=el("div");pi.placeholder="Cari invoice, pengguna, atau produk…";pi.setAttribute("aria-label","Pencarian global");pal.append(pi,pl);document.body.append(pal);
+const pal=el("dialog","pal"),pi=el("input","inp"),pl=el("div");pi.placeholder="Cari invoice, pengguna, atau produk…";pi.setAttribute("aria-label","Pencarian global");const pt=el("div","pal-top"),px=el("button","pal-x");px.type="button";px.setAttribute("aria-label","Tutup pencarian");px.title="Tutup";px.append(el("i","fa-solid fa-xmark"));px.onclick=()=>pal.close();pt.append(pi,px);pal.append(pt,pl);document.body.append(pal);
 const go=(p,i,v)=>{location.hash=p;if(i==="oq")$("os").value="all";const x=$(i);x.value=v;x.dispatchEvent(new Event("input"))};
 pi.oninput=()=>{const q=pi.value.trim().toLowerCase(),h=[];pl.textContent="";if(!q)return;
  D.G.forEach(g=>[g.inv,g.user,g.gt,g.ref].join(" ").toLowerCase().includes(q)&&h.push(["fa-receipt","Pesanan "+g.inv.replace("INV-","#"),(g.user||"-")+" · "+rp(g.total),()=>go("orders","oq",g.inv)]));
