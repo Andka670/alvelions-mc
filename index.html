@@ -55,7 +55,7 @@
   <div class="feat">
     <div><span class="ic"><i class="fa-solid fa-coins"></i></span><section><h3>Ekonomi server</h3><p>Jual dan beli item dengan mata uang server. Ketik <code>/shop</code> untuk membuka toko.</p></section></div>
     <div><span class="ic"><i class="fa-solid fa-shield-halved"></i></span><section><h3>Faction dan perang wilayah</h3><p>Bentuk tim, klaim wilayah, dan pertahankan basemu dari faction lain.</p></section></div>
-    <div><span class="ic"><i class="fa-solid fa-map-location-dot"></i></span><section><h3>Claim land</h3><p>Beli tanah dengan money in-game, lalu lindungi bangunanmu.</p></section></div>
+    <div><span class="ic"><i class="fa-solid fa-map-location-dot"></i></span><section><h3>Claim land</h3><p>Beli tanah dengan money in-game, lalu lindungi bangunanmu.</p><button type="button" class="btn vid-btn" id="claimVidBtn"><i class="fa-brands fa-youtube"></i> Tonton tutorial</button></section></div>
     <div><span class="ic"><i class="fa-solid fa-wand-magic-sparkles"></i></span><section><h3>Tree Capitator, Vein Miner, Harvest Hoe</h3><p>Mempermudah anda dalam menebang, menggali ores, dan memanen tanaman.</p></section></div>
     <div><span class="ic"><i class="fa-solid fa-wand-magic-sparkles"></i></span><section><h3>Better Tree, Portable Bases</h3><p>Generate pohon yang diperbagus dan base player yang dapat dipindahkan kemanapun.</p></section></div>
     <div><span class="ic"><i class="fa-solid fa-table-cells-large"></i></span><section><h3>Antarmuka custom</h3><p>Menu in-game yang bersih dan mudah dipakai di layar HP. Ketik <code>/menu</code>.</p></section></div>
@@ -116,6 +116,7 @@
 </div></footer>
 
 <dialog id="dlg"><h3 id="dT"></h3><p id="dB"></p><button class="btn" id="dClose">Tutup</button><a class="btn btn-gold" id="dBuy" href="checkout.html" hidden>Beli di checkout</a></dialog>
+<dialog id="vidDlg" class="vid-dlg" aria-label="Tutorial claim land"><h3>Tutorial claim land</h3><div class="vid-frame" id="vidFrame"></div><div class="vid-act"><a class="btn" href="https://youtu.be/VS0hi_VBVak" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i> Buka di YouTube</a><button class="btn" id="vidClose">Tutup</button></div></dialog>
 <div class="toast" id="toast" role="status">IP server disalin</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -140,6 +141,22 @@ privasi:["Kebijakan privasi","Gamertag, nomor HP, dan data transaksi hanya dipak
 function openDlg(t,b,buy){$("dT").textContent=t;$("dB").textContent=b;$("dBuy").hidden=!buy;$("dlg").showModal()}
 $("dClose").onclick=()=>$("dlg").close();
 document.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>openDlg(...INFO[b.dataset.info]));
+
+/* Video tutorial claim land: iframe dimuat hanya saat dibuka */
+(function(){
+  const d=$("vidDlg"),f=$("vidFrame");
+  $("claimVidBtn").onclick=()=>{
+    const i=document.createElement("iframe");
+    i.src="https://www.youtube-nocookie.com/embed/VS0hi_VBVak?rel=0";
+    i.title="Tutorial claim land";i.allowFullscreen=true;
+    i.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    i.referrerPolicy="strict-origin-when-cross-origin";
+    f.replaceChildren(i);d.showModal()};
+  const x=()=>{if(d.open)d.close()};
+  $("vidClose").onclick=x;
+  d.addEventListener("close",()=>f.replaceChildren());
+  d.addEventListener("click",e=>{if(e.target===d)x()});
+})();
 
 /* Status server: hanya data nyata dari checker, tanpa angka simulasi */
 (async()=>{
