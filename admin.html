@@ -22,7 +22,7 @@
 <a data-p="orders" data-t="Pesanan" data-s="Verifikasi dan proses pesanan pembeli."><i class="fa-solid fa-receipt"></i>Pesanan <span class="cnt-b" id="navPend"></span></a>
 <a data-p="products" data-t="Produk" data-s="Atur rank dan item yang dijual."><i class="fa-solid fa-box"></i>Produk</a>
 <a data-p="income" data-t="Pendapatan" data-s="Laporan dari pesanan berstatus selesai."><i class="fa-solid fa-chart-line"></i>Pendapatan</a>
-<a data-p="users" data-t="Pengguna" data-s="Lihat akun dan reset password."><i class="fa-solid fa-users"></i>Pengguna</a>
+<a data-p="users" data-t="Pengguna" data-s="Lihat akun, reset password, dan hapus akun."><i class="fa-solid fa-users"></i>Pengguna</a>
 <a data-p="news" data-t="Pengumuman" data-s="Tampil di dashboard semua member."><i class="fa-solid fa-bullhorn"></i>Pengumuman</a>
 <a data-p="system" data-t="Sistem" data-s="Kesehatan data, backup, dan pintasan."><i class="fa-solid fa-sliders"></i>Sistem</a></nav>
 <div class="side-foot"><a href="index.html" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i>Lihat website</a><a class="out" id="out"><i class="fa-solid fa-right-from-bracket"></i>Keluar</a></div>
@@ -47,6 +47,7 @@
 <dialog class="wide" id="dOrder"><h3 id="oT"></h3><div id="oB"></div><div class="act"><a class="btn btn-gold" id="oWa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Hubungi pembeli</a><button class="btn dng" id="oDel">Hapus</button><button class="btn" onclick="this.closest('dialog').close()">Tutup</button></div></dialog>
 <dialog id="dProd"><h3 id="pT"></h3><div class="fg"><label for="pN">Nama produk</label><input id="pN" class="inp" style="width:100%"></div><div class="fg"><label for="pP">Harga (Rp)</label><input id="pP" class="inp" style="width:100%" type="number" min="0"></div><div class="fg"><label for="pD">Deskripsi</label><textarea id="pD" class="inp" rows="3"></textarea></div><p class="msg" id="pM" role="alert"></p><div class="act"><button class="btn btn-gold" id="pS">Simpan</button><button class="btn" id="pC">Batal</button></div></dialog>
 <dialog id="dPass"><h3>Reset password</h3><p id="rU" style="margin-bottom:12px"></p><div class="fg"><label for="rP">Password baru</label><input id="rP" class="inp" style="width:100%" type="password" autocomplete="new-password"></div><div class="fg"><label for="rC">Konfirmasi</label><input id="rC" class="inp" style="width:100%" type="password" autocomplete="new-password"></div><p class="msg" id="rM" role="alert"></p><div class="act"><button class="btn btn-gold" id="rS">Simpan</button><button class="btn" id="rX">Batal</button></div></dialog>
+<dialog id="dDelU"><h3>Hapus akun pengguna</h3><p id="xU" style="margin-bottom:12px"></p><div class="fg"><label for="xI" id="xL">Ketik username untuk konfirmasi</label><input id="xI" class="inp" style="width:100%" autocomplete="off"></div><p class="msg" id="xM" role="alert"></p><div class="act"><button class="btn dng" id="xS" disabled>Hapus akun</button><button class="btn" id="xX">Batal</button></div></dialog>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
