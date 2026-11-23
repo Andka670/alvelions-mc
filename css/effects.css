@@ -1,0 +1,161 @@
+body:is(.theme-dashboard, .theme-home) > .av-atmosphere-underlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(255, 195, 33, .075), transparent 58%),
+    linear-gradient(rgba(255, 223, 104, .025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 223, 104, .025) 1px, transparent 1px);
+  background-size: auto, 54px 54px, 54px 54px;
+  background-position: center, center, center;
+}
+body:is(.theme-dashboard, .theme-home) > .container {
+  position: relative !important;
+  z-index: 1 !important;
+  isolation: auto !important;
+  background: transparent !important;
+}
+body.theme-home > .navbar-container {
+  position: relative;
+  z-index: 2;
+}
+body.theme-home > .av-scroll-progress {
+  z-index: 1300;
+}
+body:is(.theme-dashboard, .theme-home) .av-aurora-orb {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(44px);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+body:is(.theme-dashboard, .theme-home) .av-aurora-orb-a {
+  width: min(64vw, 850px); height: min(64vw, 850px);
+  left: -21vw; top: -34vh;
+  background: radial-gradient(circle, rgba(255, 194, 26, .28) 0%, rgba(255, 170, 0, .13) 34%, rgba(255, 170, 0, 0) 71%);
+  animation: avAuroraA 13s ease-in-out infinite alternate;
+}
+body:is(.theme-dashboard, .theme-home) .av-aurora-orb-b {
+  width: min(70vw, 900px); height: min(70vw, 900px);
+  right: -25vw; top: 18vh;
+  background: radial-gradient(circle, rgba(255, 224, 101, .19) 0%, rgba(255, 175, 0, .10) 39%, rgba(255, 160, 0, 0) 72%);
+  animation: avAuroraB 17s ease-in-out infinite alternate;
+}
+body:is(.theme-dashboard, .theme-home) .av-aurora-orb-c {
+  width: min(47vw, 660px); height: min(47vw, 660px);
+  left: 23vw; bottom: -43vh;
+  background: radial-gradient(circle, rgba(212, 136, 0, .18) 0%, rgba(255, 207, 48, .07) 42%, transparent 73%);
+  animation: avAuroraC 19s ease-in-out infinite alternate;
+}
+@keyframes avAuroraA { 0% { transform: translate3d(0,0,0) scale(.88); opacity:.65; } 100% { transform: translate3d(18vw,13vh,0) scale(1.12); opacity:1; } }
+@keyframes avAuroraB { 0% { transform: translate3d(0,0,0) scale(1); opacity:.54; } 100% { transform: translate3d(-14vw,-10vh,0) scale(.88); opacity:.95; } }
+@keyframes avAuroraC { 0% { transform: translate3d(0,0,0) scale(.9); opacity:.55; } 100% { transform: translate3d(9vw,-12vh,0) scale(1.14); opacity:.9; } }
+body:is(.theme-dashboard, .theme-home) .av-ember {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  width: var(--size); height: var(--size);
+  border-radius: 50%;
+  background: #ffe793;
+  box-shadow: 0 0 7px 2px rgba(255, 202, 38, .5), 0 0 20px 4px rgba(255, 173, 0, .22);
+  opacity: .12;
+  animation: avEmberFloat var(--duration) ease-in-out var(--delay) infinite;
+}
+@keyframes avEmberFloat {
+  0%,100% { transform: translate3d(0, 12px, 0) scale(.65); opacity: .08; }
+  35% { opacity: .8; }
+  55% { transform: translate3d(16px, -26px, 0) scale(1.12); opacity: .55; }
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse at 77% 17%, rgba(255, 249, 211, .36), transparent 42%),
+    linear-gradient(110deg, transparent 10%, rgba(255, 215, 73, .08) 66%, rgba(255, 247, 195, .17));
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay .bolt {
+  fill: none;
+  stroke: rgba(255, 253, 228, 1);
+  stroke-linecap: round;
+  stroke-linejoin: bevel;
+  stroke-width: 5.2;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 4px rgba(255,255,220,1)) drop-shadow(0 0 12px rgba(255,223,95,1)) drop-shadow(0 0 30px rgba(255,169,0,.9));
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  opacity: 0;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay .bolt-branch {
+  stroke: rgba(255, 219, 86, .98);
+  stroke-width: 2.6;
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay .bolt-secondary {
+  stroke-width: 3.4;
+  opacity: 0;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking {
+  visibility: visible;
+  animation: avLightningFlash .68s ease-out both;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking .av-lightning-flash {
+  animation: avFlashWash .68s ease-out both;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking .bolt-main {
+  animation: avBoltDraw .58s steps(1, end) both;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking .bolt-branch {
+  animation: avBoltBranch .45s ease-out .06s both;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking .bolt-secondary {
+  animation: avBoltSecondary .3s steps(1, end) .12s both;
+}
+body:is(.theme-dashboard, .theme-home) .av-lightning-overlay.is-striking.is-alternate .bolt-main {
+  animation-name: avBoltDrawAlt;
+}
+@keyframes avLightningFlash {
+  0% { opacity:0; } 8% { opacity:.72; } 18% { opacity:.10; } 28% { opacity:.48; } 42% { opacity:.04; } 53% { opacity:.23; } 100% { opacity:0; visibility:hidden; }
+}
+@keyframes avFlashWash { 0%,100% { opacity:0; } 9% { opacity:.9; } 19% { opacity:.12; } 32% { opacity:.55; } 52% { opacity:.03; } }
+@keyframes avBoltDraw { 0% { stroke-dashoffset:1200; opacity:0; } 5% { stroke-dashoffset:1200; opacity:1; } 16% { stroke-dashoffset:0; opacity:1; } 24% { opacity:.15; } 31% { opacity:1; } 49% { opacity:.88; } 72%,100% { opacity:0; stroke-dashoffset:-30; } }
+@keyframes avBoltDrawAlt { 0% { stroke-dashoffset:1200; opacity:0; } 8% { stroke-dashoffset:1200; opacity:1; } 19% { stroke-dashoffset:0; opacity:1; } 28% { opacity:.10; } 36% { opacity:.95; } 52%,100% { opacity:0; stroke-dashoffset:-30; } }
+@keyframes avBoltBranch { 0% { stroke-dashoffset:500; opacity:0; } 16% { opacity:1; } 48% { stroke-dashoffset:0; opacity:.95; } 100% { opacity:0; } }
+@keyframes avBoltSecondary { 0%,100% { opacity:0; } 15%,32% { opacity:.95; } 42% { opacity:0; } }
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) > .av-atmosphere-underlay {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(255, 195, 33, .12), transparent 62%),
+    linear-gradient(rgba(153, 106, 0, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(153, 106, 0, .035) 1px, transparent 1px);
+  background-size: auto, 54px 54px, 54px 54px;
+}
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-aurora-orb { mix-blend-mode: multiply; filter: blur(54px); }
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-aurora-orb-a { background:radial-gradient(circle,rgba(255,202,40,.25),rgba(255,224,121,.12) 38%,transparent 72%); }
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-aurora-orb-b { background:radial-gradient(circle,rgba(255,215,78,.18),rgba(244,184,23,.07) 40%,transparent 72%); }
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-aurora-orb-c { background:radial-gradient(circle,rgba(255,210,73,.16),rgba(255,228,145,.05) 42%,transparent 73%); }
+html[data-theme="light"] body:is(.theme-dashboard, .theme-home) .av-lightning-overlay { display:none !important; }
+@media (prefers-reduced-motion: reduce) {
+  body:is(.theme-dashboard, .theme-home) .av-aurora-orb,
+  body:is(.theme-dashboard, .theme-home) .av-ember { animation: none !important; }
+  body:is(.theme-dashboard, .theme-home) .av-lightning-overlay { display: none !important; }
