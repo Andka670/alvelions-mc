@@ -1,516 +1,55 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <script>
-    (function(){
-      // Use WIB (Asia/Jakarta) rather than relying on the visitor device timezone.
-      var theme='dark';
-      function jakartaHour(){
-        try {
-          var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
-          var hourPart=parts.find(function(part){return part.type==='hour';});
-          if(hourPart) return Number(hourPart.value);
-        } catch(e) {}
-        return new Date(Date.now() + 7 * 60 * 60 * 1000).getUTCHours();
-      }
-      try {
-        var hour=jakartaHour();
-        theme=(hour>=6 && hour<18)?'light':'dark';
-        // V5 key ignores stale overrides from older versions so the WIB schedule wins by default.
-        var raw=localStorage.getItem('alvelions-theme-override-v5');
-        if(raw){
-          var choice=JSON.parse(raw);
-          if(choice && (choice.theme==='light'||choice.theme==='dark') && Number.isFinite(choice.until) && choice.until>Date.now()) theme=choice.theme;
-          else localStorage.removeItem('alvelions-theme-override-v5');
-        }
-      } catch(e) { var h=jakartaHour(); theme=(h>=6 && h<18)?'light':'dark'; }
-      document.documentElement.setAttribute('data-theme',theme);
-    })();
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALVELIONS MC - CHECKOUT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #facc15; /* Kuning Cyber / Neon */
-            --secondary: #fbbf24; 
-            --bg-dark: #07050f; 
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --danger: #ef4444;
-            --success: #22c55e;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.08) 0%, transparent 80%);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            padding: 30px 10px;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .auth-container {
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .auth-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
-        }
-
-        .qris-box {
-            text-align: center;
-            margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .qris-box p {
-            font-size: 0.75rem;
-            color: var(--secondary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        #qrisImage {
-            width: 200px;
-            height: 200px;
-            object-fit: contain;
-            border-radius: 10px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
-            background: #fff; /* Menjaga QR tetap terbaca jika transparan */
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #94a3b8;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 14px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.8rem;
-            font-family: 'Inter', sans-serif;
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
-        }
-
-        select option {
-            background: #0c091a;
-            color: #fff;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 30px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn:hover {
-            background: #fff;
-            box-shadow: 0 0 20px var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            background: #444;
-            color: #888;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            font-size: 0.65rem;
-            color: rgba(255, 255, 255, 0.3);
-            text-decoration: none;
-            margin-top: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .back-link:hover { color: var(--primary); }
-        .quantity-box{
-            display:flex;
-            align-items:center;
-            gap:10px;
-        }
-        
-        .qty-btn{
-            width:42px;
-            height:42px;
-            border:none;
-            border-radius:10px;
-            background:var(--primary);
-            color:#000;
-            font-size:22px;
-            cursor:pointer;
-            font-weight:bold;
-        }
-        
-        .qty-btn:hover{
-            opacity:.9;
-        }
-        
-        #quantity{
-            text-align:center;
-            font-weight:bold;
-        }
-        
-        .summary-card{
-            margin-top:15px;
-            background:rgba(250,204,21,.08);
-            border:1px solid rgba(250,204,21,.3);
-            border-radius:14px;
-            padding:15px;
-        }
-        
-        .summary-row{
-            display:flex;
-            justify-content:space-between;
-            margin-bottom:8px;
-        }
-        
-        .summary-row:last-child{
-            margin-bottom:0;
-            font-size:18px;
-            font-weight:bold;
-            color:var(--primary);
-        }
-
-        /* QRIS TYPE TOGGLE */
-        .qris-type-toggle{
-            display:flex;
-            gap:8px;
-            margin-bottom:12px;
-        }
-
-        .qris-type-btn{
-            flex:1;
-            padding:8px 6px;
-            background:rgba(255,255,255,0.05);
-            border:1px solid rgba(255,255,255,0.1);
-            border-radius:10px;
-            color:#94a3b8;
-            font-size:0.7rem;
-            font-weight:700;
-            cursor:pointer;
-            text-transform:uppercase;
-            letter-spacing:0.5px;
-            transition:0.2s;
-        }
-
-        .qris-type-btn.active{
-            background:var(--primary);
-            color:#000;
-            border-color:var(--primary);
-            box-shadow:0 0 10px rgba(250,204,21,.3);
-        }
-
-        /* CART */
-        .cart-section{
-            margin:16px 0;
-            background:rgba(0,0,0,0.25);
-            border:1px solid rgba(255,255,255,0.08);
-            border-radius:14px;
-            padding:14px;
-        }
-
-        .cart-section-title{
-            font-size:0.7rem;
-            font-weight:700;
-            color:#94a3b8;
-            text-transform:uppercase;
-            letter-spacing:0.5px;
-            margin-bottom:10px;
-        }
-
-        .cart-empty{
-            font-size:0.75rem;
-            color:rgba(255,255,255,0.3);
-            text-align:center;
-            padding:10px 0;
-        }
-
-        .cart-item{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:8px 0;
-            border-bottom:1px solid rgba(255,255,255,0.06);
-            gap:8px;
-        }
-
-        .cart-item:last-child{
-            border-bottom:none;
-        }
-
-        .cart-item-name{
-            font-size:0.8rem;
-            font-weight:600;
-        }
-
-        .cart-item-price{
-            font-size:0.7rem;
-            color:#94a3b8;
-            margin-top:2px;
-        }
-
-        .cart-item-actions{
-            display:flex;
-            align-items:center;
-            gap:6px;
-            flex-shrink:0;
-        }
-
-        .qty-btn-sm{
-            width:26px;
-            height:26px;
-            border:none;
-            border-radius:8px;
-            background:rgba(250,204,21,0.15);
-            color:var(--primary);
-            font-size:15px;
-            font-weight:bold;
-            cursor:pointer;
-        }
-
-        .btn-remove{
-            width:26px;
-            height:26px;
-            border:none;
-            border-radius:8px;
-            background:rgba(239,68,68,0.15);
-            color:var(--danger);
-            font-size:13px;
-            font-weight:bold;
-            cursor:pointer;
-        }
-
-        .btn-add-cart{
-            width:100%;
-            padding:10px;
-            background:rgba(250,204,21,0.12);
-            border:1px solid var(--primary);
-            color:var(--primary);
-            border-radius:10px;
-            font-weight:700;
-            font-size:0.75rem;
-            cursor:pointer;
-            margin-top:8px;
-            text-transform:uppercase;
-            letter-spacing:0.5px;
-        }
-
-        .btn-add-cart:hover{
-            background:var(--primary);
-            color:#000;
-        }
-    
-
-        /* Desktop layout */
-        @media (min-width: 768px) {
-            .auth-container {
-                max-width: 900px;
-            }
-            .auth-card {
-                padding: 36px;
-            }
-        }
-
-
-        /* Desktop visual scale: larger controls/text, mobile stays unchanged */
-        @media (min-width: 768px) {
-            .auth-card { padding: 44px; border-radius: 28px; }
-            h1 { font-size: 1.9rem; margin-bottom: 26px; }
-            .qris-box p { font-size: 0.9rem; }
-            .form-group { margin-bottom: 18px; }
-            .form-group label { font-size: 0.8rem; margin-bottom: 7px; }
-            input, select { padding: 15px 17px; font-size: 1rem; border-radius: 12px; }
-            .btn { padding: 15px 18px; font-size: 1rem; }
-            .btn-add-cart { padding: 13px; font-size: 0.95rem; }
-            .qris-type-btn { padding: 11px 10px; font-size: 0.85rem; }
-            .qty-btn { width: 48px; height: 48px; font-size: 25px; }
-            .cart-section { padding: 18px; }
-            .cart-section-title { font-size: 0.85rem; }
-            .cart-empty { font-size: 0.85rem; }
-            .cart-item-name { font-size: 0.95rem; }
-            .cart-item-price { font-size: 0.8rem; }
-            .qty-btn-sm, .btn-remove { width: 32px; height: 32px; font-size: 17px; }
-            .btn-add-cart:hover, .btn:hover, .qty-btn:hover, .qris-type-btn:hover, .qty-btn-sm:hover, .btn-remove:hover { transform: scale(1.035); }
-        }
-
-    </style>
-    <link rel="stylesheet" href="css/alvelions-theme.css?v=theme-fab-left-v1">
-    <link rel="icon" type="image/png" href="assets/alvelions-logo.png">
+<script>(function(){var r=document.documentElement,t='dark';try{var h=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',hourCycle:'h23'}).format(new Date()));t=(h>=6&&h<18)?'light':'dark';var c=JSON.parse(localStorage.getItem('alvelions-theme-override-v5')||'null');if(c&&(c.theme==='light'||c.theme==='dark')&&c.until>Date.now())t=c.theme}catch(e){}r.setAttribute('data-theme',t)})()</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout – ALVELIONS MC</title>
+<link rel="icon" type="image/png" href="assets/alvelions-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/pro.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/effects.css">
 </head>
-<body class="theme-checkout">
-
-<div class="auth-container">
-    <div class="auth-card">
-        <div class="av-checkout-brand"><img class="av-brand-logo av-brand-logo-checkout" src="assets/alvelions-logo.png" alt="Logo ALVE LIONS" width="100" height="98"><span>ALVELIONS MC</span></div>
-
-        <div class="qris-box">
-            <p>QRIS Pembayaran</p>
-
-            <div class="qris-type-toggle">
-                <button type="button" id="btnQrisNasional" class="qris-type-btn active" onclick="setQrisType('nasional')">Nasional</button>
-                <button type="button" id="btnQrisInternasional" class="qris-type-btn" onclick="setQrisType('internasional')">Internasional</button>
-            </div>
-
-            <img id="qrisImage" alt="Memuat QRIS...">
-        </div>
-
-        <h1>Checkout Order</h1>
-
-        <div class="form-group">
-            <label for="username" id="usernameLabel">Username Akun Web</label>
-            <input id="username" placeholder="Masukkan username terdaftar" autocomplete="username">
-            <small id="usernameAutoHint" style="display:none;margin-top:7px;color:#a3a3a3;line-height:1.5;">Username akan diisi otomatis dari akun yang sedang login.</small>
-        </div>
-
-        <div class="form-group">
-            <label>Gamertag Minecraft</label>
-            <input id="gamertag" placeholder="Contoh: SteveAlvelions">
-        </div>
-
-        <div class="form-group">
-            <label>Nomor HP / WhatsApp</label>
-            <input id="phone" placeholder="Contoh: 0851xxxxxxxx">
-        </div>
-
-        <div class="form-group">
-            <label>Pilih Produk</label>
-            <select id="productSelect">
-                <option value="">-- Pilih Produk --</option>
-            </select>
-        </div>
-        <div class="form-group">
-        <label>Jumlah</label>
-        
-        <div class="quantity-box">
-        
-        <button
-        type="button"
-        class="qty-btn"
-        onclick="changeQty(-1)">−</button>
-        
-        <input
-        id="quantity"
-        type="number"
-        value="1"
-        min="1">
-        
-        <button
-        type="button"
-        class="qty-btn"
-        onclick="changeQty(1)">+</button>
-        
-        </div>
-
-        <button type="button" class="btn-add-cart" onclick="addToCart()">+ Tambah ke Keranjang</button>
-        </div>
-
-        <div class="cart-section">
-            <div class="cart-section-title">🛒 Keranjang Belanja</div>
-            <div id="cartEmpty" class="cart-empty">Keranjang masih kosong</div>
-            <div id="cartList"></div>
-        </div>
-
-        <div class="summary-card">
-        <div class="summary-row">
-        <span>Total Belanja</span>
-        <span id="grandTotalText">Rp0</span>
-        </div>
-        </div>
-        <div class="form-group">
-            <label>Metode Pembayaran</label>
-            <select id="payment">
-                <option value="dana">DANA</option>
-                <option value="gopay">GOPAY</option>
-                <option value="ovo">OVO</option>
-                <option value="shopeepay">SHOPEEPAY</option>
-                <option value="lainnya">Lainnya</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>ID Transaksi Payment (Dari Aplikasi E-Wallet)</label>
-            <input id="id_transaksi_payment" placeholder="Masukkan Kode / Ref ID Transaksi">
-        </div>
-
-        <button id="submitBtn" class="btn" onclick="submitOrder()">
-            Kirim Pesanan
-        </button>
-
-        <a href="index.html" class="back-link">← Kembali ke Home</a>
-    </div>
+<body class="theme-home">
+<header class="top"><div class="wrap"><a class="brand" href="index.html"><img src="assets/alvelions-logo.png" alt="">ALVELIONS MC</a>
+<a class="btn" style="margin-left:auto" href="store.html"><i class="fa-solid fa-arrow-left"></i> Kembali ke store</a><button class="btn icon-btn" id="themeBtn" aria-label="Ganti tema"></button></div></header>
+<main><section class="sec" style="border-top:0;padding:52px 0 80px"><div class="wrap">
+<div class="co-head"><h2>Checkout</h2><p class="lead" style="margin-bottom:0">Isi data pemain, pilih produk, lalu bayar lewat QRIS dan konfirmasi dengan ID transaksi.</p></div>
+<div class="co"><div class="co-main">
+<section class="panel"><h3><span class="n">1</span>Data pemain</h3><p class="sub">Dipakai admin untuk mengirim rank atau item ke akunmu.</p>
+<div class="fg"><label for="username" id="usernameLabel">Username akun web</label><input id="username" placeholder="Username terdaftar" autocomplete="username"><small id="usernameAutoHint" style="display:none">Username diisi otomatis dari akun yang sedang login.</small></div>
+<div class="g2"><div class="fg"><label for="gamertag">Gamertag Minecraft</label><input id="gamertag" placeholder="Contoh: SteveAlvelions"></div>
+<div class="fg"><label for="phone">Nomor HP / WhatsApp</label><input id="phone" inputmode="tel" placeholder="Contoh: 0851xxxxxxxx"></div></div></section>
+<section class="panel"><h3><span class="n">2</span>Pilih produk</h3><p class="sub">Tambahkan satu atau beberapa produk ke keranjang.</p>
+<div class="fg"><label for="productSelect">Produk</label><select id="productSelect"><option value="">-- Pilih produk --</option></select></div>
+<div class="addrow"><div class="quantity-box"><button type="button" class="qty-btn" onclick="changeQty(-1)" aria-label="Kurangi">−</button><input id="quantity" type="number" value="1" min="1" aria-label="Jumlah"><button type="button" class="qty-btn" onclick="changeQty(1)" aria-label="Tambah">+</button></div>
+<button type="button" class="btn btn-gold" style="width:auto" onclick="addToCart()"><i class="fa-solid fa-cart-plus"></i> Tambah ke keranjang</button></div></section>
+<section class="panel"><h3><span class="n">3</span>Pembayaran</h3><p class="sub">Scan QRIS di samping, lalu isi ID transaksi dari aplikasi e-wallet.</p>
+<div class="fg"><label for="payment">Metode pembayaran</label><select id="payment"><option value="dana">DANA</option><option value="gopay">GOPAY</option><option value="ovo">OVO</option><option value="shopeepay">SHOPEEPAY</option><option value="lainnya">Lainnya</option></select></div>
+<div class="fg"><label for="id_transaksi_payment">ID transaksi pembayaran</label><input id="id_transaksi_payment" placeholder="Kode atau Ref ID dari e-wallet"><small>Ada di riwayat transaksi aplikasi e-wallet setelah kamu membayar.</small></div></section>
 </div>
-
+<aside class="sum"><section class="panel"><h3>Ringkasan pesanan</h3><div style="height:14px"></div>
+<div id="cartEmpty" class="cart-empty">Keranjang masih kosong.<br>Pilih produk di langkah 2.</div><div id="cartList"></div>
+<div class="total"><span>Total</span><span id="grandTotalText">Rp0</span></div></section>
+<section class="panel"><h3>Bayar dengan QRIS</h3>
+<div class="qris-type-toggle"><button type="button" id="btnQrisNasional" class="qris-type-btn active" onclick="setQrisType('nasional')">Nasional</button><button type="button" id="btnQrisInternasional" class="qris-type-btn" onclick="setQrisType('internasional')">Internasional</button></div>
+<img id="qrisImage" alt="Kode QRIS pembayaran">
+<div style="height:18px"></div><button id="submitBtn" class="btn btn-gold" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> Kirim pesanan</button>
+<p class="secure"><i class="fa-solid fa-lock"></i><span>Setelah pesanan terkirim, kamu diarahkan ke WhatsApp admin untuk konfirmasi. Pesanan diproses setelah pembayaran terverifikasi.</span></p></section></aside>
+</div></div></section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
-
 <script>
+function setT(t,s){const r=document.documentElement,b=document.getElementById("themeBtn");r.setAttribute("data-theme",t);b.innerHTML='<i class="fa-solid fa-'+(t==="dark"?"sun":"moon")+'"></i>';b.setAttribute("aria-label",t==="dark"?"Ganti ke tema siang":"Ganti ke tema malam");if(s)try{localStorage.setItem("alvelions-theme-override-v5",JSON.stringify({theme:t,until:Date.now()+12*36e5}))}catch(e){}}
+setT(document.documentElement.getAttribute("data-theme"),false);
+document.getElementById("themeBtn").onclick=()=>setT(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark",true);
+</script>
+<script>
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function preselect(){const id=new URLSearchParams(location.search).get("add"),s=document.getElementById("productSelect");if(!id||!s)return;const o=[...s.options].find(x=>x.value===id);if(o){s.value=id;addToCart()}}
+
 function generateID() {
     return 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
 }
@@ -653,7 +192,7 @@ async function loadProducts() {
     });
 }
 
-loadProducts();
+loadProducts().then(preselect);
 function rupiah(x){
     return "Rp" + Number(x).toLocaleString("id-ID");
 }
@@ -728,7 +267,7 @@ function renderCart() {
         row.className = "cart-item";
         row.innerHTML = `
             <div>
-                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-name">${esc(item.name)}</div>
                 <div class="cart-item-price">${rupiah(item.price)} x ${item.qty} = ${rupiah(subtotal)}</div>
             </div>
             <div class="cart-item-actions">
@@ -886,8 +425,7 @@ async function submitOrder() {
     // Memindahkan halaman user ke dashboard
     window.location.href = "dashboard.html";
 }
-</script>
 
-    <script src="js/theme-toggle.js?v=checkout-auto-user-v1"></script>
-</body>
-</html>
+</script>
+<script src="js/atmosphere-effects.js"></script>
+</body></html>
