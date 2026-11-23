@@ -55,3 +55,9 @@ textarea.inp{width:100%;font-family:inherit;resize:vertical}
 .msg{min-height:1.2em;font-size:.85rem;margin-top:10px;color:var(--red)}
 .scrim{display:none}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:fixed;left:0;top:0;width:272px;transform:translateX(-100%);transition:transform .2s;background:var(--bg1)}.side.open{transform:none}body:has(.side.open){overflow:hidden}.scrim.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}.mmenu{display:inline-flex}.two{grid-template-columns:1fr}}
+
+/* tombol silang (cancel) di dialog pencarian admin */
+.pal-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pal-top .inp{flex:1;min-width:0;width:auto;margin-bottom:0}
+.pal-x{flex:0 0 auto;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;background:var(--icbg);color:var(--mute);font-size:1rem;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+.pal-x:hover,.pal-x:focus-visible{color:var(--red);border-color:rgba(248,113,113,.4)}
