@@ -49,6 +49,11 @@
   </div>
 </div></section>
 
+<section class="sec ann-sec" id="pengumuman" hidden><div class="wrap">
+  <h2>Pengumuman</h2>
+  <div class="ann" id="annBody"></div>
+</div></section>
+
 <section class="sec" id="fitur"><div class="wrap">
   <h2>Yang bisa kamu lakukan di server</h2>
   <p class="lead">Fitur utama yang aktif dan bisa langsung dipakai sejak hari pertama.</p>
@@ -156,6 +161,21 @@ document.querySelectorAll("[data-info]").forEach(b=>b.onclick=()=>openDlg(...INF
   $("vidClose").onclick=x;
   d.addEventListener("close",()=>f.replaceChildren());
   d.addEventListener("click",e=>{if(e.target===d)x()});
+})();
+
+/* Pengumuman dari tabel announcements (3 terbaru; section tersembunyi bila kosong/gagal) */
+(async()=>{
+  try{
+    const {data,error}=await supabaseClient.from("announcements").select("title,content,created_at").order("created_at",{ascending:false}).limit(3);
+    if(error||!data||!data.length)return;
+    const box=$("annBody");
+    data.forEach(n=>{
+      const a=document.createElement("article"),h=document.createElement("h3"),t=document.createElement("time"),p=document.createElement("p");
+      h.textContent=n.title||"";p.textContent=n.content||"";
+      if(n.created_at){const d=new Date(n.created_at);if(!isNaN(d)){t.dateTime=d.toISOString();t.textContent=d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Jakarta"})}}
+      a.append(h,t,p);box.appendChild(a)});
+    $("pengumuman").hidden=false;
+  }catch(e){}
 })();
 
 /* Status server: hanya data nyata dari checker, tanpa angka simulasi */
