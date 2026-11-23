@@ -1,5 +1,8 @@
 .shell{display:grid;grid-template-columns:268px minmax(0,1fr);min-height:100vh}
-.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:5px;padding:20px 16px;border-right:1px solid var(--line);background:var(--nav);backdrop-filter:blur(14px);overflow-y:auto;z-index:30}
+.side{position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:5px;padding:20px 16px;border-right:1px solid var(--line);background:var(--nav);backdrop-filter:blur(14px);overflow:hidden;overscroll-behavior:contain;z-index:30}
+.side-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.side-nav>*,.side-foot>*{flex-shrink:0}
+.side-foot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid var(--line)}
 .side .brand{padding:6px 10px 18px;margin-bottom:8px;border-bottom:1px solid var(--line)}
 .lbl{padding:12px 12px 4px;font-size:.7rem;font-weight:800;letter-spacing:.14em;color:var(--mute)}
 .side a{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;color:var(--mute);font-weight:650;font-size:.92rem;text-decoration:none;border:1px solid transparent;cursor:pointer}
@@ -51,4 +54,4 @@ dialog .act{margin-top:16px}
 textarea.inp{width:100%;font-family:inherit;resize:vertical}
 .msg{min-height:1.2em;font-size:.85rem;margin-top:10px;color:var(--red)}
 .scrim{display:none}
-@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:fixed;left:0;top:0;width:272px;transform:translateX(-100%);transition:transform .2s;background:var(--bg1)}.side.open{transform:none}.scrim.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}.mmenu{display:inline-flex}.two{grid-template-columns:1fr}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:fixed;left:0;top:0;width:272px;transform:translateX(-100%);transition:transform .2s;background:var(--bg1)}.side.open{transform:none}body:has(.side.open){overflow:hidden}.scrim.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}.mmenu{display:inline-flex}.two{grid-template-columns:1fr}}
