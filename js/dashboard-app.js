@@ -50,5 +50,18 @@ $("pwS").onclick=async()=>{const a=$("pw1").value,c=$("pw2").value,m=$("pwM");m.
  const {error}=await sb.auth.updateUser({password:a});if(error){m.textContent=error.message;return}
  $("pw1").value=$("pw2").value="";m.style.color="var(--grass)";m.textContent="Password berhasil diperbarui."};
 $("out").onclick=async()=>{await sb.auth.signOut();location.href="index.html"};
+/* hapus akun sendiri (via Edge Function delete-account) */
+{const dd=$("dDel"),di=$("dI"),dg=$("dGo"),dm=$("dM");
+ if(pr&&pr.role==="admin")$("delCard").hidden=true;
+ $("delB").onclick=()=>{di.value="";dg.disabled=true;dm.textContent="";$("dN").textContent=uname;dd.showModal()};
+ $("dX").onclick=()=>dd.close();
+ di.oninput=()=>{dg.disabled=di.value.trim()!==uname};
+ dg.onclick=async()=>{dm.style.color="var(--mute)";dm.textContent="Menghapus akun…";dg.disabled=true;
+  try{const {data:{session:s}}=await sb.auth.getSession();
+   const res=await fetch(SUPABASE_URL+"/functions/v1/delete-account",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+s.access_token,apikey:SUPABASE_ANON_KEY},body:"{}"});
+   const j=await res.json().catch(()=>({}));
+   if(!res.ok){dm.style.color="var(--red)";dm.textContent=j.error||"Gagal menghapus akun.";dg.disabled=false;return}
+   await sb.auth.signOut({scope:"local"}).catch(()=>{});location.replace("index.html")}
+  catch(e){dm.style.color="var(--red)";dm.textContent="Terjadi kesalahan: "+e.message;dg.disabled=false}}}
 initNav();await load();
 })();
