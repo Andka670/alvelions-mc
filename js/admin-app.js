@@ -33,7 +33,7 @@ function detail(g){$("oT").textContent="Pesanan "+g.inv;const b=$("oB");b.textCo
   const {error}=await sb.from("orders").delete().in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal menghapus: "+error.message,1);$("dOrder").close();toast("Pesanan dihapus");load()};
  $("dOrder").showModal()}
 function rOrders(){const q=$("oq").value.trim().toLowerCase(),f=$("os").value,b=$("ordB");b.textContent="";
- lastO=G.filter(g=>(f==="all"||g.status===f)&&(!q||[g.inv,g.user,g.gt,g.phone,g.ref].join(" ").toLowerCase().includes(q)));
+ const k=$("ok").value;lastO=G.filter(g=>(f==="all"||g.status===f)&&(k==="all"||g.items.some(i=>catOf(i.name)===k))&&(!q||[g.inv,g.user,g.gt,g.phone,g.ref].join(" ").toLowerCase().includes(q)));
  $("oc").textContent=lastO.length+" pesanan"+(lastO.length>300?" (300 teratas ditampilkan, persempit dengan filter)":"");
  if(!lastO.length)return empty(b,8,"Tidak ada pesanan yang cocok. Ubah kata kunci atau filter status.");
  lastO.slice(0,300).forEach(g=>{const tr=el("tr"),cb=el("input");cb.type="checkbox";cb.checked=SEL.has(g.inv);cb.setAttribute("aria-label","Pilih "+g.inv);cb.onchange=()=>{cb.checked?SEL.add(g.inv):SEL.delete(g.inv);window.admBulkUI&&admBulkUI()};td(tr,cb);const iv=el("div");iv.append(el("span","mono",g.inv.replace("INV-","#")));(window.admFlag?admFlag(g):[]).forEach(f=>iv.append(el("span","flag",f)));td(tr,iv);
@@ -41,19 +41,19 @@ function rOrders(){const q=$("oq").value.trim().toLowerCase(),f=$("os").value,b=
   td(tr,el("span","",g.items[0].name+(g.items.length>1?" +"+(g.items.length-1):"")));td(tr,el("b","",rp(g.total)));
   const s=el("select","inp sm");Object.keys(ST).forEach(k=>{const o=el("option","",ST[k]);o.value=k;s.append(o)});s.value=g.status;s.onchange=()=>setStatus(g,s.value);td(tr,s);
   td(tr,el("span","mut",fdate(g.created)));const d=el("button","btn sm","Detail");d.onclick=()=>detail(g);td(tr,d);b.append(tr)})}
-$("oq").oninput=$("os").onchange=rOrders;
+$("oq").oninput=$("os").onchange=$("ok").onchange=rOrders;
 $("oExp").onclick=()=>lastO.length?window.admExport&&admExport(lastO):toast("Tidak ada pesanan untuk diekspor",1);
 /* ---- produk ---- */
 let editId=null;
 function rProd(){const q=$("pq").value.trim().toLowerCase(),b=$("prodB");b.textContent="";
- const l=P.filter(p=>!q||(p.name+" "+(p.description||"")).toLowerCase().includes(q)).sort((a,b)=>a.price-b.price);
+ const k=$("pk").value,l=P.filter(p=>(k==="all"||catOf(p.name)===k)&&(!q||(p.name+" "+(p.description||"")).toLowerCase().includes(q))).sort((a,b)=>a.price-b.price);
  if(!l.length)return empty(b,4,"Belum ada produk. Klik Tambah produk untuk membuat yang pertama.");
  l.forEach(p=>{const tr=el("tr");td(tr,el("b","",p.name));td(tr,el("span","",rp(p.price)));td(tr,el("span","mut",(p.description||"-").slice(0,80)));
   const a=el("div","act"),e=el("button","btn sm","Edit"),d=el("button","btn sm dng","Hapus");e.onclick=()=>pForm(p);
   d.onclick=async()=>{if(!confirm("Hapus produk "+p.name+"? Pesanan lama tetap ada, tapi namanya tampil sebagai produk dihapus."))return;const {error}=await sb.from("products").delete().eq("id",p.id);if(error)return toast("Gagal menghapus: "+error.message,1);toast("Produk dihapus");load()};
   a.append(e,d);td(tr,a);b.append(tr)})}
 function pForm(p){editId=p?p.id:null;$("pT").textContent=p?"Edit produk":"Tambah produk";$("pN").value=p?p.name:"";$("pP").value=p?p.price:"";$("pD").value=p&&p.description?p.description:"";$("pM").textContent="";$("dProd").showModal()}
-$("pAdd").onclick=()=>pForm(null);$("pq").oninput=rProd;$("pC").onclick=()=>$("dProd").close();
+$("pAdd").onclick=()=>pForm(null);$("pq").oninput=$("pk").onchange=rProd;$("pC").onclick=()=>$("dProd").close();
 $("pS").onclick=async()=>{const n=$("pN").value.trim(),pr=Number($("pP").value);
  if(!n||$("pP").value===""||!Number.isFinite(pr)||pr<0){$("pM").textContent="Nama wajib diisi dan harga tidak boleh negatif.";return}
  const row={name:n,price:pr,description:$("pD").value.trim()};
