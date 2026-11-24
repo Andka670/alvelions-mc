@@ -13,7 +13,7 @@ async function load(){
  O=o.data||[];P=p.data||[];U=u.data||[];N=n.data||[];PN=Object.fromEntries(P.map(x=>[String(x.id),x.name]));G=group(O,PN);renderAll()}
 function renderAll(){document.dispatchEvent(new CustomEvent("admin:data",{detail:{G,O,U,P,N}}));rHome();rOrders();rProd();rInc();rUsers();rNews();const c=G.filter(g=>g.status==="pending").length;$("navPend").textContent=c||""}
 /* ---- ringkasan ---- */
-async function setStatus(g,s){const {error}=await sb.from("orders").update({status:s}).in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal mengubah status: "+error.message,1);toast("Status diperbarui: "+ST[s]);load()}
+async function setStatus(g,s){const {error}=await sb.from("orders").update({status:s}).in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal mengubah status: "+error.message,1);toast("Status diperbarui: "+ST[s]+(s==="none"&&permItems(g).length?". Rank permanen hangus, klik Detail lalu Hubungi pembeli.":""));load()}
 function rHome(){const done=G.filter(g=>g.status==="done"),pend=G.filter(g=>g.status==="pending"),td0=jk(Date.now());
  kpi($("kpis"),[["fa-hourglass-half","Menunggu verifikasi",pend.length,"warn"],["fa-sack-dollar","Pendapatan hari ini",rp(sumT(done.filter(g=>fdate(g.created).startsWith(td0)))),""],["fa-chart-line","Total pendapatan",rp(sumT(done)),""],["fa-receipt","Total pesanan",G.length,""],["fa-box","Produk",P.length,""],["fa-users","Pengguna",U.length,""]]);
  const days=[];for(let i=13;i>=0;i--)days.push(jk(Date.now()-i*864e5));
@@ -27,7 +27,8 @@ function detail(g){$("oT").textContent="Pesanan "+g.inv;const b=$("oB");b.textCo
  const kv=(k,v)=>{const r=el("div","kv");r.append(el("span","",k),el("b","",v||"-"));b.append(r)};
  kv("Status",ST[g.status]||g.status);kv("Waktu",fdate(g.created));kv("Username",g.user);kv("Gamertag",g.gt);kv("Nomor HP",g.phone);kv("Metode",(g.pay||"").toUpperCase()+(g.qris?" · QRIS "+g.qris:""));kv("ID pembayaran",g.ref);
  g.items.forEach(i=>kv(i.name+" × "+i.qty,rp(i.sub)));kv("Total",rp(g.total));
- $("oWa").href="https://wa.me/"+wa(g.phone)+"?text="+encodeURIComponent("Halo "+(g.gt||g.user)+", pesanan "+g.inv+" di ALVELIONS MC "+(g.status==="done"?"sudah selesai diproses. Selamat bermain!":"sedang kami proses."));
+ const pm=g.status==="none"?permItems(g):[];if(pm.length)kv("Catatan",RANK_NOTE);
+ $("oWa").href="https://wa.me/"+wa(g.phone)+"?text="+encodeURIComponent("Halo "+(g.gt||g.user)+", pesanan "+g.inv+" di ALVELIONS MC "+(pm.length?"dibatalkan. Status rank permanen ("+pm.map(i=>i.name).join(", ")+") hangus. Silakan cek website ALVELIONS: "+SITE_URL:g.status==="done"?"sudah selesai diproses. Selamat bermain!":"sedang kami proses."));
  $("oDel").onclick=async()=>{if(!confirm("Hapus pesanan "+g.inv+"? Pendapatan dari pesanan ini ikut hilang dan tidak bisa dikembalikan."))return;
   const {error}=await sb.from("orders").delete().in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal menghapus: "+error.message,1);$("dOrder").close();toast("Pesanan dihapus");load()};
  $("dOrder").showModal()}
