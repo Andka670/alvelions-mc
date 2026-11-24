@@ -71,7 +71,7 @@ window.admExport=gs=>{dx.textContent="";dx.append(el("h3","","Ekspor pesanan"),e
  dx.append(el("p","",""));dx.lastChild.style.cssText="margin-bottom:14px;white-space:normal";
  dx.lastChild.textContent="Excel berisi 3 sheet: Ringkasan, Pesanan, dan Rincian Item. Total dihitung otomatis dengan rumus, ada filter kolom, dan siap dicetak.";
  const a=el("div","act"),xb=el("button","btn btn-gold","Unduh Excel (.xlsx)"),cb=el("button","btn","CSV mentah"),x=el("button","btn","Batal");x.onclick=()=>dx.close();
- const st=$("os").value,q=$("oq").value.trim(),fl=({all:"Semua status",pending:"Menunggu",done:"Selesai",none:"Dibatalkan"}[st]||st)+(q?' · kata kunci "'+q+'"':""),fs=({all:"semua",pending:"menunggu",done:"selesai",none:"dibatalkan"}[st]||st);
+ const st=$("os").value,q=$("oq").value.trim(),fl=({all:"Semua status",pending:"Menunggu",done:"Selesai",none:"Dibatalkan"}[st]||st)+($("ok").value!=="all"?" · kategori "+$("ok").selectedOptions[0].text:"")+(q?' · kata kunci "'+q+'"':""),fs=({all:"semua",pending:"menunggu",done:"selesai",none:"dibatalkan"}[st]||st);
  const P=g=>[g.inv,X.D(fdate(g.created)),g.user||""];
  xb.onclick=async()=>{xb.disabled=true;xb.textContent="Menyiapkan…";try{
   const wb=X.book("Laporan Pesanan ALVELIONS MC"),sm=wb.addWorksheet("Ringkasan",{views:[{showGridLines:false}],properties:{tabColor:{argb:X.GOLD}},pageSetup:{orientation:"portrait",paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:0}}),
