@@ -11,7 +11,7 @@ const list=(box,rows,none)=>{box.textContent="";if(!rows.length){box.append(el("
 function beep(){if(!$("snd")||!$("snd").checked)return;try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.18)}catch(e){}}
 function insights(){const {G}=D,now=Date.now(),done=G.filter(isRev),pend=G.filter(g=>g.status==="pending"),
  w=(a,b)=>done.filter(g=>T(g)>=now-b*DAY&&T(g)<now-a*DAY),c=w(0,7),p=w(7,14),aov=a=>a.length?sumT(a)/a.length:0,none=G.filter(g=>g.status==="none").length;
- kpi($("insK"),[["fa-sack-dollar","Pendapatan 7 hari",rp(sumT(c)),""],["fa-circle-check","Transaksi 7 hari",c.length,""],["fa-scale-balanced","Rata-rata per transaksi",rp(aov(c)),""],["fa-ban","Tingkat pembatalan",G.length?Math.round(none/G.length*100)+"%":"0%",""]]);
+ kpi($("insK"),[["fa-sack-dollar","Pendapatan 7 hari",rp(sumT(c)),""],["fa-circle-check","Transaksi 7 hari",c.length,""],["fa-scale-balanced","Rata-rata per transaksi",rp(aov(c)),""],["fa-ban","Tingkat hangus",G.length?Math.round(none/G.length*100)+"%":"0%",""]]);
  const k=$("insK").children;k[0].querySelector("b").append(dl(sumT(c),sumT(p)));k[1].querySelector("b").append(dl(c.length,p.length));k[2].querySelector("b").append(dl(aov(c),aov(p)));
  const old=pend.filter(g=>now-T(g)>36e5).length,dup=new Set(G.filter(g=>g.ref&&REF[g.ref]>1).map(g=>g.ref)).size,gone=G.filter(g=>g.items.some(i=>i.name==="Produk dihapus")).length,go=()=>{location.hash="orders"},al=[];
  if(old)al.push(["Pesanan tertunda",old+" pesanan menunggu lebih dari 1 jam","",go]);
@@ -35,7 +35,7 @@ $("oAll").onchange=e=>document.querySelectorAll("#ordB input[type=checkbox]").fo
 const du=el("dialog","wide");document.body.append(du);
 window.admUser=u=>{const mine=D.G.filter(g=>g.user===u.username),done=mine.filter(isRev),last=mine[0];du.textContent="";
  du.append(el("h3","",u.username||"-"));const kv=(k,v)=>{const r=el("div","kv");r.append(el("span","",k),el("b","",v));du.append(r)};
- kv("Role",u.role||"user");kv("Bergabung",u.created_at?fdate(u.created_at).slice(0,10):"-");kv("Total pesanan",mine.length);kv("Total belanja (selesai + batal)",rp(sumT(done)));kv("Pesanan terakhir",last?fdate(last.created):"-");kv("Gamertag",last&&last.gt||"-");kv("Nomor HP",last&&last.phone||"-");
+ kv("Role",u.role||"user");kv("Bergabung",u.created_at?fdate(u.created_at).slice(0,10):"-");kv("Total pesanan",mine.length);kv("Total belanja (selesai + hangus)",rp(sumT(done)));kv("Pesanan terakhir",last?fdate(last.created):"-");kv("Gamertag",last&&last.gt||"-");kv("Nomor HP",last&&last.phone||"-");
  mine.slice(0,5).forEach(g=>{const r=el("div","li"),l=el("div");l.append(el("span","mono",g.inv.replace("INV-","#")),el("span","mut",fdate(g.created)+" · "+rp(g.total)));r.append(l,bdg(g.status));du.append(r)});
  const a=el("div","act");
  if(last&&last.phone){const w=el("a","btn btn-gold sm","WhatsApp");w.href="https://wa.me/"+wa(last.phone);w.target="_blank";w.rel="noopener";a.append(w)}
@@ -71,7 +71,7 @@ window.admExport=gs=>{dx.textContent="";dx.append(el("h3","","Ekspor pesanan"),e
  dx.append(el("p","",""));dx.lastChild.style.cssText="margin-bottom:14px;white-space:normal";
  dx.lastChild.textContent="Excel berisi 3 sheet: Ringkasan, Pesanan, dan Rincian Item. Total dihitung otomatis dengan rumus, ada filter kolom, dan siap dicetak.";
  const a=el("div","act"),xb=el("button","btn btn-gold","Unduh Excel (.xlsx)"),cb=el("button","btn","CSV mentah"),x=el("button","btn","Batal");x.onclick=()=>dx.close();
- const st=$("os").value,q=$("oq").value.trim(),fl=({all:"Semua status",pending:"Menunggu",done:"Selesai",none:"Dibatalkan"}[st]||st)+($("ok").value!=="all"?" · kategori "+$("ok").selectedOptions[0].text:"")+(q?' · kata kunci "'+q+'"':""),fs=({all:"semua",pending:"menunggu",done:"selesai",none:"dibatalkan"}[st]||st);
+ const st=$("os").value,q=$("oq").value.trim(),fl=({all:"Semua status",pending:"Menunggu",done:"Selesai",none:"Hangus"}[st]||st)+($("ok").value!=="all"?" · kategori "+$("ok").selectedOptions[0].text:"")+(q?' · kata kunci "'+q+'"':""),fs=({all:"semua",pending:"menunggu",done:"selesai",none:"hangus"}[st]||st);
  const P=g=>[g.inv,X.D(fdate(g.created)),g.user||""];
  xb.onclick=async()=>{xb.disabled=true;xb.textContent="Menyiapkan…";try{
   const wb=X.book("Laporan Pesanan ALVELIONS MC"),sm=wb.addWorksheet("Ringkasan",{views:[{showGridLines:false}],properties:{tabColor:{argb:X.GOLD}},pageSetup:{orientation:"portrait",paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:0}}),
@@ -87,22 +87,22 @@ window.admExport=gs=>{dx.textContent="";dx.append(el("h3","","Ekspor pesanan"),e
   sm.mergeCells("A2:C2");c=sm.getCell("A2");c.value=meta;c.font={name:X.F,size:9,italic:true,color:{argb:"FF5F5A48"}};c.alignment={vertical:"middle",indent:1,wrapText:true};sm.getRow(2).height=30;
   sm.getCell("A4").value="RINGKASAN STATUS";sm.getCell("A4").font={name:X.F,size:11,bold:true};H(5,["Status","Jumlah pesanan","Nilai (Rp)"]);
   const L=tp.last,pe=`Pesanan!$K$5:$K$${L}`,pt=`Pesanan!$J$5:$J$${L}`,by={};
-  ["Selesai","Menunggu","Dibatalkan"].forEach((s,i)=>{const r=6+i,m=gs.filter(g=>SL(g.status)===s);
+  ["Selesai","Menunggu","Hangus"].forEach((s,i)=>{const r=6+i,m=gs.filter(g=>SL(g.status)===s);
    c=sm.getCell(r,1);c.value=s;F(c,{fill:X.ST[s][0],font:{bold:true,color:{argb:X.ST[s][1]}}});
    c=sm.getCell(r,2);c.value={formula:`COUNTIF(${pe},A${r})`,result:m.length};F(c,{fmt:"#,##0",h:"right"});
    c=sm.getCell(r,3);c.value={formula:`SUMIFS(${pt},${pe},A${r})`,result:sumT(m)};F(c,{fmt:rp0,h:"right"})});
   const dn=gs.filter(isRev),fo={bold:true,color:{argb:X.GOLD}};
   c=sm.getCell("A9");c.value="TOTAL";F(c,{fill:X.INK,font:fo});c=sm.getCell("B9");c.value={formula:"SUM(B6:B8)",result:gs.length};F(c,{fill:X.INK,font:fo,fmt:"#,##0",h:"right"});c=sm.getCell("C9");c.value={formula:"SUM(C6:C8)",result:sumT(gs)};F(c,{fill:X.INK,font:fo,fmt:rp0,h:"right"});
-  [["Pendapatan (selesai + dibatalkan)","C6+C8",sumT(dn),rp0],["Rata-rata per pesanan terhitung","IFERROR((C6+C8)/(B6+B8),0)",dn.length?sumT(dn)/dn.length:0,rp0],["Pesanan dengan peringatan",`SUMPRODUCT(--(LEN(Pesanan!$O$5:$O$${L})>0))`,gs.filter(g=>admFlag(g).length).length,"#,##0"]].forEach(([k,f,v,fm],i)=>{const r=11+i;c=sm.getCell(r,1);c.value=k;F(c,{font:{bold:true}});sm.mergeCells(r,2,r,3);c=sm.getCell(r,2);c.value={formula:f,result:v};F(c,{fmt:fm,h:"right"});sm.getCell(r,3).border=X.bd});
-  sm.getCell("A15").value="PENJUALAN PER PRODUK (selesai + dibatalkan)";sm.getCell("A15").font={name:X.F,size:11,bold:true};H(16,["Produk","Terjual","Pendapatan (Rp)"]);
+  [["Pendapatan (selesai + hangus)","C6+C8",sumT(dn),rp0],["Rata-rata per pesanan terhitung","IFERROR((C6+C8)/(B6+B8),0)",dn.length?sumT(dn)/dn.length:0,rp0],["Pesanan dengan peringatan",`SUMPRODUCT(--(LEN(Pesanan!$O$5:$O$${L})>0))`,gs.filter(g=>admFlag(g).length).length,"#,##0"]].forEach(([k,f,v,fm],i)=>{const r=11+i;c=sm.getCell(r,1);c.value=k;F(c,{font:{bold:true}});sm.mergeCells(r,2,r,3);c=sm.getCell(r,2);c.value={formula:f,result:v};F(c,{fmt:fm,h:"right"});sm.getCell(r,3).border=X.bd});
+  sm.getCell("A15").value="PENJUALAN PER PRODUK (selesai + hangus)";sm.getCell("A15").font={name:X.F,size:11,bold:true};H(16,["Produk","Terjual","Pendapatan (Rp)"]);
   dn.forEach(g=>g.items.forEach(y=>{const z=by[y.name]||(by[y.name]={q:0,t:0});z.q+=y.qty;z.t+=y.sub}));
   const ks=Object.keys(by).sort((a,b)=>by[b].t-by[a].t),IL=ti.last,ri=k=>`'Rincian Item'!$${k}$5:$${k}$${IL}`;
   ks.forEach((k,i)=>{const r=17+i;c=sm.getCell(r,1);c.value=k;F(c);
-   c=sm.getCell(r,2);c.value={formula:`SUMIFS(${ri("E")},${ri("D")},$A${r},${ri("H")},"Selesai")+SUMIFS(${ri("E")},${ri("D")},$A${r},${ri("H")},"Dibatalkan")`,result:by[k].q};F(c,{fmt:"#,##0",h:"right"});
-   c=sm.getCell(r,3);c.value={formula:`SUMIFS(${ri("G")},${ri("D")},$A${r},${ri("H")},"Selesai")+SUMIFS(${ri("G")},${ri("D")},$A${r},${ri("H")},"Dibatalkan")`,result:by[k].t};F(c,{fmt:rp0,h:"right"})});
+   c=sm.getCell(r,2);c.value={formula:`SUMIFS(${ri("E")},${ri("D")},$A${r},${ri("H")},"Selesai")+SUMIFS(${ri("E")},${ri("D")},$A${r},${ri("H")},"Hangus")`,result:by[k].q};F(c,{fmt:"#,##0",h:"right"});
+   c=sm.getCell(r,3);c.value={formula:`SUMIFS(${ri("G")},${ri("D")},$A${r},${ri("H")},"Selesai")+SUMIFS(${ri("G")},${ri("D")},$A${r},${ri("H")},"Hangus")`,result:by[k].t};F(c,{fmt:rp0,h:"right"})});
   let e=17+ks.length;if(!ks.length){sm.mergeCells(e,1,e,3);c=sm.getCell(e,1);c.value="Belum ada penjualan pada data ini.";F(c,{font:{italic:true}});e++}
   else{c=sm.getCell(e,1);c.value="TOTAL";F(c,{fill:X.INK,font:fo});c=sm.getCell(e,2);c.value={formula:`SUM(B17:B${e-1})`,result:ks.reduce((n,k)=>n+by[k].q,0)};F(c,{fill:X.INK,font:fo,fmt:"#,##0",h:"right"});c=sm.getCell(e,3);c.value={formula:`SUM(C17:C${e-1})`,result:ks.reduce((n,k)=>n+by[k].t,0)};F(c,{fill:X.INK,font:fo,fmt:rp0,h:"right"});e++}
-  sm.mergeCells(e+1,1,e+1,3);c=sm.getCell(e+1,1);c.value="Catatan: seluruh angka dihitung otomatis dari sheet Pesanan dan Rincian Item. Pendapatan dihitung dari pesanan berstatus Selesai dan Dibatalkan.";c.font={name:X.F,size:8,italic:true,color:{argb:"FF5F5A48"}};c.alignment={wrapText:true,vertical:"top"};sm.getRow(e+1).height=26;
+  sm.mergeCells(e+1,1,e+1,3);c=sm.getCell(e+1,1);c.value="Catatan: seluruh angka dihitung otomatis dari sheet Pesanan dan Rincian Item. Pendapatan dihitung dari pesanan berstatus Selesai dan Hangus.";c.font={name:X.F,size:8,italic:true,color:{argb:"FF5F5A48"}};c.alignment={wrapText:true,vertical:"top"};sm.getRow(e+1).height=26;
   await X.save(wb,"Laporan-Pesanan-ALVELIONS_"+fs+"_"+X.today()+".xlsx");dx.close();toast("Excel diunduh: "+gs.length+" pesanan")}catch(er){toast(er.message,1);xb.disabled=false;xb.textContent="Unduh Excel (.xlsx)"}};
  cb.onclick=()=>{const H=["No","Invoice","Tanggal","Jam","Username","Gamertag","No. HP","Item","Jumlah item","Total (Rp)","Status","Metode","Tipe QRIS","ID pembayaran"],ft=v=>v?{t:v}:"";
   csv("pesanan-alvelions_"+fs+"_"+X.today()+".csv",[H,...gs.map((g,i)=>[i+1,g.inv,fdate(g.created).slice(0,10),fdate(g.created).slice(11,16),g.user,g.gt,ft(g.phone),g.items.map(y=>y.name+" x"+y.qty).join("; "),SU(g.items,y=>y.qty),g.total,SL(g.status),MD(g.pay),g.qris||"",ft(g.ref)])]);dx.close();toast("CSV diunduh")};
