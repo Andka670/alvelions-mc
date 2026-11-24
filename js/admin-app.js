@@ -13,8 +13,8 @@ async function load(){
  O=o.data||[];P=p.data||[];U=u.data||[];N=n.data||[];PN=Object.fromEntries(P.map(x=>[String(x.id),x.name]));G=group(O,PN);renderAll()}
 function renderAll(){document.dispatchEvent(new CustomEvent("admin:data",{detail:{G,O,U,P,N}}));rHome();rOrders();rProd();rInc();rUsers();rNews();const c=G.filter(g=>g.status==="pending").length;$("navPend").textContent=c||""}
 /* ---- ringkasan ---- */
-async function setStatus(g,s){const {error}=await sb.from("orders").update({status:s}).in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal mengubah status: "+error.message,1);toast("Status diperbarui: "+ST[s]+(s==="none"&&permItems(g).length?". Rank permanen hangus, klik Detail lalu Hubungi pembeli.":""));load()}
-function rHome(){const done=G.filter(g=>g.status==="done"),pend=G.filter(g=>g.status==="pending"),td0=jk(Date.now());
+async function setStatus(g,s){const {error}=await sb.from("orders").update({status:s}).in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal mengubah status: "+error.message,1);toast("Status diperbarui: "+ST[s]+(s==="none"&&permItems(g).length?". Rank permanen hangus, klik Detail lalu Hubungi pembeli.":s==="done"&&permItems(g).length?". Kirim rules rank permanen: klik Detail lalu Hubungi pembeli.":""));load()}
+function rHome(){const done=G.filter(isRev),pend=G.filter(g=>g.status==="pending"),td0=jk(Date.now());
  kpi($("kpis"),[["fa-hourglass-half","Menunggu verifikasi",pend.length,"warn"],["fa-sack-dollar","Pendapatan hari ini",rp(sumT(done.filter(g=>fdate(g.created).startsWith(td0)))),""],["fa-chart-line","Total pendapatan",rp(sumT(done)),""],["fa-receipt","Total pesanan",G.length,""],["fa-box","Produk",P.length,""],["fa-users","Pengguna",U.length,""]]);
  const days=[];for(let i=13;i>=0;i--)days.push(jk(Date.now()-i*864e5));
  drawChart("chRev","bar",days.map(d=>d.slice(5)),days.map(d=>sumT(done.filter(g=>fdate(g.created).startsWith(d)))),"Pendapatan");
@@ -28,7 +28,7 @@ function detail(g){$("oT").textContent="Pesanan "+g.inv;const b=$("oB");b.textCo
  kv("Status",ST[g.status]||g.status);kv("Waktu",fdate(g.created));kv("Username",g.user);kv("Gamertag",g.gt);kv("Nomor HP",g.phone);kv("Metode",(g.pay||"").toUpperCase()+(g.qris?" · QRIS "+g.qris:""));kv("ID pembayaran",g.ref);
  g.items.forEach(i=>kv(i.name+" × "+i.qty,rp(i.sub)));kv("Total",rp(g.total));
  const pm=g.status==="none"?permItems(g):[];if(pm.length)kv("Catatan",RANK_NOTE);
- $("oWa").href="https://wa.me/"+wa(g.phone)+"?text="+encodeURIComponent("Halo "+(g.gt||g.user)+", pesanan "+g.inv+" di ALVELIONS MC "+(pm.length?"dibatalkan. Status rank permanen ("+pm.map(i=>i.name).join(", ")+") hangus. Silakan cek website ALVELIONS: "+SITE_URL:g.status==="done"?"sudah selesai diproses. Selamat bermain!":"sedang kami proses."));
+ $("oWa").href="https://wa.me/"+wa(g.phone)+"?text="+encodeURIComponent("Halo "+(g.gt||g.user)+", pesanan "+g.inv+" di ALVELIONS MC "+(pm.length?"dibatalkan. Status rank permanen ("+pm.map(i=>i.name).join(", ")+") hangus. Silakan cek website ALVELIONS: "+SITE_URL:g.status==="done"?"sudah selesai diproses. Selamat bermain!"+(permItems(g).length?"\n\nRules rank permanen:\n1. Jangan keluar dari grup WA ALVELIONS.\n2. Jangan melanggar rules server dan grup.":""):"sedang kami proses."));
  $("oDel").onclick=async()=>{if(!confirm("Hapus pesanan "+g.inv+"? Pendapatan dari pesanan ini ikut hilang dan tidak bisa dikembalikan."))return;
   const {error}=await sb.from("orders").delete().in("id",g.rows.map(r=>r.id));if(error)return toast("Gagal menghapus: "+error.message,1);$("dOrder").close();toast("Pesanan dihapus");load()};
  $("dOrder").showModal()}
@@ -61,13 +61,13 @@ $("pS").onclick=async()=>{const n=$("pN").value.trim(),pr=Number($("pP").value);
  if(error){$("pM").textContent="Gagal menyimpan: "+error.message;return}$("dProd").close();toast("Produk disimpan");load()};
 /* ---- pendapatan ---- */
 function rInc(){const r=$("ir").value,lim=r==="all"?0:Date.now()-Number(r)*864e5,since=lim?jk(lim):"";
- const done=G.filter(g=>g.status==="done"&&(!since||fdate(g.created).slice(0,10)>=since));
+ const done=G.filter(g=>isRev(g)&&(!since||fdate(g.created).slice(0,10)>=since));
  const by={};done.forEach(g=>g.items.forEach(i=>{const x=by[i.name]||(by[i.name]={qty:0,tot:0});x.qty+=i.qty;x.tot+=i.sub}));
- kpi($("ik"),[["fa-sack-dollar","Pendapatan",rp(sumT(done)),""],["fa-receipt","Transaksi selesai",done.length,""],["fa-scale-balanced","Rata-rata per transaksi",rp(done.length?sumT(done)/done.length:0),""]]);
+ kpi($("ik"),[["fa-sack-dollar","Pendapatan",rp(sumT(done)),""],["fa-receipt","Transaksi dihitung",done.length,""],["fa-scale-balanced","Rata-rata per transaksi",rp(done.length?sumT(done)/done.length:0),""]]);
  const n=r==="all"?30:Math.min(Number(r),90),days=[];for(let i=n-1;i>=0;i--)days.push(jk(Date.now()-i*864e5));
  drawChart("chInc","line",days.map(d=>d.slice(5)),days.map(d=>sumT(done.filter(g=>fdate(g.created).startsWith(d)))),"Pendapatan");
  const b=$("incB");b.textContent="";const k=Object.keys(by).sort((a,c)=>by[c].tot-by[a].tot);
- if(!k.length)return empty(b,3,"Belum ada transaksi selesai pada periode ini.");
+ if(!k.length)return empty(b,3,"Belum ada transaksi pada periode ini.");
  k.forEach(x=>{const tr=el("tr");td(tr,el("b","",x));td(tr,String(by[x].qty));td(tr,rp(by[x].tot));b.append(tr)})}
 $("ir").onchange=rInc;
 /* ---- pengguna ---- */
@@ -76,7 +76,7 @@ function rUsers(){const q=$("uq").value.trim().toLowerCase(),b=$("userB");b.text
  const l=U.filter(u=>!q||(u.username||"").toLowerCase().includes(q));
  if(!l.length)return empty(b,5,"Tidak ada pengguna yang cocok.");
  l.forEach(u=>{const mine=G.filter(g=>g.user===u.username),tr=el("tr");td(tr,el("b","",u.username||"-"));
-  td(tr,el("span","bdg "+(u.role==="admin"?"b-done":"b-pending"),u.role||"user"));td(tr,String(mine.length));td(tr,rp(sumT(mine.filter(g=>g.status==="done"))));
+  td(tr,el("span","bdg "+(u.role==="admin"?"b-done":"b-pending"),u.role||"user"));td(tr,String(mine.length));td(tr,rp(sumT(mine.filter(isRev))));
   const r=el("button","btn sm","Reset password");r.onclick=()=>{resetId=u.id;$("rU").textContent="Pengguna: "+u.username;$("rP").value=$("rC").value="";$("rM").textContent="";$("dPass").showModal()};const dt=el("button","btn sm","Detail");dt.onclick=()=>window.admUser&&admUser(u);const xb=el("button","btn sm dng","Hapus"),lock=u.id===ME||u.role==="admin";xb.disabled=lock;if(lock)xb.title=u.id===ME?"Tidak bisa menghapus akun sendiri":"Cabut akses admin dulu (lewat Detail) sebelum menghapus";
   xb.onclick=()=>{delId=u.id;delName=u.username||"HAPUS";$("xU").textContent="Pengguna: "+(u.username||"-")+"\nAkun login dihapus permanen dan tidak bisa dikembalikan. Riwayat pesanan tetap tersimpan di laporan.";$("xL").textContent="Ketik "+delName+" untuk konfirmasi";$("xI").value="";$("xS").disabled=true;$("xM").textContent="";$("dDelU").showModal()};
   const ac=el("div","act");ac.append(dt,r,xb);td(tr,ac);b.append(tr)})}
