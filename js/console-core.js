@@ -3,6 +3,10 @@ const $=id=>document.getElementById(id),rp=n=>"Rp"+(Number(n)||0).toLocaleString
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
 const fdate=s=>String(s||"").replace("T"," ").slice(0,16);
 const ST={pending:"Menunggu",done:"Selesai",none:"Dibatalkan"};
+const SITE_URL="https://alvelionsmc.vercel.app/";
+const isPerm=n=>{n=String(n||"").toLowerCase();return !n.includes("/monthly")&&n.includes("rank")};
+const permItems=g=>g.items.filter(i=>isPerm(i.name));
+const RANK_NOTE="Rank permanen yang dibatalkan berstatus hangus. Pembeli dihubungi lewat WhatsApp.";
 const bdg=s=>el("span","bdg b-"+(ST[s]?s:"none"),ST[s]||s);
 const wa=p=>{const n=String(p||"").replace(/\D/g,"");return n.startsWith("0")?"62"+n.slice(1):n};
 const sumT=a=>a.reduce((s,g)=>s+g.total,0);
