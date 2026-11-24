@@ -1,7 +1,7 @@
 /* Pembuat laporan Excel (.xlsx) berformat. Dipakai panel admin dan dashboard member. Butuh ExcelJS. */
 window.ALV_X=(()=>{
 const F="Arial",GOLD="FFFFD84D",INK="FF14151A",LINE="FFD9D4C0",ZEB="FFFBF8EC",
- ST={Selesai:["FFE3F5EA","FF1B7F45"],Menunggu:["FFFFF0D9","FF9A5B00"],Dibatalkan:["FFFCE4E4","FFB3261E"]},
+ ST={Selesai:["FFE3F5EA","FF1B7F45"],Menunggu:["FFFFF0D9","FF9A5B00"],Hangus:["FFFCE4E4","FFB3261E"]},
  s=c=>({style:"thin",color:{argb:LINE}}),bd={top:s(),left:s(),bottom:s(),right:s()},
  fill=a=>({type:"pattern",pattern:"solid",fgColor:{argb:a}}),
  col=n=>{let r="";for(;n>0;n=Math.floor((n-1)/26))r=String.fromCharCode(65+(n-1)%26)+r;return r},
