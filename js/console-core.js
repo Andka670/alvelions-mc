@@ -6,6 +6,7 @@ const ST={pending:"Menunggu",done:"Selesai",none:"Dibatalkan"};
 const SITE_URL="https://alvelionsmc.vercel.app/";
 const isPerm=n=>{n=String(n||"").toLowerCase();return !n.includes("/monthly")&&n.includes("rank")};
 const catOf=n=>{n=String(n||"").toLowerCase();return n.includes("/monthly")?"bulan":n.includes("rank")?"perm":n.includes("money")?"money":"lain"};
+const isRev=g=>g.status==="done"||g.status==="none";
 const permItems=g=>g.items.filter(i=>isPerm(i.name));
 const RANK_NOTE="Rank permanen yang dibatalkan berstatus hangus. Pembeli dihubungi lewat WhatsApp.";
 const bdg=s=>el("span","bdg b-"+(ST[s]?s:"none"),ST[s]||s);
