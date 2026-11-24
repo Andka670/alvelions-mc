@@ -17,6 +17,7 @@ function detail(g){$("oT").textContent="Pesanan "+g.inv;const b=$("oB");b.textCo
  const kv=(k,v)=>{const r=el("div","kv");r.append(el("span","",k),el("b","",v||"-"));b.append(r)};
  kv("Status",ST[g.status]||g.status);kv("Waktu",fdate(g.created));kv("Gamertag",g.gt);kv("Metode",(g.pay||"").toUpperCase());kv("ID pembayaran",g.ref);
  g.items.forEach(i=>kv(i.name+" × "+i.qty,rp(i.sub)));kv("Total",rp(g.total));
+ if(g.status==="none"&&permItems(g).length){const p=el("p","sub",RANK_NOTE+" Silakan cek website ALVELIONS: "),a=el("a","",SITE_URL);a.href=SITE_URL;a.target="_blank";a.rel="noopener";p.append(a);b.append(p)}
  const c=$("oCancel");c.hidden=g.status!=="pending";
  c.onclick=async()=>{if(!confirm("Batalkan pesanan "+g.inv+"? Hanya pesanan yang belum diproses yang bisa dibatalkan."))return;
   const {error}=await sb.from("orders").delete().eq("username",uname).eq("id_transaksi",g.inv).eq("status","pending");
